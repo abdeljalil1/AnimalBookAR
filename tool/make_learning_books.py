@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Writes the items files of the Arabic letters, French letters and Colors books.
+"""Writes the items files of the Arabic letters and Colors books.
 
     python3 tool/make_learning_books.py
 
 The words, letter names and colours live here; the 3D models come from
 tool/make_shapes.py (run it next: it also fills in each colour scene's parts).
-Then run make_pages.py and compile_targets.py with --book=letters_ar,
---book=letters_fr and --book=colors.
+Then run make_pages.py and compile_targets.py with --book=letters_ar and
+--book=colors.
 """
 import json
 from pathlib import Path
@@ -52,36 +52,6 @@ ARABIC = [
 ARABIC_LATIN = ["Alif", "Baa", "Taa", "Thaa", "Jiim", "Haa", "Khaa", "Daal", "Thaal", "Raa", "Zaay", "Siin",
                 "Shiin", "Saad", "Daad", "Taa", "Thaa", "Ayn", "Ghayn", "Faa", "Qaaf", "Kaaf", "Laam", "Miim",
                 "Nuun", "Haa", "Waaw", "Yaa"]
-
-# French: letter, word (with its article for "le/la"), English, Arabic, photo.
-FRENCH = [
-    ("A", "ambulance", "l'ambulance", "ambulance", "سيارة إسعاف", "ambulance"),
-    ("B", "bus", "le bus", "bus", "حافلة", "bus"),
-    ("C", "chameau", "le chameau", "camel", "جمل", "camel"),
-    ("D", "dauphin", "le dauphin", "dolphin", "دلفين", "dolphin"),
-    ("E", "éléphant", "l'éléphant", "elephant", "فيل", "elephant"),
-    ("F", "flamant", "le flamant", "flamingo", "نحام", "flamingo"),
-    ("G", "girafe", "la girafe", "giraffe", "زرافة", "giraffe"),
-    ("H", "hibou", "le hibou", "owl", "بومة", "owl"),
-    ("I", "iguane", "l'iguane", "iguana", "إغوانة", "iguana"),
-    ("J", "jaguar", "le jaguar", "jaguar", "يغور", "jaguar"),
-    ("K", "kangourou", "le kangourou", "kangaroo", "كنغر", "kangaroo"),
-    ("L", "lion", "le lion", "lion", "أسد", "lion"),
-    ("M", "moto", "la moto", "motorcycle", "دراجة نارية", "motorcycle"),
-    ("N", "nuage", "le nuage", "cloud", "سحابة", "cloud"),
-    ("O", "ours", "l'ours", "bear", "دب", "bear"),
-    ("P", "perroquet", "le perroquet", "parrot", "ببغاء", "parrot"),
-    ("Q", "quilles", "les quilles", "skittles", "قوارير البولينغ", "skittles"),
-    ("R", "renard", "le renard", "fox", "ثعلب", "fox"),
-    ("S", "soleil", "le soleil", "sun", "شمس", "sun"),
-    ("T", "tracteur", "le tracteur", "tractor", "جرار", "tractor"),
-    ("U", "ukulélé", "le ukulélé", "ukulele", "يوكوليلي", "ukulele"),
-    ("V", "vache", "la vache", "cow", "بقرة", "cow"),
-    ("W", "wagon", "le wagon", "wagon", "عربة قطار", "wagon"),
-    ("X", "xylophone", "le xylophone", "xylophone", "إكسيليفون", "xylophone"),
-    ("Y", "yaourt", "le yaourt", "yogurt", "زبادي", "yogurt"),
-    ("Z", "zèbre", "le zèbre", "zebra", "حمار وحشي", "zebra"),
-]
 
 # Colours: id, hex, names, the spoken "find" question, a fact.
 COLORS = [
@@ -137,27 +107,6 @@ def letters_ar():
     return items
 
 
-def letters_fr():
-    items = []
-    for i, (ch, word, with_article, en, ar, photo) in enumerate(FRENCH):
-        items.append({
-            "id": f"fr_{ch.lower()}", "page": i + 1,
-            "en": f"{ch} · {en.capitalize()}", "fr": f"{ch} comme {word.capitalize()}", "ar": f"{ch} · {ar}",
-            "fr_of": f"de la lettre {ch}", "ar_def": f"الحرف {ch}",
-            "fact_en": f"In French, {en} is “{word}”: it starts with {ch}.",
-            "fact_fr": f"{with_article[0].upper()}{with_article[1:]} : {word} commence par {ch}.",
-            "fact_ar": f"بالفرنسية، {ar} هي «{word}»: تبدأ بحرف {ch}.",
-            "letter": ch + ch.lower(), "forms": [ch, ch.lower()], "word": word, "photo": photo,
-            "say": f"{ch}, comme {word}", "say_lang": "fr",
-            "model": f"books/letters_fr/models/fr_{ch.lower()}.glb", "sound": None,
-            "color": RAINBOW[i % len(RAINBOW)], "size": 0.5, "lift": 0, "turn": 0,
-            "helps": {"en": f"Where is the letter {ch}?", "fr": f"Où est la lettre {ch} ?", "ar": f"أين الحرف {ch}؟"},
-            "helps_say": f"Où est la lettre {ch} ?",
-            "parts": [],
-        })
-    return items
-
-
 def colors():
     items = []
     for i, (cid, hexc, en, fr, ar, fr_def, ar_def, (fen, ffr, far)) in enumerate(COLORS):
@@ -192,5 +141,4 @@ def write(book, items):
 
 if __name__ == "__main__":
     write("letters_ar", letters_ar())
-    write("letters_fr", letters_fr())
     write("colors", colors())

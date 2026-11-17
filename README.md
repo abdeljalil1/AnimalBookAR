@@ -197,7 +197,7 @@ python3 tool/inspect_models.py --parts --files=books/cars/models/car.glb
 
 ### Letters and Colours
 
-The Arabic letters (28), French letters (26) and Colours (10) books are made by
+The Arabic letters (28) and Colours (10) books are made by
 scripts: `tool/make_learning_books.py` writes their items (words, letter names,
 colour facts), then `tool/make_shapes.py` builds the 3D letters and colour
 scenes in three.js (headless Chrome) and measures each scene's objects as its
@@ -210,8 +210,8 @@ colours is a game without the camera.
 python3 tool/make_learning_books.py && python3 tool/make_shapes.py
 ```
 
-Then `make_pages.py` and `compile_targets.py` with `--book=letters_ar`,
-`--book=letters_fr` or `--book=colors`, and test with
+Then `make_pages.py` and `compile_targets.py` with `--book=letters_ar`
+or `--book=colors`, and test with
 `node tool/test_learning_ar.mjs`.
 
 Photos for the book go in `tool/photos/<book>/`; the printable PDF is written to

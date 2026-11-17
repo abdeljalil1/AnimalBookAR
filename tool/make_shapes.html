@@ -81,7 +81,7 @@ function letterModel(text, font, color) {
   return g;
 }
 
-for (const book of ['letters_ar', 'letters_fr']) {
+for (const book of ['letters_ar']) {
   for (const it of cfg[book]) {
     const text = book === 'letters_ar' ? it.letter : it.letter; // "Aa" for French, the isolated form for Arabic
     const model = letterModel(text, fonts[book === 'letters_ar' ? 'ar' : 'fr'], it.color);
