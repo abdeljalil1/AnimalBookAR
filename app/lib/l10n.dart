@@ -34,24 +34,36 @@ class S {
   String get language => _t('Language', 'Langue', 'اللغة');
   String get zoo => _t('ZOO', 'ZOO', 'حديقة الحيوانات');
 
-  String levelName(int level) => switch (level) {
+  String levelName(int level, {String kind = 'animals'}) => switch (level) {
         1 => _t('Meet', 'Découvrir', 'تعرّف'),
-        2 => _t('Body parts', 'Le corps', 'أجزاء الجسم'),
+        2 => partsTitle(kind),
         _ => _t('Quiz', 'Quiz', 'اختبار'),
       };
   String levelTitle(int level) => _t('Level $level', 'Niveau $level', 'المستوى $level');
   String finishFirst(int level) =>
       _t('Finish level $level first', 'Termine d\'abord le niveau $level', 'أكمل المستوى $level أولًا');
-  String levelProgress(int level, int done, int total, {bool vehicles = false}) => switch (level) {
-        1 => metOf(vehicles, done, total),
+  String levelProgress(int level, int done, int total, {String kind = 'animals'}) => switch (level) {
+        1 => metOf(kind, done, total),
         2 => _t('$done of $total parts', '$done sur $total parties', '$done من $total أجزاء'),
         _ => _t('$done of $total answers', '$done sur $total réponses', '$done من $total إجابات'),
       };
 
   // Missions
-  String meet(Animal a) => _t('Meet the ${a.en.toLowerCase()}', 'Découvre ${a.frDef}', 'تعرّف على ${a.arDef}');
-  String findPart(Animal a, BodyPart p) => _t('Find the ${a.en.toLowerCase()}\'s ${p.en.toLowerCase()}',
-      'Trouve ${p.frDef} ${a.frOf}', 'ابحث عن ${p.ar} ${a.arDef}');
+  String meet(Animal a, {String kind = 'animals'}) => switch (kind) {
+        'letters' => _t('Learn ${a.en}', 'Apprends ${a.fr}', 'تعلّم ${a.ar}'),
+        'colors' => _t('Discover ${a.en.toLowerCase()}', 'Découvre ${a.frDef}', 'تعرّف على ${a.arDef}'),
+        _ => _t('Meet the ${a.en.toLowerCase()}', 'Découvre ${a.frDef}', 'تعرّف على ${a.arDef}'),
+      };
+  String findPart(Animal a, BodyPart p, {String kind = 'animals'}) => kind == 'colors'
+      ? _t('Find the ${a.en.toLowerCase()} ${p.en.toLowerCase()}', 'Trouve ${p.frDef} ${a.fr.toLowerCase()}',
+          'ابحث عن ${p.ar} ${a.ar}')
+      : _t('Find the ${a.en.toLowerCase()}\'s ${p.en.toLowerCase()}', 'Trouve ${p.frDef} ${a.frOf}',
+          'ابحث عن ${p.ar} ${a.arDef}');
+  String partsTitle(String kind) => switch (kind) {
+        'vehicles' => _t('Parts', 'Les pièces', 'الأجزاء'),
+        'colors' => _t('Things', 'Les objets', 'الأشياء'),
+        _ => _t('Body parts', 'Le corps', 'أجزاء الجسم'),
+      };
   String quizOf(Animal a) => _t('${a.en} quiz', 'Quiz ${a.frOf}', 'اختبار ${a.arDef}');
   String openPage(int page) =>
       _t('Open your book at page $page', 'Ouvre ton livre à la page $page', 'افتح كتابك على الصفحة $page');
@@ -157,9 +169,29 @@ class S {
   String get comingSoon => _t('Coming soon', 'Bientôt', 'قريبًا');
   String get lettersBook => _t('Letters', 'Les lettres', 'الحروف');
   String get heritageBook => _t('Algeria', 'L\'Algérie', 'الجزائر');
-  String metOf(bool vehicles, int done, int total) => vehicles
-      ? _t('$done of $total vehicles', '$done sur $total véhicules', '$done من $total مركبات')
-      : _t('$done of $total animals', '$done sur $total animaux', '$done من $total حيوانات');
+  String metOf(String kind, int done, int total) => switch (kind) {
+        'vehicles' => _t('$done of $total vehicles', '$done sur $total véhicules', '$done من $total مركبات'),
+        'letters' => _t('$done of $total letters', '$done sur $total lettres', '$done من $total حروف'),
+        'colors' => _t('$done of $total colours', '$done sur $total couleurs', '$done من $total ألوان'),
+        _ => _t('$done of $total animals', '$done sur $total animaux', '$done من $total حيوانات'),
+      };
+  String statMet(String kind) => switch (kind) {
+        'vehicles' => statVehicles,
+        'letters' => _t('Letters learned', 'Lettres apprises', 'حروف تعلّمها'),
+        'colors' => _t('Colours met', 'Couleurs découvertes', 'ألوان تعرّف عليها'),
+        _ => statAnimals,
+      };
+  String findGame(String kind) => kind == 'colors'
+      ? _t('Find the colour', 'Trouve la couleur', 'ابحث عن اللون')
+      : _t('Find the letter', 'Trouve la lettre', 'ابحث عن الحرف');
+  String get findHint =>
+      _t('Listen, then scan the right page', 'Écoute, puis scanne la bonne page', 'استمع ثم امسح الصفحة الصحيحة');
+  String get mixGame => _t('Mix colours', 'Mélange les couleurs', 'امزج الألوان');
+  String get mixHint =>
+      _t('Two paints make a new colour', 'Deux peintures font une couleur', 'لونان يصنعان لونًا جديدًا');
+  String get mixPick => _t('Pick two paints', 'Choisis deux peintures', 'اختر لونين');
+  String mixResult(String a, String b, String c) => _t('$a and $b make $c!', '$a et $b font $c !', '$a و$b يصنعان $c!');
+  String get mixAgain => _t('Mix again', 'Encore', 'امزج مرة أخرى');
   String get town => _t('TOWN', 'VILLE', 'المدينة');
   String get statVehicles => _t('Vehicles met', 'Véhicules découverts', 'مركبات تعرّف عليها');
   String get helpsGame => _t('Who helps?', 'Qui aide ?', 'من يساعد؟');
@@ -169,9 +201,13 @@ class S {
   // Games
   String get games => _t('Games', 'Jeux', 'ألعاب');
   String get memoryGame => _t('Memory', 'Mémoire', 'الذاكرة');
-  String memoryHint({bool vehicles = false}) => vehicles
-      ? _t('Match each vehicle to its name', 'Associe chaque véhicule à son nom', 'طابق كل مركبة مع اسمها')
-      : _t('Match each animal to its name', 'Associe chaque animal à son nom', 'طابق كل حيوان مع اسمه');
+  String memoryHint({String kind = 'animals'}) => switch (kind) {
+        'vehicles' =>
+          _t('Match each vehicle to its name', 'Associe chaque véhicule à son nom', 'طابق كل مركبة مع اسمها'),
+        'letters' => _t('Match each letter to its word', 'Associe chaque lettre à son mot', 'طابق كل حرف مع كلمته'),
+        'colors' => _t('Match each colour to its name', 'Associe chaque couleur à son nom', 'طابق كل لون مع اسمه'),
+        _ => _t('Match each animal to its name', 'Associe chaque animal à son nom', 'طابق كل حيوان مع اسمه'),
+      };
   String get soundQuiz => _t('Sound quiz', 'Quiz des sons', 'اختبار الأصوات');
   String get soundQuizHint => _t('Who makes this sound?', 'Qui fait ce bruit ?', 'من يصدر هذا الصوت؟');
   String movesWin(int moves) => _t('Bravo! You found all the pairs in $moves moves.',

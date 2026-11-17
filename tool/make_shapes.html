@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><title>Make shapes</title>
+<script type="importmap">
+{ "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/__three/" } }
+</script>
+</head>
+<body style="margin:0;background:#fff">
+<pre id="log">starting…</pre>
+<script type="module">
+// Served by tool/make_shapes.py. Builds, in three.js, the 3D letters of the
+// letter books and the colour scenes of the Colors book, saves them as GLB,
+// and renders thumbnails (and the colour pictures for the printed pages).
+import * as THREE from 'three';
+import { TTFLoader } from 'three/addons/loaders/TTFLoader.js';
+import { Font } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+
+const log = (m) => { document.getElementById('log').textContent += '\n' + m; };
+const cfg = await (await fetch('/__config')).json();
+const save = (path, body) => fetch('/__save?path=' + encodeURIComponent(path), { method: 'POST', body });
+const ttf = (url) => new Promise((ok, fail) => new TTFLoader().load(url, (j) => ok(new Font(j)), undefined, fail));
+const fonts = { ar: await ttf('/__fonts/Tajawal-ExtraBold.ttf'), fr: await ttf('/__fonts/Poppins-ExtraBold.ttf') };
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+const exporter = new GLTFExporter();
+const glb = (obj) => new Promise((ok, fail) => exporter.parse(obj, ok, fail, { binary: true }));
+const darker = (hex, k) => new THREE.Color(hex).multiplyScalar(k);
+
+function lights(scene) {
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8d7b68, 2.2));
+  const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+  sun.position.set(2, 4, 3);
+  scene.add(sun);
+}
+
+// A PNG of the object, seen a little from above and from the front.
+async function snapshot(obj, w, h, path, bg = null, pad = 1.25) {
+  renderer.setSize(w, h);
+  renderer.setClearColor(bg === null ? 0x000000 : bg, bg === null ? 0 : 1);
+  const scene = new THREE.Scene();
+  lights(scene);
+  const holder = obj.clone();
+  scene.add(holder);
+  const box = new THREE.Box3().setFromObject(holder);
+  const c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3());
+  const cam = new THREE.PerspectiveCamera(30, w / h, 0.01, 100);
+  const r = Math.max(s.x / (w / h), s.y, s.z * 0.6) * pad;
+  const dist = r / (2 * Math.tan(THREE.MathUtils.degToRad(15)));
+  cam.position.set(c.x + dist * 0.18, c.y + dist * 0.42, c.z + dist);
+  cam.lookAt(c);
+  renderer.render(scene, cam);
+  const blob = await new Promise((ok) => renderer.domElement.toBlob(ok, 'image/png'));
+  await save(path, blob);
+}
+
+// ---- letters -----------------------------------------------------------------
+function letterModel(text, font, color) {
+  const geo = new TextGeometry(text, {
+    font, size: 1, height: 0.28, curveSegments: 6,
+    bevelEnabled: true, bevelThickness: 0.04, bevelSize: 0.025, bevelSegments: 2,
+  });
+  geo.computeBoundingBox();
+  const b = geo.boundingBox;
+  geo.translate(-(b.min.x + b.max.x) / 2, -b.min.y, -(b.min.z + b.max.z) / 2);
+  const mesh = new THREE.Mesh(geo, [
+    new THREE.MeshStandardMaterial({ color, roughness: 0.45 }),
+    new THREE.MeshStandardMaterial({ color: darker(color, 0.7), roughness: 0.6 }),
+  ]);
+  mesh.name = 'letter';
+  // Leaned back, so its face looks up at a phone held above the book.
+  mesh.rotation.x = -0.75;
+  const g = new THREE.Group();
+  g.add(mesh);
+  g.updateMatrixWorld(true);
+  const lb = new THREE.Box3().setFromObject(g);
+  mesh.position.y = -lb.min.y;
+  return g;
+}
+
+for (const book of ['letters_ar', 'letters_fr']) {
+  for (const it of cfg[book]) {
+    const text = book === 'letters_ar' ? it.letter : it.letter; // "Aa" for French, the isolated form for Arabic
+    const model = letterModel(text, fonts[book === 'letters_ar' ? 'ar' : 'fr'], it.color);
+    await save(`app/assets/ar/${it.model}`, await glb(model));
+    await snapshot(model, 256, 256, `app/assets/ar/books/${book}/thumbs/${it.id}.png`, 0xfff6e6, 1.5);
+  }
+  log(book + ' done');
+}
+
+// ---- colour scenes -----------------------------------------------------------
+const eye = (x, y, z, s = 0.07) => {
+  const g = new THREE.Group();
+  const w = new THREE.Mesh(new THREE.SphereGeometry(s, 16, 12), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+  const p = new THREE.Mesh(new THREE.SphereGeometry(s * 0.55, 12, 8), new THREE.MeshStandardMaterial({ color: 0x111111 }));
+  p.position.z = s * 0.6;
+  g.add(w, p);
+  g.position.set(x, y, z);
+  return g;
+};
+function extrude(shape, depth, mat) {
+  const geo = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: 0.04, bevelSize: 0.04, bevelSegments: 3, curveSegments: 16 });
+  geo.center();
+  return new THREE.Mesh(geo, mat);
+}
+const MAKERS = {
+  ball(mat) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.42, 32, 24), mat);
+    m.position.y = 0.42;
+    return m;
+  },
+  star(mat) {
+    const s = new THREE.Shape();
+    for (let i = 0; i < 10; i++) {
+      const r = i % 2 ? 0.22 : 0.5, a = Math.PI / 2 + (i * Math.PI) / 5;
+      i ? s.lineTo(Math.cos(a) * r, Math.sin(a) * r) : s.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+    }
+    const m = extrude(s, 0.18, mat);
+    m.position.y = 0.5;
+    return m;
+  },
+  heart(mat) {
+    const s = new THREE.Shape();
+    s.moveTo(0, -0.45);
+    s.bezierCurveTo(-0.15, -0.3, -0.55, -0.1, -0.5, 0.18);
+    s.bezierCurveTo(-0.45, 0.45, -0.1, 0.5, 0, 0.25);
+    s.bezierCurveTo(0.1, 0.5, 0.45, 0.45, 0.5, 0.18);
+    s.bezierCurveTo(0.55, -0.1, 0.15, -0.3, 0, -0.45);
+    const m = extrude(s, 0.2, mat);
+    m.position.y = 0.48;
+    return m;
+  },
+  balloon(mat) {
+    const g = new THREE.Group();
+    const pts = [];
+    for (let i = 0; i <= 20; i++) {
+      const t = i / 20, a = t * Math.PI;
+      pts.push(new THREE.Vector2(Math.sin(a) * 0.32 * (1 - 0.25 * t), -Math.cos(a) * 0.42));
+    }
+    const body = new THREE.Mesh(new THREE.LatheGeometry(pts, 32), mat);
+    body.rotation.x = Math.PI;
+    body.position.y = 1.0;
+    const string = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.58, 6), new THREE.MeshStandardMaterial({ color: 0x777777 }));
+    string.position.y = 0.29;
+    g.add(body, string);
+    return g;
+  },
+  cube(mat) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.62, 0.62), mat);
+    m.position.y = 0.31;
+    m.rotation.y = 0.5;
+    return m;
+  },
+  flower(mat) {
+    const g = new THREE.Group();
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.6, 8), new THREE.MeshStandardMaterial({ color: 0x3f8f3f }));
+    stem.position.y = 0.3;
+    g.add(stem);
+    const head = new THREE.Group();
+    head.position.set(0, 0.72, 0);
+    for (let i = 0; i < 6; i++) {
+      const p = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), mat);
+      const a = (i * Math.PI) / 3;
+      p.scale.set(1, 1, 0.45);
+      p.position.set(Math.cos(a) * 0.2, Math.sin(a) * 0.2, 0);
+      head.add(p);
+    }
+    const mid = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 12), new THREE.MeshStandardMaterial({ color: 0xffc928 }));
+    mid.position.z = 0.04;
+    head.add(mid);
+    g.add(head);
+    return g;
+  },
+  cup(mat) {
+    const g = new THREE.Group();
+    const pts = [new THREE.Vector2(0, 0), new THREE.Vector2(0.24, 0), new THREE.Vector2(0.28, 0.5), new THREE.Vector2(0.25, 0.5), new THREE.Vector2(0.21, 0.04), new THREE.Vector2(0, 0.04)];
+    g.add(new THREE.Mesh(new THREE.LatheGeometry(pts, 32), mat));
+    const h = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.035, 10, 24), mat);
+    h.position.set(0.3, 0.26, 0);
+    g.add(h);
+    return g;
+  },
+  hat(mat) {
+    const g = new THREE.Group();
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.8, 32), mat);
+    cone.position.y = 0.4;
+    const pom = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 12), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+    pom.position.y = 0.82;
+    g.add(cone, pom);
+    return g;
+  },
+  fish(mat) {
+    const g = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.3, 24, 16), mat);
+    body.scale.set(1.5, 1, 0.6);
+    const tail = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.3, 3), mat);
+    tail.rotation.z = Math.PI / 2;
+    tail.position.x = -0.55;
+    g.add(body, tail, eye(0.3, 0.08, 0.14));
+    g.position.y = 0.32;
+    const w = new THREE.Group();
+    w.add(g);
+    return w;
+  },
+};
+
+for (const [i, it] of cfg.colors.entries()) {
+  const mat = new THREE.MeshStandardMaterial({ color: it.color, roughness: 0.4 });
+  const scene = new THREE.Group();
+  const spots = cfg.layouts[i % cfg.layouts.length];
+  const parts = [];
+  it.objects.forEach((kind, k) => {
+    const o = MAKERS[kind](mat);
+    const holder = new THREE.Group();
+    holder.name = kind;
+    holder.add(o);
+    const [x, z, s] = spots[k];
+    holder.position.set(x, 0, z);
+    holder.scale.setScalar(s);
+    scene.add(holder);
+  });
+  scene.updateMatrixWorld(true);
+  const all = new THREE.Box3().setFromObject(scene);
+  const size = all.getSize(new THREE.Vector3());
+  for (const holder of scene.children) {
+    const b = new THREE.Box3().setFromObject(holder);
+    const c = b.getCenter(new THREE.Vector3());
+    const at = [(c.x - all.min.x) / size.x, (b.min.y + (b.max.y - b.min.y) * 0.65 - all.min.y) / size.y, (b.max.z - all.min.z) / size.z];
+    parts.push({ id: holder.name, at: at.map((v) => +v.toFixed(2)) });
+  }
+  await save(`app/assets/ar/${it.model}`, await glb(scene));
+  await snapshot(scene, 1100, 760, `tool/photos/colors/${it.cid}.png`, null, 1.12);
+  await snapshot(scene, 256, 256, `app/assets/ar/books/colors/thumbs/${it.id}.png`, 0xffffff, 1.0);
+  cfg.colors[i].parts = parts;
+}
+log('colors done');
+await fetch('/__done', { method: 'POST', body: JSON.stringify({ colors: cfg.colors.map((c) => ({ id: c.id, parts: c.parts })) }) });
+</script>
+</body>
+</html>

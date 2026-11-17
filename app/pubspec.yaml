@@ -85,6 +85,18 @@ flutter:
     - assets/ar/books/cars/sounds/
     - assets/ar/books/cars/pages/
     - assets/ar/books/cars/thumbs/
+    - assets/ar/books/letters_ar/
+    - assets/ar/books/letters_ar/models/
+    - assets/ar/books/letters_ar/pages/
+    - assets/ar/books/letters_ar/thumbs/
+    - assets/ar/books/letters_fr/
+    - assets/ar/books/letters_fr/models/
+    - assets/ar/books/letters_fr/pages/
+    - assets/ar/books/letters_fr/thumbs/
+    - assets/ar/books/colors/
+    - assets/ar/books/colors/models/
+    - assets/ar/books/colors/pages/
+    - assets/ar/books/colors/thumbs/
 
   # Poppins (Latin) with Tajawal for Arabic; both SIL Open Font License (assets/fonts/OFL-*.txt)
   fonts:

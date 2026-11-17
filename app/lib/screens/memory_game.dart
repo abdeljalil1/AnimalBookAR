@@ -94,7 +94,7 @@ class _MemoryGameState extends State<MemoryGame> {
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
             child: Row(children: [
               Expanded(
-                  child: Text(s.memoryHint(vehicles: widget.progress.book.vehicles),
+                  child: Text(s.memoryHint(kind: widget.progress.book.kind),
                       style: const TextStyle(color: Color(0xFF7A6A5C)))),
               Text('${s.namesIn} '),
               SegmentedButton<Lang>(

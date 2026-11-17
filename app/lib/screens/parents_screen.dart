@@ -318,8 +318,13 @@ class _StatsCard extends StatelessWidget {
     final c = p.child;
     final tiles = [
       (
-        p.book.vehicles ? Icons.directions_car_rounded : Icons.pets_rounded,
-        p.book.vehicles ? s.statVehicles : s.statAnimals,
+        switch (p.book.kind) {
+          'vehicles' => Icons.directions_car_rounded,
+          'letters' => Icons.abc_rounded,
+          'colors' => Icons.palette_rounded,
+          _ => Icons.pets_rounded,
+        },
+        s.statMet(p.book.kind),
         '${p.metCount} / ${p.animals.length}'
       ),
       (Icons.touch_app_rounded, s.statParts, '${p.partsTotalFound} / ${p.totalParts}'),

@@ -24,6 +24,8 @@ const HELPS = params.get('mode') === 'helps'; // vehicles: "There's a fire! Who 
 const SCAN_QUIZ = SOUND_QUIZ || HELPS; // both are answered by scanning a page
 const BOOK_ID = params.get('book') || 'animals';
 let VEH = false; // the open book is about vehicles (set once books.json is read)
+let KIND = 'animals'; // animals | vehicles | letters | colors
+const SUFFIX = { vehicles: 'V', letters: 'L', colors: 'C' };
 const QUIZ_GOAL = 3; // right answers per animal
 const QUIZ_DWELL_MS = 400; // aim at the right part this long to answer
 const PAGE_HALF_W = 0.5;
@@ -60,6 +62,12 @@ const TEXT = {
     hintV: 'Aim the ◎ at a part · 1 finger: turn and tip · 2 fingers: zoom, move',
     helpsAgain: 'Tap here to hear it again, then scan the right page',
     helpsRight: "Yes! It's {a}!", helpsWrong: "That's {a}. Try another one!",
+    // letters ("…L") and colours ("…C")
+    scanL: 'Point the camera at a letter page', newAnimalL: 'New letter! +1 ★', moveL: 'Spin',
+    hintL: '1 finger: turn and tip · 2 fingers: zoom, move', helpsRightL: 'Yes! {a}!', helpsRightC: "Yes! It's {a}!",
+    scanC: 'Point the camera at a colour page', newAnimalC: 'New colour! +1 ★', moveC: 'Spin',
+    hintC: 'Aim the ◎ at a thing · 1 finger: turn and tip · 2 fingers: zoom, move',
+    feedC: 'Paint', yumC: "Yes! It's {f}!", noThanksC: "That's {f}. Find the page's colour!", fullC: 'Well done! 🎉',
   },
   fr: {
     whoSound: 'Qui fait ce bruit ? 🔊', listenAgain: 'Touche ici pour réécouter, puis scanne la page',
@@ -80,6 +88,11 @@ const TEXT = {
     hintV: 'Vise ◎ une partie · 1 doigt : tourner, pencher · 2 doigts : zoomer, déplacer',
     helpsAgain: 'Touche ici pour réécouter, puis scanne la bonne page',
     helpsRight: "Oui ! C'est {a} !", helpsWrong: "Ça, c'est {a}. Essaie un autre !",
+    scanL: "Vise une page de lettre avec la caméra", newAnimalL: 'Nouvelle lettre ! +1 ★', moveL: 'Tourner',
+    hintL: '1 doigt : tourner, pencher · 2 doigts : zoomer, déplacer', helpsRightL: 'Oui ! {a} !', helpsRightC: "Oui ! C'est {a} !",
+    scanC: 'Vise une page de couleur avec la caméra', newAnimalC: 'Nouvelle couleur ! +1 ★', moveC: 'Tourner',
+    hintC: 'Vise ◎ un objet · 1 doigt : tourner, pencher · 2 doigts : zoomer, déplacer',
+    feedC: 'Peindre', yumC: "Oui ! C'est {f} !", noThanksC: "Ça, c'est {f}. Trouve la couleur de la page !", fullC: 'Bravo ! 🎉',
   },
   ar: {
     whoSound: 'من يصدر هذا الصوت؟ 🔊', listenAgain: 'المس هنا للاستماع مرة أخرى، ثم امسح الصفحة',
@@ -100,9 +113,14 @@ const TEXT = {
     hintV: 'صوّب ◎ نحو جزء · إصبع: تدوير وإمالة · إصبعان: تكبير وتحريك',
     helpsAgain: 'المس هنا للاستماع مرة أخرى، ثم امسح الصفحة الصحيحة',
     helpsRight: 'نعم! إنها {a}!', helpsWrong: 'هذه {a}. جرّب غيرها!',
+    scanL: 'وجّه الكاميرا نحو صفحة حرف', newAnimalL: 'حرف جديد! +1 ★', moveL: 'دوران',
+    hintL: 'إصبع: تدوير وإمالة · إصبعان: تكبير وتحريك', helpsRightL: 'أحسنت! {a}!', helpsRightC: 'أحسنت! إنه {a}!',
+    scanC: 'وجّه الكاميرا نحو صفحة لون', newAnimalC: 'لون جديد! +1 ★', moveC: 'دوران',
+    hintC: 'صوّب ◎ نحو شيء · إصبع: تدوير وإمالة · إصبعان: تكبير وتحريك',
+    feedC: 'تلوين', yumC: 'نعم! إنه {f}!', noThanksC: 'هذا {f}. ابحث عن لون الصفحة!', fullC: 'أحسنت! 🎉',
   },
 };
-const t = (key, vars = {}) => ((VEH && TEXT[LANG][key + 'V']) || TEXT[LANG][key]).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
+const t = (key, vars = {}) => ((SUFFIX[KIND] && TEXT[LANG][key + SUFFIX[KIND]]) || TEXT[LANG][key]).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
 const nameIn = (def, lang = LANG) => def[lang];
 const partWithArticle = (def) => ({ en: 'the ' + def.en.toLowerCase(), fr: def.fr_def, ar: def.ar_def })[LANG];
 // Foods for the feeding game; each animal lists the ones it eats ("eats").
@@ -139,13 +157,29 @@ const NEEDS = {
   hay: { icon: '🌾', en: 'Hay', fr: 'Foin', ar: 'تبن' },
   soap: { icon: '🧽', en: 'Sponge', fr: 'Éponge', ar: 'إسفنجة' },
 };
+// Paints for the Colors book ("Paint": the right one is the page's colour).
+const PAINTS = {
+  red: { swatch: '#E53935', en: 'Red', fr: 'Rouge', ar: 'أحمر' },
+  orange: { swatch: '#FB8C00', en: 'Orange', fr: 'Orange', ar: 'برتقالي' },
+  yellow: { swatch: '#FDD835', en: 'Yellow', fr: 'Jaune', ar: 'أصفر' },
+  green: { swatch: '#43A047', en: 'Green', fr: 'Vert', ar: 'أخضر' },
+  blue: { swatch: '#1E88E5', en: 'Blue', fr: 'Bleu', ar: 'أزرق' },
+  purple: { swatch: '#8E24AA', en: 'Purple', fr: 'Violet', ar: 'بنفسجي' },
+  pink: { swatch: '#EC6FA9', en: 'Pink', fr: 'Rose', ar: 'وردي' },
+  brown: { swatch: '#795548', en: 'Brown', fr: 'Marron', ar: 'بني' },
+  black: { swatch: '#2B2B2B', en: 'Black', fr: 'Noir', ar: 'أسود' },
+  white: { swatch: '#F5F5F5', en: 'White', fr: 'Blanc', ar: 'أبيض' },
+};
 const TRAY_SIZE = 6;
-const catalog = () => (VEH ? NEEDS : FOODS);
+const catalog = () => (KIND === 'colors' ? PAINTS : VEH ? NEEDS : FOODS);
+const trayIcon = (item) => (item.swatch
+  ? `<b style="display:inline-block;width:34px;height:34px;border-radius:50%;background:${item.swatch};border:2px solid rgba(0,0,0,.18)"></b>`
+  : `<b>${item.icon}</b>`);
 const wants = (a) => a.eats || a.needs || [];
 
 // Reads text aloud: the app's voice (flutter_tts), or the browser's when testing.
 let lastSpoken = { text: '', at: 0 };
-function speak(text) {
+function speak(text, lang = LANG) {
   if (!text) return;
   const now = performance.now();
   if (text === lastSpoken.text && now - lastSpoken.at < 2500) return; // no stutter
@@ -153,10 +187,10 @@ function speak(text) {
   state.spokenCount = (state.spokenCount || 0) + 1;
   state.lastSpoken = text;
   const bridge = window.flutter_inappwebview;
-  if (bridge && bridge.callHandler) { ask('speak', { text }); return; }
+  if (bridge && bridge.callHandler) { ask('speak', lang === LANG ? { text } : { text, lang }); return; }
   try {
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = { en: 'en-US', fr: 'fr-FR', ar: 'ar-SA' }[LANG];
+    u.lang = { en: 'en-US', fr: 'fr-FR', ar: 'ar-SA' }[lang];
     u.rate = 0.85;
     speechSynthesis.cancel();
     speechSynthesis.speak(u);
@@ -164,11 +198,11 @@ function speak(text) {
 }
 
 // "the fox" / "le renard" / "الثعلب"
-const animalWithArticle = (a) => ({
+const animalWithArticle = (a) => (KIND === 'letters' || KIND === 'colors' ? a[LANG] : {
   en: 'the ' + a.en.toLowerCase(),
   fr: a.fr_of.startsWith('du ') ? 'le ' + a.fr_of.slice(3) : a.fr_of.replace(/^de /, ''),
   ar: a.ar_def,
-})[LANG];
+}[LANG]);
 const otherNames = (def) => ['en', 'fr', 'ar'].filter((l) => l !== LANG).map((l) => def[l]).join(' · ');
 
 // Readable by tests (tool/test_web_ar.mjs) and handy when debugging.
@@ -299,9 +333,11 @@ function applyLanguage() {
   $('scan-hint').textContent = t('scan');
   $('held-badge').textContent = t('held');
   $('gesture-hint').textContent = t('hint');
-  for (const [id, key, icon] of [['btn-sound', 'sound', VEH ? '📢' : '🔊'], ['btn-move', 'move', VEH ? '🚗' : '🐾'], ['btn-feed', 'feed', VEH ? '🧰' : '🍽️'], ['btn-hold', 'hold', '✋'], ['btn-reset', 'reset', '↺']]) {
+  const icons = { animals: ['🔊', '🐾', '🍽️'], vehicles: ['📢', '🚗', '🧰'], letters: ['🔊', '🔄', ''], colors: ['🔊', '🔄', '🎨'] }[KIND];
+  for (const [id, key, icon] of [['btn-sound', 'sound', icons[0]], ['btn-move', 'move', icons[1]], ['btn-feed', 'feed', icons[2]], ['btn-hold', 'hold', '✋'], ['btn-reset', 'reset', '↺']]) {
     $(id).innerHTML = `<span>${icon}</span>${t(key)}`;
   }
+  $('btn-feed').classList.toggle('hidden', KIND === 'letters'); // nothing to give a letter
 }
 applyLanguage();
 
@@ -369,7 +405,8 @@ async function askGyroPermission() {
 async function main() {
   const books = await (await fetch('books.json')).json();
   const book = books.find((b) => b.id === BOOK_ID) || books[0];
-  VEH = book.kind === 'vehicles';
+  KIND = book.kind || 'animals';
+  VEH = KIND === 'vehicles';
   state.book = book.id;
   applyLanguage();
   const animals = await (await fetch(book.data)).json();
@@ -531,7 +568,7 @@ async function main() {
     entry.lastSoundAt = performance.now();
     entry.popT = 0.45;
     const au = entry.audio;
-    if (!au) { speak(nameIn(entry.a)); state.soundsPlayed++; return; }
+    if (!au) { speak(entry.a.say || nameIn(entry.a), entry.a.say ? entry.a.say_lang : LANG); state.soundsPlayed++; return; }
     au.currentTime = 0;
     au.play().then(() => { state.soundsPlayed++; }).catch(() => {
       // Autoplay blocked (only in a normal browser): the Sound button still works.
@@ -560,7 +597,7 @@ async function main() {
       soundAnswer(entry);
     } else {
       if (isNew || performance.now() - entry.lastSoundAt > SOUND_REPEAT_MS) playSound(entry);
-      if (isNew) { speak(nameIn(entry.a)); closeFeed(); }
+      if (isNew) { if (!entry.a.say) speak(nameIn(entry.a)); closeFeed(); }
     }
     ask('found', { id: entry.a.id }).then((r) => reward(r, t('newAnimal')));
     if (QUIZ) quizStart(entry);
@@ -849,7 +886,13 @@ async function main() {
   const sq = { target: null, busy: false, correct: 0 };
 
   function soundPlay() {
-    if (HELPS) { if (sq.target) speak(sq.target.a.helps[LANG]); return; }
+    if (HELPS) {
+      if (sq.target) {
+        const a = sq.target.a;
+        if (a.helps_say) speak(a.helps_say, a.say_lang); else speak(a.helps[LANG]);
+      }
+      return;
+    }
     if (!sq.target || !sq.target.audio) return;
     sq.target.audio.currentTime = 0;
     sq.target.audio.play().catch(() => {});
@@ -926,7 +969,7 @@ async function main() {
       const el = document.createElement('div');
       el.className = 'food' + (feed.fed.has(f) ? ' eaten' : '');
       el.dataset.food = f;
-      el.innerHTML = `<b>${catalog()[f].icon}</b><small>${catalog()[f][LANG]}</small>`;
+      el.innerHTML = `${trayIcon(catalog()[f])}<small>${catalog()[f][LANG]}</small>`;
       el.addEventListener('pointerdown', (e) => startFoodDrag(e, f, el));
       tray.append(el);
     }
@@ -959,7 +1002,7 @@ async function main() {
     const start = { x: e.clientX, y: e.clientY, t: performance.now() };
     const ghost = document.createElement('div');
     ghost.className = 'food-ghost';
-    ghost.textContent = catalog()[food].icon;
+    if (catalog()[food].swatch) ghost.innerHTML = trayIcon(catalog()[food]); else ghost.textContent = catalog()[food].icon;
     ghost.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
     document.body.append(ghost);
     el.classList.add('dragging');
@@ -991,6 +1034,7 @@ async function main() {
     const right = wants(current.a).includes(food);
     const name = catalog()[food][LANG];
     const entry = current;
+    if (KIND === 'colors') paint(entry, catalog()[food].swatch, right);
     if (right) {
       const m = mouthPoint();
       ghost.classList.add('fly');
@@ -1018,6 +1062,24 @@ async function main() {
       ask('food', { animal: entry.a.id, food, right: false });
     }
     state.feed = { on: feed.on, items: feed.items, fed: [...feed.fed], last: { food, right } };
+  }
+
+  // Colors book: paint the scene's coloured objects (eyes, stems... keep theirs).
+  // A wrong colour goes back to the page's colour after a moment.
+  function paint(entry, hex, keep) {
+    if (!entry.model) return;
+    const base = new THREE.Color(entry.a.color);
+    entry.model.traverse((o) => {
+      if (!o.isMesh) return;
+      for (const m of [].concat(o.material)) {
+        if (!m.userData.orig) m.userData.orig = m.color.clone();
+        const o0 = m.userData.orig;
+        if (Math.abs(o0.r - base.r) + Math.abs(o0.g - base.g) + Math.abs(o0.b - base.b) < 0.06) m.color.set(hex);
+      }
+    });
+    clearTimeout(entry.paintTimer);
+    if (!keep) entry.paintTimer = setTimeout(() => paint(entry, entry.a.color, true), 1600);
+    state.painted = hex;
   }
 
   // ---- AR photo --------------------------------------------------------------------

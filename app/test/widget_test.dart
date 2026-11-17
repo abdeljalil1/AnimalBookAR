@@ -195,4 +195,37 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.byType(BookshelfScreen), findsOneWidget);
   });
+
+  testWidgets('letter books have one level and a Find game; colours mix paints', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 2400));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final p = await _progress(tester, {'name': 'Yahia'});
+    await tester.pumpWidget(AnimalBookApp(progress: p));
+    await _settle(tester);
+
+    expect(find.text('Arabic letters'), findsOneWidget);
+    expect(find.text('0 of 28 letters'), findsOneWidget);
+    await _openBook(tester, 'letters_ar');
+    expect(find.text('Learn Alif · Lion'), findsOneWidget); // the first mission
+    expect(find.byKey(const Key('level-2')), findsNothing); // one level only
+    expect(find.byKey(const Key('game-find')), findsOneWidget);
+    expect(find.byKey(const Key('game-sound')), findsNothing);
+    expect(p.unlocked(2), isFalse);
+    await tester.tap(find.byKey(const Key('back-to-books')));
+    await _settle(tester);
+    await tester.pump(const Duration(milliseconds: 400));
+
+    await tester.scrollUntilVisible(find.byKey(const Key('book-colors')), 300);
+    await _openBook(tester, 'colors');
+    expect(find.text('Discover red'), findsOneWidget);
+    expect(find.text('Things'), findsOneWidget); // level 2 is about the objects
+    await tester.tap(find.byKey(const Key('game-mix')));
+    await _settle(tester);
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.byKey(const Key('pot-red')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('pot-yellow')));
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.text('Red and yellow make orange!'), findsOneWidget);
+  });
 }

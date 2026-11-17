@@ -1,14 +1,94 @@
 [
-  {
-    "id": "animals", "en": "Animals", "fr": "Les animaux", "ar": "الحيوانات",
-    "kind": "animals", "map": "zoo", "color": "#E8702A",
-    "data": "animals.json", "targets": "targets.mind",
-    "pagesDir": "assets/ar/pages", "thumbsDir": "assets/thumbs"
-  },
-  {
-    "id": "cars", "en": "Cars and trucks", "fr": "Les véhicules", "ar": "المركبات",
-    "kind": "vehicles", "map": "town", "color": "#2F6FD0",
-    "data": "books/cars/items.json", "targets": "books/cars/targets.mind",
-    "pagesDir": "assets/ar/books/cars/pages", "thumbsDir": "assets/ar/books/cars/thumbs"
-  }
+ {
+  "id": "animals",
+  "en": "Animals",
+  "fr": "Les animaux",
+  "ar": "الحيوانات",
+  "kind": "animals",
+  "map": "zoo",
+  "color": "#E8702A",
+  "data": "animals.json",
+  "targets": "targets.mind",
+  "pagesDir": "assets/ar/pages",
+  "thumbsDir": "assets/thumbs",
+  "games": [
+   "memory",
+   "sound"
+  ],
+  "levels": 3
+ },
+ {
+  "id": "cars",
+  "en": "Cars and trucks",
+  "fr": "Les véhicules",
+  "ar": "المركبات",
+  "kind": "vehicles",
+  "map": "town",
+  "color": "#2F6FD0",
+  "data": "books/cars/items.json",
+  "targets": "books/cars/targets.mind",
+  "pagesDir": "assets/ar/books/cars/pages",
+  "thumbsDir": "assets/ar/books/cars/thumbs",
+  "games": [
+   "memory",
+   "sound",
+   "helps"
+  ],
+  "levels": 3
+ },
+ {
+  "id": "letters_ar",
+  "en": "Arabic letters",
+  "fr": "Lettres arabes",
+  "ar": "الحروف العربية",
+  "kind": "letters",
+  "map": "park",
+  "color": "#00897B",
+  "data": "books/letters_ar/items.json",
+  "targets": "books/letters_ar/targets.mind",
+  "pagesDir": "assets/ar/books/letters_ar/pages",
+  "thumbsDir": "assets/ar/books/letters_ar/thumbs",
+  "games": [
+   "memory",
+   "find"
+  ],
+  "levels": 1
+ },
+ {
+  "id": "letters_fr",
+  "en": "French letters",
+  "fr": "Lettres françaises",
+  "ar": "الحروف الفرنسية",
+  "kind": "letters",
+  "map": "park",
+  "color": "#7E57C2",
+  "data": "books/letters_fr/items.json",
+  "targets": "books/letters_fr/targets.mind",
+  "pagesDir": "assets/ar/books/letters_fr/pages",
+  "thumbsDir": "assets/ar/books/letters_fr/thumbs",
+  "games": [
+   "memory",
+   "find"
+  ],
+  "levels": 1
+ },
+ {
+  "id": "colors",
+  "en": "Colours",
+  "fr": "Les couleurs",
+  "ar": "الألوان",
+  "kind": "colors",
+  "map": "park",
+  "color": "#D81B60",
+  "data": "books/colors/items.json",
+  "targets": "books/colors/targets.mind",
+  "pagesDir": "assets/ar/books/colors/pages",
+  "thumbsDir": "assets/ar/books/colors/thumbs",
+  "games": [
+   "memory",
+   "find",
+   "mix"
+  ],
+  "levels": 3
+ }
 ]

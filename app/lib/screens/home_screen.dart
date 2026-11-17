@@ -8,6 +8,7 @@ import '../widgets/zoo_path.dart';
 import 'animal_sheet.dart';
 import 'ar_screen.dart';
 import 'memory_game.dart';
+import 'mix_game.dart';
 import 'parents_screen.dart';
 
 const brand = Color(0xFFE8702A);
@@ -57,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
       listenable: p,
       builder: (context, _) {
         final s = p.s;
-        final current = p.currentLevel.clamp(1, 3);
+        final current = p.currentLevel.clamp(1, p.book.levels);
         final level = (_shownLevel != null && p.unlocked(_shownLevel!)) ? _shownLevel! : current;
         final mission = p.mission;
         return Scaffold(
@@ -73,28 +74,30 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 16),
                   _MissionCard(mission: mission, progress: p, onGo: () => _openAr(quiz: mission.quiz)),
                   const SizedBox(height: 18),
-                  _LevelSwitcher(
-                    progress: p,
-                    selected: level,
-                    onSelect: (l) {
-                      if (p.unlocked(l)) {
-                        setState(() => _shownLevel = l);
-                      } else {
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(SnackBar(content: Text(s.finishFirst(l - 1))));
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 10),
+                  if (p.book.levels > 1)
+                    _LevelSwitcher(
+                      progress: p,
+                      selected: level,
+                      onSelect: (l) {
+                        if (p.unlocked(l)) {
+                          setState(() => _shownLevel = l);
+                        } else {
+                          ScaffoldMessenger.of(context)
+                            ..hideCurrentSnackBar()
+                            ..showSnackBar(SnackBar(content: Text(s.finishFirst(l - 1))));
+                        }
+                      },
+                    ),
+                  if (p.book.levels > 1) const SizedBox(height: 10),
                   _LevelBar(progress: p, level: level),
                   const SizedBox(height: 14),
                   _Games(
                     progress: p,
-                    onHelps: p.book.vehicles ? () => _openAr(helps: true) : null,
+                    onHelps: () => _openAr(helps: true),
                     onMemory: () =>
                         Navigator.of(context).push(MaterialPageRoute(builder: (_) => MemoryGame(progress: p))),
                     onSoundQuiz: () => _openAr(soundQuiz: true),
+                    onMix: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => MixGame(progress: p))),
                   ),
                   const SizedBox(height: 14),
                 ]),
@@ -199,8 +202,8 @@ class _MissionCard extends StatelessWidget {
     final s = progress.s;
     final a = mission.animal;
     final (title, subtitle) = switch (mission.level) {
-      1 => (s.meet(a!), s.openPage(a.page)),
-      2 => (s.findPart(a!, mission.part!), s.openPage(a.page)),
+      1 => (s.meet(a!, kind: progress.book.kind), s.openPage(a.page)),
+      2 => (s.findPart(a!, mission.part!, kind: progress.book.kind), s.openPage(a.page)),
       3 => (s.quizOf(a!), '${s.answer3} · ${s.page(a.page)}'),
       _ => (s.allDone, s.playAgain),
     };
@@ -299,7 +302,7 @@ class _LevelSwitcher extends StatelessWidget {
                     Text('$l',
                         style: const TextStyle(fontWeight: FontWeight.w800, color: Color(0xFF7A6A5C), fontSize: 12)),
                   ]),
-                  Text(s.levelName(l),
+                  Text(s.levelName(l, kind: progress.book.kind),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -340,7 +343,7 @@ class _LevelBar extends StatelessWidget {
         ),
       ),
       const SizedBox(width: 10),
-      Text(s.levelProgress(level, done, total, vehicles: progress.book.vehicles),
+      Text(s.levelProgress(level, done, total, kind: progress.book.kind),
           style: const TextStyle(fontSize: 12, color: Color(0xFF7A6A5C))),
     ]);
   }
@@ -375,17 +378,27 @@ class _ScanButton extends StatelessWidget {
   }
 }
 
-/// Two games: memory (no camera) and the sound quiz (camera).
+/// The book's games (books.json "games"): memory (no camera), the sound quiz,
+/// "Who helps?" / "Find the letter" / "Find the colour" (camera: scan the
+/// right page) and mixing paints (no camera). Two tiles per row.
 class _Games extends StatelessWidget {
-  const _Games({required this.progress, required this.onMemory, required this.onSoundQuiz, this.onHelps});
+  const _Games({
+    required this.progress,
+    required this.onMemory,
+    required this.onSoundQuiz,
+    required this.onHelps,
+    required this.onMix,
+  });
   final Progress progress;
   final VoidCallback onMemory;
   final VoidCallback onSoundQuiz;
-  final VoidCallback? onHelps; // vehicles: "Who helps?"
+  final VoidCallback onHelps;
+  final VoidCallback onMix;
 
   @override
   Widget build(BuildContext context) {
     final s = progress.s;
+    final kind = progress.book.kind;
     Widget tile(Key key, IconData icon, String title, String sub, Color color, VoidCallback onTap) => Expanded(
           child: Material(
             key: key,
@@ -414,19 +427,28 @@ class _Games extends StatelessWidget {
             ),
           ),
         );
+    final tiles = [
+      for (final g in progress.book.games)
+        switch (g) {
+          'memory' => tile(const Key('game-memory'), Icons.grid_view_rounded, s.memoryGame, s.memoryHint(kind: kind),
+              const Color(0xFF7A6BB5), onMemory),
+          'sound' => tile(const Key('game-sound'), Icons.hearing_rounded, s.soundQuiz, s.soundQuizHint,
+              const Color(0xFF1F8A8A), onSoundQuiz),
+          'helps' => tile(const Key('game-helps'), Icons.volunteer_activism_rounded, s.helpsGame, s.helpsHint,
+              const Color(0xFFD9483B), onHelps),
+          'find' => tile(const Key('game-find'), kind == 'colors' ? Icons.colorize_rounded : Icons.spellcheck_rounded,
+              s.findGame(kind), s.findHint, const Color(0xFF1F8A8A), onHelps),
+          'mix' =>
+            tile(const Key('game-mix'), Icons.palette_rounded, s.mixGame, s.mixHint, const Color(0xFFD9483B), onMix),
+          _ => const SizedBox.shrink(),
+        },
+    ];
     return Column(children: [
-      Row(children: [
-        tile(const Key('game-memory'), Icons.grid_view_rounded, s.memoryGame,
-            s.memoryHint(vehicles: progress.book.vehicles), const Color(0xFF7A6BB5), onMemory),
-        const SizedBox(width: 10),
-        tile(const Key('game-sound'), Icons.hearing_rounded, s.soundQuiz, s.soundQuizHint, const Color(0xFF1F8A8A),
-            onSoundQuiz),
-      ]),
-      if (onHelps != null) ...[
-        const SizedBox(height: 10),
+      for (var i = 0; i < tiles.length; i += 2) ...[
+        if (i > 0) const SizedBox(height: 10),
         Row(children: [
-          tile(const Key('game-helps'), Icons.volunteer_activism_rounded, s.helpsGame, s.helpsHint,
-              const Color(0xFFD9483B), onHelps!),
+          tiles[i],
+          if (i + 1 < tiles.length) ...[const SizedBox(width: 10), tiles[i + 1]],
         ]),
       ],
     ]);
