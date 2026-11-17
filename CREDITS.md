@@ -28,11 +28,11 @@ publishing.
 | Flamingo | Joost van Bruggen | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Phoenicopterus_roseus_-_Greater_Flamingo_XC432217.mp3) |
 | Parrot | Niels Krabbe | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Ara_militaris_-_Military_Macaw_XC250486.mp3) |
 | Stork | felix.blume | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Ciconia_ciconia_bill-clattering.ogg) |
-| Cow | (no recording yet: the app says the name) | | |
+| Cow | MichaeltheFox8621 | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Single_Cow_Moo.ogg) |
 | Sheep | earthcalling | Public domain | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Sheep_bleating.ogg) |
-| Zebra | (no recording yet: the app says the name) | | |
+| Zebra | DiegoC472 | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Gr%C3%A9vys_zebra_(Sound_Effects).ogg) |
 | Llama | (no recording yet: the app says the name) | | |
-| Dog | (no recording yet: the app says the name) | | |
+| Dog | Amada44 | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Barking_of_a_dog.ogg) |
 
 ## 3D models
 

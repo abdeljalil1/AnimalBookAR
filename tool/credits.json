@@ -110,5 +110,26 @@
   "page": "https://commons.wikimedia.org/wiki/File:Sheep_bleating.ogg",
   "license": "Public domain",
   "artist": "earthcalling"
+ },
+ "cow_sound": {
+  "title": "File:Single Cow Moo.ogg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Single_Cow_Moo.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:Single_Cow_Moo.ogg",
+  "license": "CC BY-SA 4.0",
+  "artist": "MichaeltheFox8621"
+ },
+ "zebra_sound": {
+  "title": "File:Grévys zebra (Sound Effects).ogg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Gr%C3%A9vys_zebra_%28Sound_Effects%29.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:Gr%C3%A9vys_zebra_(Sound_Effects).ogg",
+  "license": "CC BY-SA 4.0",
+  "artist": "DiegoC472"
+ },
+ "dog_sound": {
+  "title": "File:Barking of a dog.ogg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Barking_of_a_dog.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:Barking_of_a_dog.ogg",
+  "license": "CC BY-SA 3.0",
+  "artist": "Amada44"
  }
 }
