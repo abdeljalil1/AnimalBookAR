@@ -330,7 +330,7 @@ class _StatsCard extends StatelessWidget {
       crossAxisCount: 2,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      childAspectRatio: 1.9,
+      childAspectRatio: 1.55,
       mainAxisSpacing: 8,
       crossAxisSpacing: 8,
       children: [
@@ -346,7 +346,11 @@ class _StatsCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(value, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17, color: ink)),
+                      FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(value, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17, color: ink)),
+                  ),
                       Text(label,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,

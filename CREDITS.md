@@ -18,6 +18,10 @@ publishing.
 | Zebra | Yathin S Krishnappa | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Equus_quagga_burchellii_-_Etosha,_2014.jpg) |
 | Llama | Andrija12345678 | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Llamas,_Vernagt-Stausee,_Italy.jpg) |
 | Dog | Mops_oct09.jpg :  Dagur Brynjólfsson  from Hafnarfjordur, Iceland;   derivative work:  Anka Friedrich | CC BY-SA 2.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Mops_oct09_cropped2.jpg) |
+| Lion | Giles Laurent | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg) |
+| Elephant | Giles Laurent | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:178_Male_African_bush_elephant_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg) |
+| Giraffe | Quartl | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Giraffa_camelopardalis_rothschildi_qtl2.jpg) |
+| Camel | Florian Prischl | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Camelus_dromedarius_in_Nuweiba.jpg) |
 
 ## Sounds (trimmed to a few seconds, volume levelled, AAC)
 
@@ -33,6 +37,10 @@ publishing.
 | Zebra | DiegoC472 | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Gr%C3%A9vys_zebra_(Sound_Effects).ogg) |
 | Llama | (no recording yet: the app says the name) | | |
 | Dog | Amada44 | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Barking_of_a_dog.ogg) |
+| Lion | த*உழவன் | Public domain | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Lion_raring-sound1TamilNadu178.ogg) |
+| Elephant | தகவலுழவன் | CC0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Elephant_voice_-_trumpeting.ogg) |
+| Giraffe | Anton Baotic, Florian Sicks and Angela S. Stoeger | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Giraffe_Hum.oga) |
+| Camel | (no recording yet: the app says the name) | | |
 
 ## 3D models
 
@@ -48,6 +56,10 @@ publishing.
 | Zebra | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
 | Llama | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
 | Dog | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
+| Lion | Poly by Google | CC BY 3.0 | [Poly Pizza](https://poly.pizza/m/daMBBUnd9c9) |
+| Elephant | elkiotbear | CC BY 3.0 | [Poly Pizza](https://poly.pizza/m/3AfO8NwcxD) |
+| Giraffe | elkiotbear | CC BY 3.0 | [Poly Pizza](https://poly.pizza/m/gTFDiaGp8D) |
+| Camel | Poly by Google | CC BY 3.0 | [Poly Pizza](https://poly.pizza/m/7XeLogrxLad) |
 
 The horse, flamingo, parrot and stork from the three.js examples have no licence of their own. Fine for a
 prototype, but **replace them before publishing** (Quaternius has CC0 horses and birds).

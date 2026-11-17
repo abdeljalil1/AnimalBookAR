@@ -307,17 +307,19 @@ class _ZooPainter extends CustomPainter {
       switch (ids[i]) {
         case 'horse' || 'sheep' || 'llama':
           _hay(canvas, o);
-        case 'fox':
+        case 'fox' || 'lion':
           _rocks(canvas, o);
-        case 'flamingo':
+        case 'flamingo' || 'elephant':
           _pond(canvas, o);
+        case 'camel':
+          _palm(canvas, o + const Offset(0, -16));
         case 'parrot':
           _roundTree(canvas, o + const Offset(0, -20), 34);
         case 'stork':
           _nest(canvas, o);
         case 'cow':
           _trough(canvas, o);
-        case 'zebra':
+        case 'zebra' || 'giraffe':
           _acacia(canvas, o + const Offset(0, -10));
         case 'dog':
           _kennel(canvas, o);
@@ -490,6 +492,31 @@ class _ZooPainter extends CustomPainter {
         Paint()..color = const Color(0xFF6F9E3E));
     c.drawOval(Rect.fromCenter(center: o + const Offset(-6, -20), width: 46, height: 10),
         Paint()..color = const Color(0xFF8DBA55));
+  }
+
+  void _palm(Canvas c, Offset o) {
+    // a little sand dune and a date palm
+    c.drawOval(Rect.fromCenter(center: o + const Offset(0, 40), width: 90, height: 22),
+        Paint()..color = const Color(0xFFEBD3A0));
+    final trunk = Path()
+      ..moveTo(o.dx - 4, o.dy + 40)
+      ..quadraticBezierTo(o.dx - 2, o.dy + 10, o.dx + 4, o.dy - 18)
+      ..lineTo(o.dx + 9, o.dy - 17)
+      ..quadraticBezierTo(o.dx + 4, o.dy + 10, o.dx + 5, o.dy + 40)
+      ..close();
+    c.drawPath(trunk, Paint()..color = const Color(0xFF9A6A3A));
+    final leaf = Paint()..color = const Color(0xFF4FA066);
+    for (final a in [-2.6, -2.0, -1.2, -0.6, 0.0]) {
+      final tip = o + const Offset(6, -18) + Offset(math.cos(a), math.sin(a) * 0.6) * 32;
+      final path = Path()
+        ..moveTo(o.dx + 6, o.dy - 18)
+        ..quadraticBezierTo((o.dx + 6 + tip.dx) / 2, o.dy - 34, tip.dx, tip.dy)
+        ..quadraticBezierTo((o.dx + 6 + tip.dx) / 2, o.dy - 22, o.dx + 6, o.dy - 18);
+      c.drawPath(path, leaf);
+    }
+    for (final d in [const Offset(2, -14), const Offset(9, -13), const Offset(5, -10)]) {
+      c.drawCircle(o + d, 3, Paint()..color = const Color(0xFF7A3E1D)); // dates
+    }
   }
 
   void _kennel(Canvas c, Offset o) {

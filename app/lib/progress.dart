@@ -124,6 +124,7 @@ class Progress extends ChangeNotifier {
     if (children.isEmpty) addChild('', silent: true);
     return children.firstWhere((c) => c.id == _activeId, orElse: () => children.first);
   }
+
   String get name => children.isEmpty ? '' : child.name;
   bool get hasProfile => children.isNotEmpty && name.trim().isNotEmpty;
   S get s => S(lang);

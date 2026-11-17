@@ -25,6 +25,13 @@ MODELS = {
     "Stork.glb": ("mirada, from the ro.me project", "none stated (prototype only)",
                   "[three.js examples](https://github.com/mrdoob/three.js/tree/r160/examples/models/gltf)"),
 }
+POLY = "[Poly Pizza](https://poly.pizza/m/{})"
+MODELS.update({
+    "Lion.glb": ("Poly by Google", "CC BY 3.0", POLY.format("daMBBUnd9c9")),
+    "Camel.glb": ("Poly by Google", "CC BY 3.0", POLY.format("7XeLogrxLad")),
+    "Elephant.glb": ("elkiotbear", "CC BY 3.0", POLY.format("3AfO8NwcxD")),
+    "Giraffe.glb": ("elkiotbear", "CC BY 3.0", POLY.format("gTFDiaGp8D")),
+})
 QUATERNIUS = ("Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py", "CC0 1.0",
               "[OpenGameArt](https://opengameart.org/node/85047)")
 

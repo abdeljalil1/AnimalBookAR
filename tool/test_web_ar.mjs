@@ -29,7 +29,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const AR = join(ROOT, 'app', 'assets', 'ar');
 const OUT = join(ROOT, 'tool', 'test-output');
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const PAGES = ['horse', 'fox', 'flamingo', 'parrot', 'stork', 'cow'];
+const PAGES = ['horse', 'fox', 'flamingo', 'parrot', 'stork', 'cow', 'elephant'];
 const ANIMALS = JSON.parse(readFileSync(new URL('../app/assets/ar/animals.json', import.meta.url))).length;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const failures = [];

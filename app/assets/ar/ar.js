@@ -100,6 +100,8 @@ const FOODS = {
   frog: { icon: '🐸', en: 'Frog', fr: 'Grenouille', ar: 'ضفدع' },
   hay: { icon: '🌾', en: 'Hay', fr: 'Foin', ar: 'تبن' },
   meat: { icon: '🍖', en: 'Meat', fr: 'Viande', ar: 'لحم' },
+  leaves: { icon: '🍃', en: 'Leaves', fr: 'Feuilles', ar: 'أوراق' },
+  dates: { icon: '🌴', en: 'Dates', fr: 'Dattes', ar: 'تمر' },
 };
 const TRAY_SIZE = 6;
 
@@ -391,7 +393,7 @@ async function main() {
     if (audio) audio.preload = 'auto';
 
     const entry = {
-      a, i, anchor, root, tilt, spin, scaler, pop, turn, audio,
+      a, i, anchor, root, tilt, spin, scaler, pop, orient, turn, audio,
       model: null, mixer: null, actions: [], actionIndex: 0, parts: [],
       lastSoundAt: -Infinity, popT: 0, twirlT: 0, baseTurn: turn.rotation.y,
     };
@@ -415,6 +417,7 @@ async function main() {
       const center = box.getCenter(new THREE.Vector3());
       const s = a.size / Math.max(size.x, size.z); // longest side = a.size page widths
       model.scale.setScalar(s);
+      entry.baseScale = s;
       model.position.set(-center.x * s, -box.min.y * s + (a.lift || 0), -center.z * s);
       turn.add(model);
       entry.model = model;
@@ -1095,6 +1098,12 @@ async function main() {
       const shown = e.anchor.group.visible || (state.held && e === current);
       if (!shown) continue;
       if (e.mixer) e.mixer.update(dt);
+      else if (e.model && e.baseScale) {
+        // No built-in animation (the static models): breathe and sway a little.
+        const t = now / 1000 + e.i;
+        e.model.scale.set(e.baseScale, e.baseScale * (1 + 0.025 * Math.sin(t * 2.4)), e.baseScale * (1 + 0.012 * Math.sin(t * 2.4)));
+        e.orient.rotation.z = 0.035 * Math.sin(t * 1.3);
+      }
       if (e.popT > 0) {
         e.popT = Math.max(0, e.popT - dt);
         e.pop.scale.setScalar(1 + 0.18 * Math.sin((e.popT / 0.45) * Math.PI));

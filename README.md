@@ -10,7 +10,8 @@ beak. Aim the circle in the middle of the screen at one (or tap it) to see its
 name in the three languages. **Hold** keeps the animal on screen when the page
 leaves the camera, so the child can turn the phone and look around it.
 
-Ten animals: horse, fox, flamingo, parrot, stork, cow, sheep, zebra, llama, dog. The app speaks English,
+Fourteen animals: horse, fox, flamingo, parrot, stork, cow, sheep, zebra, llama, dog,
+lion, elephant, giraffe, camel. The app speaks English,
 French or Arabic (right to left), chosen on first launch or from the home screen.
 
 ## Home and levels
@@ -149,6 +150,11 @@ python3 tool/make_pages.py
 ```bash
 python3 tool/compile_targets.py
 ```
+
+Models without built-in animations (the lion, elephant, giraffe and camel,
+CC BY 3.0 from Poly Pizza) get a gentle breathing sway in code. `turn` also fixes
+models built facing sideways (the elephant and giraffe face +X, so `turn` is -30
+instead of 60).
 
 `size` is the animal's length as a share of the page width, `lift` raises
 flying animals above the page, `turn` is the facing angle in degrees.

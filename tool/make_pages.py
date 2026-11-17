@@ -26,7 +26,8 @@ CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 # Where each animal is in its photo (x, y as fractions), for the square thumbnails.
 THUMB_FOCUS = {"horse": (0.38, 0.5), "fox": (0.62, 0.45), "flamingo": (0.5, 0.5),
                "parrot": (0.42, 0.45), "stork": (0.5, 0.45), "cow": (0.5, 0.5), "sheep": (0.5, 0.55),
-               "zebra": (0.5, 0.5), "llama": (0.45, 0.5), "dog": (0.5, 0.45)}
+               "zebra": (0.5, 0.5), "llama": (0.45, 0.5), "dog": (0.5, 0.45), "lion": (0.5, 0.45),
+               "elephant": (0.5, 0.5), "giraffe": (0.5, 0.35), "camel": (0.5, 0.45)}
 
 # A4 at 96 CSS px per inch is 794 x 1123. Screenshots use a 1.5625 scale
 # factor, giving 1240 x 1754 PNGs (150 dpi).

@@ -38,19 +38,19 @@ void main() {
   });
 
   testWidgets('home shows the levels, the path and an animal sheet', (tester) async {
-    await tester.binding.setSurfaceSize(const Size(400, 2600));
+    await tester.binding.setSurfaceSize(const Size(400, 3400));
     addTearDown(() => tester.binding.setSurfaceSize(null));
     final p = await _progress(tester, {
       'name': 'Yahia',
-      'met': ['horse', 'fox', 'flamingo', 'parrot', 'stork', 'cow', 'sheep', 'zebra', 'llama', 'dog'],
+      'met': ['horse', 'fox', 'flamingo', 'parrot', 'stork', 'cow', 'sheep', 'zebra', 'llama', 'dog', 'lion', 'elephant', 'giraffe', 'camel'],
       'parts': ['fox:head', 'fox:ear'],
     });
     await tester.pumpWidget(AnimalBookApp(progress: p));
     await _settle(tester);
 
     expect(find.text("Find the horse's head"), findsOneWidget); // level 2 mission
-    expect(find.text('2 of 88 parts'), findsOneWidget);
-    for (final name in ['Horse', 'Fox', 'Flamingo', 'Parrot', 'Stork', 'Cow', 'Sheep', 'Zebra', 'Llama', 'Dog']) {
+    expect(find.text('2 of 122 parts'), findsOneWidget);
+    for (final name in ['Horse', 'Fox', 'Flamingo', 'Parrot', 'Stork', 'Cow', 'Sheep', 'Zebra', 'Llama', 'Dog', 'Lion', 'Elephant', 'Giraffe', 'Camel']) {
       expect(find.text(name), findsOneWidget); // the zoo signs
     }
     expect(find.text('2/9'), findsOneWidget); // fox sign: 2 of 9 parts
@@ -87,7 +87,7 @@ void main() {
     expect(find.text('Parents'), findsOneWidget);
     expect(find.text('Accounts are not available right now (no connection).'), findsOneWidget); // no Firebase in tests
     expect(find.text('Yahia'), findsWidgets);
-    expect(find.text('1 / 10'), findsOneWidget); // animals met
+    expect(find.text('1 / 14'), findsOneWidget); // animals met
 
     await tester.pageBack();
     for (var i = 0; i < 4; i++) {

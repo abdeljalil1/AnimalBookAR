@@ -131,5 +131,54 @@
   "page": "https://commons.wikimedia.org/wiki/File:Barking_of_a_dog.ogg",
   "license": "CC BY-SA 3.0",
   "artist": "Amada44"
+ },
+ "lion_photo": {
+  "title": "File:020 The lion king Snyggve in the Serengeti National Park Photo by Giles Laurent.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg/1280px-020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg",
+  "license": "CC BY-SA 4.0",
+  "artist": "Giles Laurent"
+ },
+ "elephant_photo": {
+  "title": "File:178 Male African bush elephant in Etosha National Park Photo by Giles Laurent.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/178_Male_African_bush_elephant_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg/1280px-178_Male_African_bush_elephant_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:178_Male_African_bush_elephant_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg",
+  "license": "CC BY-SA 4.0",
+  "artist": "Giles Laurent"
+ },
+ "giraffe_photo": {
+  "title": "File:Giraffa camelopardalis rothschildi qtl2.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Giraffa_camelopardalis_rothschildi_qtl2.jpg/1280px-Giraffa_camelopardalis_rothschildi_qtl2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Giraffa_camelopardalis_rothschildi_qtl2.jpg",
+  "license": "CC BY-SA 3.0",
+  "artist": "Quartl"
+ },
+ "camel_photo": {
+  "title": "File:Camelus dromedarius in Nuweiba.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c4/Camelus_dromedarius_in_Nuweiba.jpg/1280px-Camelus_dromedarius_in_Nuweiba.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Camelus_dromedarius_in_Nuweiba.jpg",
+  "license": "CC BY-SA 3.0",
+  "artist": "Florian Prischl"
+ },
+ "lion_sound": {
+  "title": "File:Lion raring-sound1TamilNadu178.ogg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Lion_raring-sound1TamilNadu178.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:Lion_raring-sound1TamilNadu178.ogg",
+  "license": "Public domain",
+  "artist": "த*உழவன்"
+ },
+ "elephant_sound": {
+  "title": "File:Elephant voice - trumpeting.ogg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/4/40/Elephant_voice_-_trumpeting.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:Elephant_voice_-_trumpeting.ogg",
+  "license": "CC0",
+  "artist": "தகவலுழவன்"
+ },
+ "giraffe_sound": {
+  "title": "File:Giraffe Hum.oga",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Giraffe_Hum.oga?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:Giraffe_Hum.oga",
+  "license": "CC BY-SA 4.0",
+  "artist": "Anton Baotic, Florian Sicks and Angela S. Stoeger"
  }
 }
