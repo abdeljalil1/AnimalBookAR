@@ -19,6 +19,7 @@ const params = new URLSearchParams(location.search);
 const DEBUG = params.has('debug');
 const LANG = ['en', 'fr', 'ar'].includes(params.get('lang')) ? params.get('lang') : 'en';
 const QUIZ = params.get('mode') === 'quiz'; // level 3: "Find the tail!"
+const SOUND_QUIZ = params.get('mode') === 'sound'; // "Who makes this sound?": scan the right page
 const QUIZ_GOAL = 3; // right answers per animal
 const QUIZ_DWELL_MS = 400; // aim at the right part this long to answer
 const PAGE_HALF_W = 0.5;
@@ -36,6 +37,8 @@ const $ = (id) => document.getElementById(id);
 // UI text in the three languages ({p} = a body part with its article).
 const TEXT = {
   en: {
+    whoSound: 'Who makes this sound? 🔊', listenAgain: 'Tap here to listen again, then scan the page',
+    soundRight: "Bravo! It's {a}!", soundWrong: "That's {a}. Listen again!",
     feed: 'Feed', yum: 'Yum! {f}!', noThanks: '{f}? No thanks!', full: 'All full! 🎉',
     saved: 'Saved to your photos 📸', notSaved: 'The photo was not saved',
     loading: 'Starting the camera…', scan: 'Point the camera at an animal page',
@@ -49,6 +52,8 @@ const TEXT = {
     loadFail: 'Something went wrong while loading: ',
   },
   fr: {
+    whoSound: 'Qui fait ce bruit ? 🔊', listenAgain: 'Touche ici pour réécouter, puis scanne la page',
+    soundRight: "Bravo ! C'est {a} !", soundWrong: "Ça, c'est {a}. Écoute encore !",
     feed: 'Nourrir', yum: 'Miam ! {f} !', noThanks: '{f} ? Non merci !', full: 'Rassasié ! 🎉',
     saved: 'Photo enregistrée 📸', notSaved: "La photo n'a pas été enregistrée",
     loading: 'Démarrage de la caméra…', scan: "Vise une page d'animal avec la caméra",
@@ -62,6 +67,8 @@ const TEXT = {
     loadFail: 'Erreur au chargement : ',
   },
   ar: {
+    whoSound: 'من يصدر هذا الصوت؟ 🔊', listenAgain: 'المس هنا للاستماع مرة أخرى، ثم امسح الصفحة',
+    soundRight: 'أحسنت! إنه {a}!', soundWrong: 'هذا {a}. استمع مرة أخرى!',
     feed: 'إطعام', yum: 'لذيذ! {f}!', noThanks: '{f}؟ لا شكرًا!', full: 'شبعت! 🎉',
     saved: 'حُفظت الصورة 📸', notSaved: 'لم تُحفظ الصورة',
     loading: 'تشغيل الكاميرا…', scan: 'وجّه الكاميرا نحو صفحة حيوان',
@@ -116,6 +123,12 @@ function speak(text) {
   } catch (_) { /* no voice */ }
 }
 
+// "the fox" / "le renard" / "الثعلب"
+const animalWithArticle = (a) => ({
+  en: 'the ' + a.en.toLowerCase(),
+  fr: a.fr_of.startsWith('du ') ? 'le ' + a.fr_of.slice(3) : a.fr_of.replace(/^de /, ''),
+  ar: a.ar_def,
+})[LANG];
 const otherNames = (def) => ['en', 'fr', 'ar'].filter((l) => l !== LANG).map((l) => def[l]).join(' · ');
 
 // Readable by tests (tool/test_web_ar.mjs) and handy when debugging.
@@ -153,7 +166,7 @@ function setPhase(phase) {
   $('aim').classList.toggle('hidden', !showing);
   $('parts').classList.toggle('hidden', !showing);
   $('held-badge').classList.toggle('hidden', phase !== 'held');
-  $('quiz').classList.toggle('hidden', !QUIZ || !showing || !$('quiz-text').textContent);
+  $('quiz').classList.toggle('hidden', !((QUIZ && showing) || SOUND_QUIZ) || !$('quiz-text').textContent);
   $('btn-photo').classList.toggle('hidden', !showing);
   if (!showing) $('food-tray').classList.add('hidden');
   $('error').classList.toggle('hidden', phase !== 'error');
@@ -452,8 +465,12 @@ async function main() {
     showCard(entry.a);
     if (isNew) showPartsOf(entry);
     setPhase('found');
-    if (isNew || performance.now() - entry.lastSoundAt > SOUND_REPEAT_MS) playSound(entry);
-    if (isNew) { speak(nameIn(entry.a)); closeFeed(); }
+    if (SOUND_QUIZ) {
+      soundAnswer(entry);
+    } else {
+      if (isNew || performance.now() - entry.lastSoundAt > SOUND_REPEAT_MS) playSound(entry);
+      if (isNew) { speak(nameIn(entry.a)); closeFeed(); }
+    }
     ask('found', { id: entry.a.id }).then((r) => reward(r, t('newAnimal')));
     if (QUIZ) quizStart(entry);
   }
@@ -720,7 +737,7 @@ async function main() {
     $('quiz-text').textContent = text;
     $('quiz-sub').textContent = sub;
     $('quiz').className = mood;
-    $('quiz').classList.toggle('hidden', !(state.phase === 'found' || state.phase === 'held'));
+    $('quiz').classList.toggle('hidden', !(SOUND_QUIZ || state.phase === 'found' || state.phase === 'held'));
   }
 
   // ---- Rewards ------------------------------------------------------------------
@@ -732,6 +749,48 @@ async function main() {
       celebrate(r.levelUp >= 4 ? t('allDone') : t('levelUp', { n: r.levelUp }));
     }
   }
+
+  // ---- Sound quiz ("Who makes this sound?") -------------------------------------
+  const sq = { target: null, busy: false, correct: 0 };
+
+  function soundPlay() {
+    if (!sq.target || !sq.target.audio) return;
+    sq.target.audio.currentTime = 0;
+    sq.target.audio.play().catch(() => {});
+  }
+
+  function soundNext() {
+    const pool = entries.filter((e) => e.audio && e !== sq.target);
+    const forced = !sq.target && params.get('soundTarget'); // tests pick the first animal
+    sq.target = pool.find((e) => e.a.id === forced) || pool[Math.floor(Math.random() * pool.length)];
+    sq.busy = false;
+    state.soundQuiz = { target: sq.target.a.id, correct: sq.correct };
+    banner(t('whoSound'), t('listenAgain'));
+    soundPlay();
+  }
+
+  function soundAnswer(entry) {
+    if (!sq.target || sq.busy) return;
+    if (entry === sq.target) {
+      sq.busy = true;
+      sq.correct++;
+      state.soundQuiz = { target: sq.target.a.id, correct: sq.correct };
+      entry.popT = 0.45;
+      tone([523, 659, 784, 1047]);
+      confetti(90);
+      banner(t('soundRight', { a: animalWithArticle(entry.a) }), otherNames(entry.a), 'right');
+      speak(t('soundRight', { a: animalWithArticle(entry.a) }));
+      ask('sound', { animal: entry.a.id }).then((r) => reward(r, null));
+      setTimeout(soundNext, 3000);
+    } else {
+      tone([330, 262]);
+      banner(t('soundWrong', { a: animalWithArticle(entry.a) }), t('listenAgain'), 'wrong');
+      speak(t('soundWrong', { a: animalWithArticle(entry.a) }));
+      setTimeout(soundPlay, 1800);
+    }
+  }
+
+  $('quiz').addEventListener('click', () => { if (SOUND_QUIZ) soundPlay(); });
 
   // ---- Feeding game ("What do I eat?") -----------------------------------------
   const feed = { on: false, animal: null, items: [], fed: new Set() };
@@ -1078,6 +1137,7 @@ async function main() {
     renderer.setAnimationLoop(frame);
     setPhase(state.held ? 'held' : 'scanning');
     notifyApp('ready');
+    if (SOUND_QUIZ && !sq.target) soundNext();
   }
 
   // Called by the Flutter app when it goes to the background / comes back.

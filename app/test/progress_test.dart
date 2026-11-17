@@ -67,6 +67,45 @@ void main() {
     expect(p.stars, animals.length + p.totalParts + animals.length * quizGoal);
   });
 
+  test('several children each keep their own progress', () async {
+    final p = await Progress.load(animals);
+    await p.setProfile(name: 'Amine', lang: Lang.fr);
+    p.markMet('fox');
+    final amine = p.child.id;
+    p.addChild('Lina');
+    expect(p.name, 'Lina');
+    expect(p.met('fox'), isFalse); // Lina starts fresh
+    p.markMet('cow');
+    p.switchChild(amine);
+    expect(p.met('fox'), isTrue);
+    expect(p.met('cow'), isFalse);
+    final again = await Progress.load(animals);
+    expect(again.children.map((c) => c.name), ['Amine', 'Lina']);
+    expect(again.name, 'Amine');
+  });
+
+  test('version 1 progress moves into the first child', () async {
+    SharedPreferences.setMockInitialValues({'name': 'Yahia', 'met': ['horse'], 'quiz': ['horse=2']});
+    final p = await Progress.load(animals);
+    expect(p.children, hasLength(1));
+    expect(p.name, 'Yahia');
+    expect(p.met('horse'), isTrue);
+    expect(p.quizScore('horse'), 2);
+  });
+
+  test('cloud copies merge without losing anything', () {
+    final a = ChildData(id: 'x', name: 'Sami', met: {'fox'}, quiz: {'fox': 1}, updatedAt: 1);
+    final b = ChildData(id: 'x', name: 'Sami K', met: {'cow'}, quiz: {'fox': 3}, memoryWins: 2, updatedAt: 2);
+    expect(a.merge(b), isTrue);
+    expect(a.met, {'fox', 'cow'});
+    expect(a.quiz['fox'], 3);
+    expect(a.memoryWins, 2);
+    expect(a.name, 'Sami K'); // the newer name
+    expect(a.merge(b), isFalse); // nothing new the second time
+    final round = ChildData.fromJson('x', a.toJson());
+    expect(round.toJson(), a.toJson());
+  });
+
   test('progress is saved on the phone', () async {
     final p = await Progress.load(animals);
     await p.setProfile(name: ' Yahia ', lang: Lang.ar);

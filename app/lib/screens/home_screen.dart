@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../animals.dart';
+import '../cloud.dart';
 import '../l10n.dart';
 import '../progress.dart';
 import '../widgets/zoo_path.dart';
 import 'animal_sheet.dart';
 import 'ar_screen.dart';
+import 'memory_game.dart';
+import 'parents_screen.dart';
 
 const brand = Color(0xFFE8702A);
 const ink = Color(0xFF2B2118);
@@ -13,8 +16,9 @@ const ink = Color(0xFF2B2118);
 /// Home: greeting and stars, the next mission, the three levels, and the zoo
 /// path with one stop per animal. The round button opens the AR camera.
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.progress});
+  const HomeScreen({super.key, required this.progress, this.cloud});
   final Progress progress;
+  final Cloud? cloud;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -25,8 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Progress get p => widget.progress;
 
-  void _openAr({bool quiz = false}) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => ArScreen(progress: p, quiz: quiz)));
+  void _openAr({bool quiz = false, bool soundQuiz = false}) {
+    final mode = soundQuiz ? ArMode.sound : (quiz ? ArMode.quiz : ArMode.explore);
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => ArScreen(progress: p, mode: mode)));
   }
 
   void _openAnimal(Animal a) {
@@ -64,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
                 sliver: SliverList.list(children: [
-                  _Header(progress: p),
+                  _Header(progress: p, onParents: () => openParents(context, p, widget.cloud)),
                   const SizedBox(height: 16),
                   _MissionCard(mission: mission, progress: p, onGo: () => _openAr(quiz: mission.quiz)),
                   const SizedBox(height: 18),
@@ -83,6 +88,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 10),
                   _LevelBar(progress: p, level: level),
+                  const SizedBox(height: 14),
+                  _Games(
+                    progress: p,
+                    onMemory: () =>
+                        Navigator.of(context).push(MaterialPageRoute(builder: (_) => MemoryGame(progress: p))),
+                    onSoundQuiz: () => _openAr(soundQuiz: true),
+                  ),
                   const SizedBox(height: 14),
                 ]),
               ),
@@ -106,8 +118,9 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.progress});
+  const _Header({required this.progress, required this.onParents});
   final Progress progress;
+  final VoidCallback onParents;
 
   @override
   Widget build(BuildContext context) {
@@ -155,6 +168,12 @@ class _Header extends StatelessWidget {
             Text(progress.lang.short, style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF5C4A3A))),
           ]),
         ),
+      ),
+      IconButton(
+        key: const Key('parents'),
+        tooltip: progress.s.parents,
+        onPressed: onParents,
+        icon: const Icon(Icons.family_restroom_rounded, color: Color(0xFF5C4A3A)),
       ),
     ]);
   }
@@ -343,5 +362,53 @@ class _ScanButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Two games: memory (no camera) and the sound quiz (camera).
+class _Games extends StatelessWidget {
+  const _Games({required this.progress, required this.onMemory, required this.onSoundQuiz});
+  final Progress progress;
+  final VoidCallback onMemory;
+  final VoidCallback onSoundQuiz;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = progress.s;
+    Widget tile(Key key, IconData icon, String title, String sub, Color color, VoidCallback onTap) => Expanded(
+          child: Material(
+            key: key,
+            color: color,
+            borderRadius: BorderRadius.circular(18),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(18),
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(children: [
+                  CircleAvatar(radius: 20, backgroundColor: Colors.white, child: Icon(icon, color: color)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(title,
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 15)),
+                      Text(sub,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 11.5, height: 1.2)),
+                    ]),
+                  ),
+                ]),
+              ),
+            ),
+          ),
+        );
+    return Row(children: [
+      tile(const Key('game-memory'), Icons.grid_view_rounded, s.memoryGame, s.memoryHint, const Color(0xFF7A6BB5),
+          onMemory),
+      const SizedBox(width: 10),
+      tile(const Key('game-sound'), Icons.hearing_rounded, s.soundQuiz, s.soundQuizHint, const Color(0xFF1F8A8A),
+          onSoundQuiz),
+    ]);
   }
 }

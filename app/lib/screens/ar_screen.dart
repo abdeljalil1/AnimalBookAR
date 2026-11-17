@@ -17,10 +17,14 @@ import '../speech.dart';
 /// the app bundle by [ArAssetServer]. This screen handles the camera
 /// permission, the WebView and app lifecycle, and records progress (animals
 /// met, body parts found, quiz answers) from the page's events.
+/// explore: find pages, body parts, feed; quiz: "Find the tail!";
+/// sound: "Who makes this sound?" (scan the right page).
+enum ArMode { explore, quiz, sound }
+
 class ArScreen extends StatefulWidget {
-  const ArScreen({super.key, required this.progress, this.quiz = false});
+  const ArScreen({super.key, required this.progress, this.mode = ArMode.explore});
   final Progress progress;
-  final bool quiz; // level 3: the page asks "Find the tail!"
+  final ArMode mode;
 
   @override
   State<ArScreen> createState() => _ArScreenState();
@@ -30,6 +34,7 @@ enum _Status { starting, ready, denied }
 
 class _ArScreenState extends State<ArScreen> with WidgetsBindingObserver {
   final _server = ArAssetServer();
+  final _clock = Stopwatch()..start(); // time with the camera, for the parents' page
   InAppWebViewController? _web;
   Uri? _url;
   _Status _status = _Status.starting;
@@ -60,8 +65,13 @@ class _ArScreenState extends State<ArScreen> with WidgetsBindingObserver {
     if (web == null) return;
     // Release the camera in the background; take it back on return.
     if (state == AppLifecycleState.paused) {
+      widget.progress.addPlayTime(_clock.elapsed);
+      _clock
+        ..reset()
+        ..stop();
       web.evaluateJavascript(source: 'window.arPause && window.arPause()');
     } else if (state == AppLifecycleState.resumed) {
+      _clock.start();
       web.evaluateJavascript(source: 'window.arResume && window.arResume()');
     }
   }
@@ -69,6 +79,7 @@ class _ArScreenState extends State<ArScreen> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    widget.progress.addPlayTime(_clock.elapsed);
     _server.close();
     super.dispose();
   }
@@ -91,6 +102,9 @@ class _ArScreenState extends State<ArScreen> with WidgetsBindingObserver {
       case 'quiz':
         HapticFeedback.heavyImpact(); // right answer
         return animal == null ? null : p.markQuiz(animal);
+      case 'sound':
+        HapticFeedback.heavyImpact(); // right animal for the sound
+        return p.markSoundQuiz();
       case 'hold':
         HapticFeedback.mediumImpact();
       case 'speak':
@@ -129,7 +143,7 @@ class _ArScreenState extends State<ArScreen> with WidgetsBindingObserver {
   Uri get _pageUrl => _url!.replace(queryParameters: {
         'lang': widget.progress.lang.name,
         if (widget.progress.name.isNotEmpty) 'name': widget.progress.name,
-        if (widget.quiz) 'mode': 'quiz',
+        if (widget.mode != ArMode.explore) 'mode': widget.mode.name,
       });
 
   @override

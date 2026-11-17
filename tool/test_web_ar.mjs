@@ -264,7 +264,10 @@ async function main() {
     `quiz mode asks in French (${q?.found}: "${texts.quiz}", button "${texts.btn}")`);
   if (q && q.quiz && q.quiz.target) {
     const target = q.quiz.target;
-    const wrongId = Object.keys(q.partsAt).find((id) => id !== target);
+    // the part farthest from the target, so the tap can't land on the target
+    const [tx, ty] = q.partsAt[target] || [0, 0];
+    const wrongId = Object.keys(q.partsAt).filter((id) => id !== target)
+      .sort((a, b) => Math.hypot(q.partsAt[b][0] - tx, q.partsAt[b][1] - ty) - Math.hypot(q.partsAt[a][0] - tx, q.partsAt[a][1] - ty))[0];
     if (wrongId) {
       await tap(...q.partsAt[wrongId]);
       await sleep(300);
@@ -285,6 +288,17 @@ async function main() {
   } else {
     check(false, 'quiz mode asks a question');
   }
+
+  // ---- third pass: sound quiz ("Who makes this sound?"), the horse first ----
+  await page.send('Page.navigate', { url: url + '&mode=sound&soundTarget=horse' });
+  let sqs = null;
+  const ts = Date.now();
+  while (Date.now() - ts < 100000) {
+    await sleep(400);
+    sqs = await evalJs('JSON.stringify({ q: window.__arState && window.__arState.soundQuiz, text: document.getElementById("quiz-text").textContent, shown: !document.getElementById("quiz").classList.contains("hidden") })').then(JSON.parse).catch(() => null);
+    if (sqs && sqs.q && sqs.q.correct >= 1) break;
+  }
+  check(sqs && sqs.q && sqs.q.correct >= 1, `sound quiz: scanning the horse page answers "Who makes this sound?" (${sqs?.q?.correct} right, "${sqs?.text}")`);
 
   console.log('      final state', JSON.stringify(st));
   check(st && st.modelsLoaded === ANIMALS, `all ${ANIMALS} models loaded (${st?.modelsLoaded})`);

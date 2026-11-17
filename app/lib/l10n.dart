@@ -87,4 +87,80 @@ class S {
   String get tryAgain => _t('Try again', 'Réessayer', 'حاول مرة أخرى');
   String get openSettings => _t('Open settings', 'Ouvrir les réglages', 'فتح الإعدادات');
   String get back => _t('Back', 'Retour', 'رجوع');
+
+  // Parents' page
+  String get parents => _t('Parents', 'Parents', 'الأولياء');
+  String get forParents => _t('For parents', 'Pour les parents', 'للأولياء');
+  String gateQuestion(int a, int b) =>
+      _t('Grown-ups only: $a + $b = ?', 'Réservé aux adultes : $a + $b = ?', 'للكبار فقط: $a + $b = ؟');
+  String get account => _t('Account', 'Compte', 'الحساب');
+  String get syncPitch => _t(
+      'Sign in to keep progress safe and use it on several phones or tablets.',
+      'Connectez-vous pour sauvegarder la progression et l\'utiliser sur plusieurs appareils.',
+      'سجّل الدخول لحفظ التقدّم واستخدامه على عدة أجهزة.');
+  String get continueGoogle => _t('Continue with Google', 'Continuer avec Google', 'المتابعة باستخدام Google');
+  String get useEmail => _t('Use an email', 'Utiliser un e-mail', 'استخدام بريد إلكتروني');
+  String get email => _t('Email', 'E-mail', 'البريد الإلكتروني');
+  String get password =>
+      _t('Password (6+ characters)', 'Mot de passe (6 caractères min.)', 'كلمة المرور (6 أحرف على الأقل)');
+  String get signIn => _t('Sign in', 'Se connecter', 'تسجيل الدخول');
+  String get createAccount => _t('Create account', 'Créer un compte', 'إنشاء حساب');
+  String get forgotPassword => _t('Forgot password?', 'Mot de passe oublié ?', 'نسيت كلمة المرور؟');
+  String get resetSent => _t('Check your email to reset the password.',
+      'Vérifiez vos e-mails pour réinitialiser le mot de passe.', 'تفقّد بريدك لإعادة تعيين كلمة المرور.');
+  String signedInAs(String who) => _t('Signed in as $who', 'Connecté : $who', 'تم تسجيل الدخول: $who');
+  String get synced => _t('Progress is synced', 'Progression synchronisée', 'تمت مزامنة التقدّم');
+  String get syncingNow => _t('Syncing…', 'Synchronisation…', 'جارٍ المزامنة…');
+  String get signOut => _t('Sign out', 'Se déconnecter', 'تسجيل الخروج');
+  String get cloudOff => _t(
+      'Accounts are not available right now (no connection).',
+      'Les comptes ne sont pas disponibles pour le moment (pas de connexion).',
+      'الحسابات غير متاحة حاليًا (لا يوجد اتصال).');
+  String authError(String code) => switch (code) {
+        'invalid-email' =>
+          _t('That email address is not valid.', 'Cette adresse e-mail n\'est pas valide.', 'عنوان البريد غير صالح.'),
+        'user-not-found' ||
+        'wrong-password' ||
+        'invalid-credential' =>
+          _t('Wrong email or password.', 'E-mail ou mot de passe incorrect.', 'البريد أو كلمة المرور غير صحيحة.'),
+        'email-already-in-use' => _t('An account already uses this email. Sign in instead.',
+            'Un compte utilise déjà cet e-mail. Connectez-vous.', 'هذا البريد مستخدم. سجّل الدخول بدلًا من ذلك.'),
+        'weak-password' =>
+          _t('Choose a longer password.', 'Choisissez un mot de passe plus long.', 'اختر كلمة مرور أطول.'),
+        'network-request-failed' =>
+          _t('No internet connection.', 'Pas de connexion Internet.', 'لا يوجد اتصال بالإنترنت.'),
+        _ => _t('That didn\'t work. Try again.', 'Ça n\'a pas marché. Réessayez.', 'لم ينجح ذلك. حاول مرة أخرى.'),
+      };
+  String get children => _t('Children', 'Enfants', 'الأطفال');
+  String get addChild => _t('Add a child', 'Ajouter un enfant', 'إضافة طفل');
+  String get rename => _t('Rename', 'Renommer', 'إعادة التسمية');
+  String get resetProgress => _t('Start over', 'Recommencer', 'البدء من جديد');
+  String get delete => _t('Delete', 'Supprimer', 'حذف');
+  String get cancel => _t('Cancel', 'Annuler', 'إلغاء');
+  String get save => _t('Save', 'Enregistrer', 'حفظ');
+  String confirmDelete(String name) =>
+      _t('Delete $name and all their progress?', 'Supprimer $name et toute sa progression ?', 'حذف $name وكل تقدّمه؟');
+  String confirmReset(String name) => _t('Erase all of $name\'s progress on this phone?',
+      'Effacer toute la progression de $name sur ce téléphone ?', 'مسح كل تقدّم $name على هذا الهاتف؟');
+  String progressOf(String name) => _t('$name\'s progress', 'Progression de $name', 'تقدّم $name');
+  String get statAnimals => _t('Animals met', 'Animaux découverts', 'حيوانات تعرّف عليها');
+  String get statParts => _t('Body parts found', 'Parties du corps trouvées', 'أجزاء جسم وجدها');
+  String get statQuiz => _t('Quiz answers', 'Réponses au quiz', 'إجابات الاختبار');
+  String get statWords => _t('Words learned (×3 languages)', 'Mots appris (×3 langues)', 'كلمات تعلّمها (×3 لغات)');
+  String get statFood => _t('Foods given', 'Aliments donnés', 'أطعمة قدّمها');
+  String get statGames => _t('Games won', 'Jeux gagnés', 'ألعاب فاز بها');
+  String get statTime => _t('Time in the camera', 'Temps avec la caméra', 'الوقت مع الكاميرا');
+  String minutes(int m) => _t('$m min', '$m min', '$m دقيقة');
+
+  // Games
+  String get games => _t('Games', 'Jeux', 'ألعاب');
+  String get memoryGame => _t('Memory', 'Mémoire', 'الذاكرة');
+  String get memoryHint =>
+      _t('Match each animal to its name', 'Associe chaque animal à son nom', 'طابق كل حيوان مع اسمه');
+  String get soundQuiz => _t('Sound quiz', 'Quiz des sons', 'اختبار الأصوات');
+  String get soundQuizHint => _t('Who makes this sound?', 'Qui fait ce bruit ?', 'من يصدر هذا الصوت؟');
+  String movesWin(int moves) => _t('Bravo! You found all the pairs in $moves moves.',
+      'Bravo ! Tu as trouvé toutes les paires en $moves coups.', 'أحسنت! وجدت كل الأزواج في $moves محاولة.');
+  String get playAgainBtn => _t('Play again', 'Rejouer', 'العب مجددًا');
+  String get namesIn => _t('Names in', 'Noms en', 'الأسماء بـ');
 }

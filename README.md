@@ -42,7 +42,26 @@ flamingo, a big tree for the parrot, a nest for the stork), drawn in code
   with the child's name and the animal's names to the gallery, in an
   "Animal Book AR" album (gal).
 
-Progress, the child's first name and the language are saved on the phone only
+## Parents, accounts and games
+
+- **Child profiles:** several children on one phone, each with their own progress.
+- **Parents' page** (the family icon on the home screen, behind a "grown-ups only"
+  sum): sign in, add / rename / reset / delete children, and see each child's
+  progress (animals, body parts, quiz, words learned, foods, games, time).
+- **Parent account and sync (Firebase):** sign in with Google or email; each
+  child's progress is stored in Firestore under `users/{uid}/children/{id}` and
+  kept in step on every device signed in to the same account (merging never
+  loses anything: what was found is joined, counters keep the larger value).
+  Rules in `firestore.rules` (published): a parent reads and writes only their own data.
+  Project `animal-book-ar` (Spark plan, Firestore in europe-southwest1).
+- **Memory game** (no camera): 6 pairs of photo and name, names in EN/FR/AR.
+- **Sound quiz** (camera): "Who makes this sound?", scan the right page.
+
+Without a connection the app works as before; Firebase syncs when it's back.
+For a release build, add the release key's SHA-1 to the Android app in the
+Firebase console, or Google sign-in will fail.
+
+Progress, the child's first name and the language are saved on the phone
 (`lib/progress.dart`, shared_preferences). No account, nothing sent anywhere.
 
 ## How it works

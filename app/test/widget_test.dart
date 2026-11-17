@@ -68,6 +68,41 @@ void main() {
     expect(find.text('?'), findsNWidgets(7)); // parts not found yet stay a mystery
   });
 
+  testWidgets('parents page opens after the grown-up check; memory game deals 12 cards', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 1000));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final p = await _progress(tester, {'name': 'Yahia', 'met': ['fox']});
+    await tester.pumpWidget(AnimalBookApp(progress: p));
+    await _settle(tester);
+
+    await tester.tap(find.byKey(const Key('parents')));
+    await _settle(tester);
+    final q = tester.widget<Text>(find.textContaining('Grown-ups only')).data!;
+    final m = RegExp(r'(\d+) \+ (\d+)').firstMatch(q)!;
+    final sum = int.parse(m[1]!) + int.parse(m[2]!);
+    await tester.tap(find.byKey(Key('gate-$sum')));
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+    expect(find.text('Parents'), findsOneWidget);
+    expect(find.text('Accounts are not available right now (no connection).'), findsOneWidget); // no Firebase in tests
+    expect(find.text('Yahia'), findsWidgets);
+    expect(find.text('1 / 10'), findsOneWidget); // animals met
+
+    await tester.pageBack();
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+    await tester.tap(find.byKey(const Key('game-memory')));
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
+    await tester.pump();
+    expect(find.byKey(const Key('card-11')), findsOneWidget);
+    expect(find.byKey(const Key('card-12')), findsNothing);
+  });
+
   testWidgets('switching to Arabic lays the app out right to left', (tester) async {
     await tester.binding.setSurfaceSize(const Size(400, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));

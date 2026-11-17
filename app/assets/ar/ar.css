@@ -117,6 +117,7 @@ html, body {
   box-shadow: 0 6px 20px rgba(0, 0, 0, .3); border: 3px solid #ffb703; transition: border-color .2s;
 }
 #quiz span { display: block; }
+#quiz { cursor: pointer; }
 #quiz-text { font-size: 20px; font-weight: 900; }
 #quiz-sub { font-size: 13px; color: #7a6a5c; }
 #quiz-sub:empty { display: none; }

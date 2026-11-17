@@ -1,0 +1,10 @@
+rules_version = '2';
+// Each signed-in parent can read and write only their own family's data:
+//   users/{uid}/children/{childId}  (a child's name and progress)
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
