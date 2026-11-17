@@ -45,9 +45,16 @@ class ZooPath extends StatelessWidget {
           Positioned.fill(
             child: CustomPaint(
                 painter: _ZooPainter(
-              gateText: progress.book.map == 'town' ? progress.s.town : progress.s.zoo,
+              gateText: switch (progress.book.map) {
+                'town' => progress.s.town,
+                'park' => progress.book.title(progress.lang).toUpperCase(),
+                _ => progress.s.zoo,
+              },
               ids: [for (final a in animals) a.id],
               town: progress.book.map == 'town',
+              park: progress.book.map == 'park',
+              colors: [for (final a in animals) a.color],
+              labels: [for (final a in animals) a.letter ?? ''],
             )),
           ),
           for (var i = 0; i < animals.length; i++)
@@ -226,10 +233,20 @@ const _greyscale = <double>[
 // ---------------------------------------------------------------------------
 
 class _ZooPainter extends CustomPainter {
-  _ZooPainter({required this.gateText, required this.ids, this.town = false});
+  _ZooPainter({
+    required this.gateText,
+    required this.ids,
+    this.town = false,
+    this.park = false,
+    this.colors = const [],
+    this.labels = const [],
+  });
 
   final String gateText;
   final bool town; // vehicles: roads and buildings instead of paths and enclosures
+  final bool park; // letters and colours: a garden path, a toy block or paint pot by each stop
+  final List<Color> colors; // each item's colour (paint pots)
+  final List<String> labels; // each item's letter (toy blocks)
   final List<String> ids; // animal ids in path order, for their scenes
 
   static const _grass = Color(0xFFCDE8B0);
@@ -325,6 +342,14 @@ class _ZooPainter extends CustomPainter {
         _townBuilding(canvas, ids[i], o);
         continue;
       }
+      if (park) {
+        if (labels.length > i && labels[i].isNotEmpty) {
+          _block(canvas, o, labels[i], colors[i]);
+        } else if (colors.length > i) {
+          _paintPot(canvas, o, colors[i]);
+        }
+        continue;
+      }
       switch (ids[i]) {
         case 'horse' || 'sheep' || 'llama':
           _hay(canvas, o);
@@ -353,7 +378,7 @@ class _ZooPainter extends CustomPainter {
     for (final s in spots) {
       if (town) {
         _parking(canvas, s);
-      } else {
+      } else if (!park) {
         _fence(canvas, s, 58);
       }
     }
@@ -613,6 +638,57 @@ class _ZooPainter extends CustomPainter {
     }
   }
 
+  // ---- park pieces ----
+  void _block(Canvas c, Offset o, String letter, Color color) {
+    _shadow(c, o + const Offset(4, 22), 26, 6);
+    final side = Path()
+      ..moveTo(o.dx + 20, o.dy - 20)
+      ..lineTo(o.dx + 30, o.dy - 28)
+      ..lineTo(o.dx + 30, o.dy + 12)
+      ..lineTo(o.dx + 20, o.dy + 20)
+      ..close();
+    c.drawPath(side, Paint()..color = Color.lerp(color, Colors.black, 0.35)!);
+    final top = Path()
+      ..moveTo(o.dx - 20, o.dy - 20)
+      ..lineTo(o.dx - 10, o.dy - 28)
+      ..lineTo(o.dx + 30, o.dy - 28)
+      ..lineTo(o.dx + 20, o.dy - 20)
+      ..close();
+    c.drawPath(top, Paint()..color = Color.lerp(color, Colors.white, 0.35)!);
+    c.drawRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: o, width: 40, height: 40), const Radius.circular(4)),
+        Paint()..color = color);
+    final latin = RegExp(r'^[\x00-\x7F]*$').hasMatch(letter);
+    final tp = TextPainter(
+      text: TextSpan(
+          text: latin ? letter.substring(0, 1) : letter,
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 26,
+              fontWeight: FontWeight.w900,
+              fontFamily: latin ? 'Poppins' : 'Tajawal',
+              height: 1.1)),
+      textDirection: latin ? TextDirection.ltr : TextDirection.rtl,
+    )..layout();
+    tp.paint(c, o - Offset(tp.width / 2, tp.height / 2 - (latin ? 0 : 3)));
+  }
+
+  void _paintPot(Canvas c, Offset o, Color color) {
+    _shadow(c, o + const Offset(0, 20), 26, 6);
+    // a splash on the grass, then the pot
+    final splash = Paint()..color = color.withOpacity(0.55);
+    for (final d in [const Offset(-26, 14), const Offset(24, 18), const Offset(-8, 22), const Offset(30, 2)]) {
+      c.drawCircle(o + d, 7, splash);
+    }
+    c.drawOval(Rect.fromCenter(center: o + const Offset(4, 18), width: 58, height: 16), splash);
+    final body = RRect.fromRectAndRadius(
+        Rect.fromCenter(center: o + const Offset(0, 2), width: 36, height: 34), const Radius.circular(6));
+    c.drawRRect(body, Paint()..color = const Color(0xFFB9BEC4));
+    c.drawOval(Rect.fromCenter(center: o + const Offset(0, -15), width: 36, height: 12),
+        Paint()..color = const Color(0xFF8E959C));
+    c.drawOval(Rect.fromCenter(center: o + const Offset(0, -15), width: 30, height: 9), Paint()..color = color);
+    c.drawRect(Rect.fromCenter(center: o + const Offset(0, 4), width: 36, height: 10), Paint()..color = color);
+  }
+
   // ---- town pieces ----
   void _parking(Canvas c, Offset center) {
     // a round paved stop with a kerb, like a little roundabout
@@ -778,5 +854,5 @@ class _ZooPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _ZooPainter old) =>
-      old.gateText != gateText || old.town != town || old.ids.join() != ids.join();
+      old.gateText != gateText || old.town != town || old.park != park || old.ids.join() != ids.join();
 }

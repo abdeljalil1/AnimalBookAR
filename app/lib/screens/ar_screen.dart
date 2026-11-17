@@ -109,7 +109,10 @@ class _ArScreenState extends State<ArScreen> with WidgetsBindingObserver {
         HapticFeedback.mediumImpact();
       case 'speak':
         final text = event['text'] as String?;
-        if (text != null && text.isNotEmpty) Speech.instance.say(text, p.lang);
+        // the letter books speak in the book's language, whatever the app's language
+        if (text != null && text.isNotEmpty) {
+          Speech.instance.say(text, event['lang'] == null ? p.lang : Lang.parse(event['lang'] as String));
+        }
       case 'food':
         final food = event['food'] as String?;
         if (event['right'] == true && animal != null && food != null) {

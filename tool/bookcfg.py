@@ -33,7 +33,8 @@ class Book:
         self.app_pages = ROOT / "app" / cfg["pagesDir"]
         self.thumbs = ROOT / "app" / cfg["thumbsDir"]
         self.photos = ROOT / "tool" / "photos" / ("" if first else book_id)
-        self.vehicles = cfg.get("kind") == "vehicles"
+        self.kind = cfg.get("kind", "animals")
+        self.vehicles = self.kind == "vehicles"
 
 
 BOOK = Book(next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--book=")), "animals"))

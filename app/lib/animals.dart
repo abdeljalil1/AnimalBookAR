@@ -55,6 +55,7 @@ class Animal {
     this.pagesDir = 'assets/ar/pages',
     this.thumbsDir = 'assets/thumbs',
     this.helps,
+    this.letter,
   });
 
   final String id;
@@ -76,6 +77,9 @@ class Animal {
 
   /// "Who helps?" question for vehicles ({en, fr, ar}); null for animals.
   final Map<String, String>? helps;
+
+  /// The letter books: the letter shown on the map ("ب", "Aa").
+  final String? letter;
 
   String get pageAsset => '$pagesDir/$id.jpg';
   String get thumbAsset => '$thumbsDir/$id.jpg';
@@ -104,6 +108,7 @@ class Animal {
         pagesDir: pagesDir,
         thumbsDir: thumbsDir,
         helps: (j['helps'] as Map?)?.map((k, v) => MapEntry(k as String, v as String)),
+        letter: j['letter'] as String?,
       );
 
   static Future<List<Animal>> load([AssetBundle? bundle]) async {

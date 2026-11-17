@@ -182,10 +182,13 @@ class Progress extends ChangeNotifier {
     return done >= total;
   }
 
-  bool unlocked(int level) => level == 1 || levelDone(level - 1);
+  bool unlocked(int level) => level == 1 || (level <= book.levels && levelDone(level - 1));
 
-  /// The first level not finished yet; 4 when all three are done.
-  int get currentLevel => [1, 2, 3].firstWhere((l) => !levelDone(l), orElse: () => 4);
+  /// The book's levels: 1 (meet) for the letter books, else 3.
+  List<int> get levels => [for (var l = 1; l <= book.levels; l++) l];
+
+  /// The first level not finished yet; 4 when all are done.
+  int get currentLevel => levels.firstWhere((l) => !levelDone(l), orElse: () => 4);
 
   /// Is this animal finished for this level?
   bool animalDone(Animal a, int level) => switch (level) {

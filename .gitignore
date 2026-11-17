@@ -2,3 +2,4 @@ tool/test-output/
 tool/.chrome-profile/
 tool/.cache/
 __pycache__/
+tool/.chrome-profile-shapes/

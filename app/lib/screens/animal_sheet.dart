@@ -67,22 +67,24 @@ class AnimalSheet extends StatelessWidget {
           const SizedBox(height: 12),
           Text(p.met(a.id) ? a.fact(lang) : s.notMet,
               style: const TextStyle(fontSize: 15, height: 1.35, color: Color(0xFF4A3C30))),
-          const SizedBox(height: 14),
-          Row(children: [
-            Text(s.bodyParts, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
-            const Spacer(),
-            Text(s.found(found, a.parts.length), style: const TextStyle(color: Color(0xFF7A6A5C), fontSize: 13)),
-          ]),
-          const SizedBox(height: 8),
-          Wrap(spacing: 8, runSpacing: 8, children: [
-            for (final part in a.parts)
-              p.partFound(a.id, part.id)
-                  ? GestureDetector(
-                      onTap: () => Speech.instance.say(part.name(lang), lang),
-                      child: _Chip(text: part.name(lang), found: true),
-                    )
-                  : const _Chip(text: '?', found: false),
-          ]),
+          if (a.parts.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            Row(children: [
+              Text(s.partsTitle(p.book.kind), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+              const Spacer(),
+              Text(s.found(found, a.parts.length), style: const TextStyle(color: Color(0xFF7A6A5C), fontSize: 13)),
+            ]),
+            const SizedBox(height: 8),
+            Wrap(spacing: 8, runSpacing: 8, children: [
+              for (final part in a.parts)
+                p.partFound(a.id, part.id)
+                    ? GestureDetector(
+                        onTap: () => Speech.instance.say(part.name(lang), lang),
+                        child: _Chip(text: part.name(lang), found: true),
+                      )
+                    : const _Chip(text: '?', found: false),
+            ]),
+          ],
           if (p.unlocked(3)) ...[
             const SizedBox(height: 12),
             Row(children: [

@@ -69,7 +69,7 @@ html, body { background: #fff; }
 """
 
 
-ICON = "🚗" if BOOK.vehicles else "🐾"
+ICON = {"vehicles": "🚗", "letters": "✏️", "colors": "🎨"}.get(BOOK.kind, "🐾")
 
 
 def page_html(a, num, credit):
@@ -91,8 +91,92 @@ def page_html(a, num, credit):
 </section>"""
 
 
+LEARN_CSS = """
+.letter-top { position: absolute; top: 90px; left: 40px; right: 40px; height: 430px; display: flex; gap: 26px; align-items: center; }
+.big { flex: 1; height: 100%; border-radius: 28px; background: var(--c); color: #fff; display: flex;
+  align-items: center; justify-content: center; font-weight: 900; line-height: 1; }
+.big.ar { font-family: "Geeza Pro", "Al Bayan", sans-serif; font-size: 330px; padding-bottom: 40px; }
+.big.fr { font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif; font-size: 230px; }
+.pic { width: 330px; height: 330px; border-radius: 28px; overflow: hidden; border: 6px solid var(--c); flex: none; }
+.pic img { width: 100%; height: 100%; object-fit: cover; }
+.word { position: absolute; top: 545px; left: 40px; right: 40px; text-align: center; }
+.word .main { font-size: 96px; font-weight: 900; color: var(--c); line-height: 1.05; }
+.word .main.ar { font-family: "Geeza Pro", sans-serif; }
+.forms { position: absolute; top: 760px; left: 60px; right: 60px; display: flex; justify-content: center; gap: 22px; }
+.forms span { min-width: 120px; padding: 6px 18px; text-align: center; border: 4px dashed var(--c); border-radius: 22px;
+  font-size: 74px; font-weight: 800; color: #333; font-family: "Geeza Pro", "Avenir Next", sans-serif; }
+.forms-label { position: absolute; top: 722px; left: 0; right: 0; text-align: center; font-size: 20px; color: #777; }
+.splash { position: absolute; top: 70px; left: 20px; right: 20px; height: 640px; }
+.scene { position: absolute; top: 110px; left: 60px; right: 60px; height: 560px; }
+.scene img { width: 100%; height: 100%; object-fit: contain; }
+.cname { position: absolute; top: 715px; left: 40px; right: 40px; text-align: center; }
+.cname .en { -webkit-text-stroke: 3px #333; }
+"""
+
+SPLASH = ("M300 40 C390 20 470 90 560 70 C680 40 760 150 720 250 C700 300 770 360 740 440 C700 560 560 560 470 600 "
+          "C380 640 260 620 190 560 C110 500 30 470 40 360 C48 270 10 200 70 130 C130 60 220 60 300 40 Z")
+
+
+def letter_page(a, num, credit, photo):
+    e = html.escape
+    lang = "ar" if BOOK.id == "letters_ar" else "fr"
+    other = (f'<span class="fr">{e(a["fr"].split(" · ")[-1])}</span><span class="en" style="font-size:40px;font-weight:700;color:#333">'
+             f'{e(a["en"].split(" · ")[-1])}</span>') if lang == "ar" else \
+            (f'<span class="ar" dir="rtl">{e(a["ar"].split(" · ")[-1])}</span><span style="font-size:40px;font-weight:700;color:#333">'
+             f'{e(a["en"].split(" · ")[-1])}</span>')
+    forms = "".join(f"<span>{e(f)}</span>" for f in a["forms"])
+    label = "أشكال الحرف" if lang == "ar" else "Majuscule · minuscule"
+    return f"""
+<section class="page" style="--c:{a['color']}">
+  <div class="badge">{num}</div>
+  <div class="letter-top"><div class="big {lang}" {'dir="rtl"' if lang == 'ar' else ''}>{e(a['letter'])}</div>
+    <div class="pic"><img src="{photo.as_uri()}"></div></div>
+  <div class="word"><div class="main {lang}" {'dir="rtl"' if lang == 'ar' else ''}>{e(a['word'])}</div>
+    <div class="row">{other}</div></div>
+  <div class="forms-label">{label}</div>
+  <div class="forms" {'dir="rtl"' if lang == 'ar' else ''}>{forms}</div>
+  <div class="facts" style="top:930px">
+    <p>{ICON} {e(a['fact_en'])}</p>
+    <p>{ICON} {e(a['fact_fr'])}</p>
+    <p class="far">{e(a['fact_ar'])} {ICON}</p>
+  </div>
+  <div class="foot"><span>Point the Animal Book AR app at this page ({e(BOOK.cfg["en"])})</span><span>Photo: {e(credit)}</span></div>
+</section>"""
+
+
+def color_page(a, num):
+    e = html.escape
+    scene = BOOK.photos / (a["id"].removeprefix("color_") + ".png")
+    edge = "#333" if a["color"].upper() in ("#F5F5F5", "#FDD835") else a["color"]
+    return f"""
+<section class="page" style="--c:{edge}">
+  <div class="badge">{num}</div>
+  <svg class="splash" viewBox="0 0 800 640" preserveAspectRatio="none"><path d="{SPLASH}" fill="{a['color']}" opacity=".28"
+    stroke="{edge}" stroke-width="6" stroke-dasharray="18 12"/></svg>
+  <div class="scene"><img src="{scene.as_uri()}"></div>
+  <div class="cname">
+    <div class="en" style="color:{a['color']};font-size:96px;font-weight:900;line-height:1">{e(a['en'])}</div>
+    <div class="row"><span class="fr">{e(a['fr'])}</span><span class="ar" dir="rtl">{e(a['ar'])}</span></div>
+  </div>
+  <div class="facts">
+    <p>{ICON} {e(a['fact_en'])}</p>
+    <p>{ICON} {e(a['fact_fr'])}</p>
+    <p class="far">{e(a['fact_ar'])} {ICON}</p>
+  </div>
+  <div class="foot"><span>Point the Animal Book AR app at this page ({e(BOOK.cfg["en"])})</span><span>Pictures: Animal Book AR</span></div>
+</section>"""
+
+
+def letter_photo(name):
+    for d in ["letters", "", "cars"]:
+        f = ROOT / "tool" / "photos" / d / f"{name}.jpg"
+        if f.exists():
+            return f
+    raise SystemExit(f"no photo for {name}: put it in tool/photos/letters/{name}.jpg")
+
+
 def doc(body):
-    return f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style></head><body>{body}</body></html>'
+    return f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}{LEARN_CSS}</style></head><body>{body}</body></html>'
 
 
 def chrome(*args):
@@ -122,9 +206,12 @@ def main():
     tmp = Path(tempfile.mkdtemp())
     sections = []
     for i, a in enumerate(animals, 1):
-        c = credits[a["id"] + "_photo"]
-        credit = f"{c['artist']}, {c['license']}, Wikimedia Commons"
-        sec = page_html(a, i, credit)
+        if BOOK.kind == "colors":
+            sec = color_page(a, i)
+        else:
+            c = credits[a.get("photo", a["id"]) + "_photo"]
+            credit = f"{c['artist']}, {c['license']}, Wikimedia Commons"
+            sec = letter_page(a, i, credit, letter_photo(a["photo"])) if BOOK.kind == "letters" else page_html(a, i, credit)
         sections.append(sec)
         f = tmp / f"{a['id']}.html"
         f.write_text(doc(sec))
@@ -135,7 +222,8 @@ def main():
             im = im.convert("RGB")
             im.thumbnail((900, 900 * PAGE_H // PAGE_W + 1))
             im.save(BOOK.app_pages / f"{a['id']}.jpg", quality=85, optimize=True)
-        make_thumb(a["id"])
+        if BOOK.kind not in ("letters", "colors"):  # those thumbnails come from make_shapes.py
+            make_thumb(a["id"])
         print("page", out.relative_to(ROOT))
     book = tmp / "book.html"
     book.write_text(doc("".join(sections)))

@@ -67,11 +67,7 @@ class BookshelfScreen extends StatelessWidget {
                 _BookCover(book: b, progress: progress, onTap: () => _open(context, b)),
                 const SizedBox(height: 14),
               ],
-              Row(children: [
-                Expanded(child: _SoonCover(title: s.lettersBook, icon: Icons.abc_rounded, soon: s.comingSoon)),
-                const SizedBox(width: 12),
-                Expanded(child: _SoonCover(title: s.heritageBook, icon: Icons.mosque_rounded, soon: s.comingSoon)),
-              ]),
+              _SoonCover(title: s.heritageBook, icon: Icons.mosque_rounded, soon: s.comingSoon),
             ]),
           ),
         );
@@ -143,7 +139,7 @@ class _BookCover extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              Text(s.metOf(book.vehicles, met, total), style: const TextStyle(color: Colors.white, fontSize: 12.5)),
+              Text(s.metOf(book.kind, met, total), style: const TextStyle(color: Colors.white, fontSize: 12.5)),
             ]),
           ]),
         ),
