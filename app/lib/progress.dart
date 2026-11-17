@@ -129,6 +129,16 @@ class Progress extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Per-book numbers for the parents' page.
+  int partsIn(Book b) => children.isEmpty
+      ? 0
+      : b.items.fold(0, (n, a) => n + a.parts.where((p) => child.parts.contains('${a.id}:${p.id}')).length);
+  int totalPartsIn(Book b) => b.items.fold(0, (n, a) => n + a.parts.length);
+  int quizIn(Book b) => children.isEmpty ? 0 : b.items.fold(0, (n, a) => n + (child.quiz[a.id] ?? 0));
+
+  /// Everything met, across all the books.
+  int get metAll => books.fold(0, (n, b) => n + metIn(b));
+
   /// Items met in a book, for the bookshelf.
   int metIn(Book b) => b.items.where((a) => met(a.id)).length;
   Lang lang;

@@ -87,7 +87,31 @@ class S {
       'وجّه هاتفًا آخر فيه التطبيق نحو هذه الصفحة، أو اطبع الكتاب.');
 
   // Welcome
-  String get welcomeTitle => _t('Welcome to the zoo!', 'Bienvenue au zoo !', 'مرحبًا بك في الحديقة!');
+  String get welcomeTitle => _t('Welcome!', 'Bienvenue !', 'مرحبًا بك!');
+  String get welcomeSub => _t(
+      'Books that come alive: animals, vehicles, letters and colours in 3D.',
+      'Des livres qui prennent vie : animaux, véhicules, lettres et couleurs en 3D.',
+      'كتب تنبض بالحياة: حيوانات ومركبات وحروف وألوان بالأبعاد الثلاثة.');
+  String get nameNote => _t('Only a first name. It stays on this phone.',
+      'Seulement un prénom. Il reste sur ce téléphone.', 'الاسم الأول فقط، ويبقى على هذا الهاتف.');
+  String get parentsLater => _t(
+      'Parents can sign in later, from the parents\' area, to sync between devices.',
+      'Les parents pourront se connecter plus tard, dans l\'espace parents, pour synchroniser.',
+      'يمكن للأولياء تسجيل الدخول لاحقًا من فضاء الأولياء للمزامنة بين الأجهزة.');
+  String get continueLearning => _t('Continue', 'Continuer', 'تابع');
+  String get statStars => _t('Stars', 'Étoiles', 'نجوم');
+  String get statDiscovered => _t('Discovered', 'Découverts', 'اكتشفها');
+  String get statMinutes => _t('Minutes played', 'Minutes de jeu', 'دقائق اللعب');
+  String get overview => _t('Overview', 'Vue d\'ensemble', 'نظرة عامة');
+  String get byBook => _t('Progress by book', 'Progression par livre', 'التقدّم حسب الكتاب');
+  String get activity => _t('Activity', 'Activité', 'النشاط');
+  String get settings => _t('Settings', 'Réglages', 'الإعدادات');
+  String get appLanguage => _t('App language', 'Langue de l\'appli', 'لغة التطبيق');
+  String get notSignedIn => _t('Not signed in · progress stays on this phone',
+      'Non connecté · la progression reste sur ce téléphone', 'غير مسجّل · يبقى التقدّم على هذا الهاتف');
+  String partsQuiz(int p, int pt, int q, int qt) =>
+      _t('Parts $p/$pt · Quiz $q/$qt', 'Parties $p/$pt · Quiz $q/$qt', 'أجزاء $p/$pt · اختبار $q/$qt');
+  String get gateTitle => _t('Grown-ups only', 'Réservé aux adultes', 'للكبار فقط');
   String get chooseLanguage => _t('Choose your language', 'Choisis ta langue', 'اختر لغتك');
   String get yourName => _t('What\'s your name?', 'Comment t\'appelles-tu ?', 'ما اسمك؟');
   String get nameHint => _t('Your first name', 'Ton prénom', 'اسمك');
