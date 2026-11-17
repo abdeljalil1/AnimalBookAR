@@ -6,7 +6,7 @@ publishing.
 
 ## Photos (on the book pages)
 
-| Animal | Author | Licence | Source |
+| Item | Author | Licence | Source |
 |---|---|---|---|
 | Horse | Alvesgaspar | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Horse_December_2014-1.jpg) |
 | Fox | ClaudiaTen | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Portrait_of_a_red_fox_in_Rautas_fj%C3%A4llurskog_(cropped).jpg) |
@@ -22,10 +22,19 @@ publishing.
 | Elephant | Giles Laurent | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:178_Male_African_bush_elephant_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg) |
 | Giraffe | Quartl | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Giraffa_camelopardalis_rothschildi_qtl2.jpg) |
 | Camel | Florian Prischl | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Camelus_dromedarius_in_Nuweiba.jpg) |
+| Car | ©  M 93 | CC BY-SA 3.0 de | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Toyota_Camry_2.5_Hybrid_Ascent_Sport_(IX)_%E2%80%93_f_02012026.jpg) |
+| Taxi | Petar Milošević | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:TAXI.jpg) |
+| Police car | Raymond Wambsgans | CC BY 2.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Washington_DC_Metropolitan_Police_Department_Dodge_Charger_No._1605.jpg) |
+| Ambulance | AleWi | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Stockholm,_ambulans,_2014,_21.jpg) |
+| Fire truck | William Murphy | CC BY-SA 2.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Dublin_Fire_Brigade_Pump_Ladder_D32.jpg) |
+| School bus | Atomic Taco | CC BY-SA 2.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:IC_CE_school_bus_(shortened_chassis).jpg) |
+| Tractor | Mulad | CC BY 2.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Ford_8N.jpg) |
+| Truck | Ralf Roletschek | CC BY 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:13-08-09-hongkong-by-RalfR-091.jpg) |
+| Motorcycle | Lothar Spurzem | CC BY-SA 2.0 de | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:2007-06-15_34_Moto_Guzzi_PE,_Fg.-Nr._SP7032.jpg) |
 
 ## Sounds (trimmed to a few seconds, volume levelled, AAC)
 
-| Animal | Author | Licence | Source |
+| Item | Author | Licence | Source |
 |---|---|---|---|
 | Horse | Hü . | Public domain | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Wiehern.ogg) |
 | Fox | Jugrü | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Bellender_Fuchs.ogg) |
@@ -41,10 +50,19 @@ publishing.
 | Elephant | தகவலுழவன் | CC0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Elephant_voice_-_trumpeting.ogg) |
 | Giraffe | Anton Baotic, Florian Sicks and Angela S. Stoeger | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Giraffe_Hum.oga) |
 | Camel | (no recording yet: the app says the name) | | |
+| Car | 15HPanska_Ruttner_Jan | CC0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Car_Horn.wav) |
+| Taxi | Magickallwiz | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Speeding-car-horn_doppler_effect_sample.ogg) |
+| Police car | lezer | Public domain | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:American_police_siren_i.ogg) |
+| Ambulance | Demircimehmed | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:AmbulanceSound1.wav) |
+| Fire truck | Work With Sounds  / Konrad Gutkowski | CC BY 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:WWS_Fireenginesiren.ogg) |
+| School bus | Work With Sounds  / Technical Museum of Slovenia | CC BY 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:WWS_CityBusMANSG220horn.ogg) |
+| Tractor | Work With Sounds  / Museum of Municipal Engineering | CC BY 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:WWS_TractorUrsusC328driving.ogg) |
+| Truck | Edvvc | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Trophy_Truck_and_American_V8s.ogg) |
+| Motorcycle | Huhu Uet | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Garelli_Bonanza_starten_01.ogg) |
 
 ## 3D models
 
-| Animal | Author | Licence | Source |
+| Item | Author | Licence | Source |
 |---|---|---|---|
 | Horse | mirada, from the ro.me project | none stated (prototype only) | [three.js examples](https://github.com/mrdoob/three.js/tree/r160/examples/models/gltf) |
 | Fox | Model by PixelMannen (CC0); rigging and animation by tomkranis; glTF conversion by @AsoboStudio and @scurest | CC BY 4.0 | [Khronos glTF Sample Assets](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/Fox) |
@@ -60,6 +78,15 @@ publishing.
 | Elephant | elkiotbear | CC BY 3.0 | [Poly Pizza](https://poly.pizza/m/3AfO8NwcxD) |
 | Giraffe | elkiotbear | CC BY 3.0 | [Poly Pizza](https://poly.pizza/m/gTFDiaGp8D) |
 | Camel | Poly by Google | CC BY 3.0 | [Poly Pizza](https://poly.pizza/m/7XeLogrxLad) |
+| Car | Quaternius | CC0 1.0 | [Poly Pizza](https://poly.pizza/m/Cz6yDaUcM9) |
+| Taxi | Quaternius | CC0 1.0 | [Poly Pizza](https://poly.pizza/m/x43lOScTpN) |
+| Police car | Quaternius | CC0 1.0 | [Poly Pizza](https://poly.pizza/m/BwwnUrWGmV) |
+| Ambulance | jeremy | CC BY 3.0 | [Poly Pizza](https://poly.pizza/m/a27WN4TXbwk) |
+| Fire truck | J-Toastie | CC BY 3.0 | [Poly Pizza](https://poly.pizza/m/P4XkeNmBLj) |
+| School bus | Poly by Google | CC BY 3.0 | [Poly Pizza](https://poly.pizza/m/8xacyNqdJ3t) |
+| Tractor | Poly by Google | CC BY 3.0 | [Poly Pizza](https://poly.pizza/m/5TGoA5N14c5) |
+| Truck | Quaternius | CC0 1.0 | [Poly Pizza](https://poly.pizza/m/cXw6oiFtZ8) |
+| Motorcycle | AliceCassie | CC0 1.0 | [Poly Pizza](https://poly.pizza/m/j20srJUjpB) |
 
 The horse, flamingo, parrot and stork from the three.js examples have no licence of their own. Fine for a
 prototype, but **replace them before publishing** (Quaternius has CC0 horses and birds).

@@ -173,6 +173,31 @@ python3 tool/inspect_models.py --only=horse,fox
 python3 tool/inspect_models.py --parts --only=horse,fox
 ```
 
+## Books
+
+`app/assets/ar/books.json` lists the books on the bookshelf. Each has its own
+items file, targets file, pages and thumbnails. The Cars book
+(`app/assets/ar/books/cars/`, `kind: "vehicles"`) draws a town map instead of
+the zoo, says "needs" instead of "eats" ("What does it need?"), drives with
+turning wheels on **Drive** (`front: -1` for models that face backward), and adds
+"Who helps?" (each item's `helps` question; scan the vehicle that helps). The
+tools take `--book=<id>`:
+
+```bash
+python3 tool/make_pages.py --book=cars
+```
+
+```bash
+python3 tool/compile_targets.py --book=cars
+```
+
+```bash
+python3 tool/inspect_models.py --parts --files=books/cars/models/car.glb
+```
+
+Photos for the book go in `tool/photos/<book>/`; the printable PDF is written to
+`book/<book>/<book>-book.pdf`. Test the Cars book with `node tool/test_cars_ar.mjs`.
+
 Any printed page can become a target. To use an existing book instead of these
 pages, put photos of its pages in `book/pages/<id>.png` and run only
 `compile_targets.py`. Pages with lots of detail track best; plain or repetitive

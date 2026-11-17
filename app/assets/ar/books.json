@@ -1,0 +1,14 @@
+[
+  {
+    "id": "animals", "en": "Animals", "fr": "Les animaux", "ar": "الحيوانات",
+    "kind": "animals", "map": "zoo", "color": "#E8702A",
+    "data": "animals.json", "targets": "targets.mind",
+    "pagesDir": "assets/ar/pages", "thumbsDir": "assets/thumbs"
+  },
+  {
+    "id": "cars", "en": "Cars and trucks", "fr": "Les véhicules", "ar": "المركبات",
+    "kind": "vehicles", "map": "town", "color": "#2F6FD0",
+    "data": "books/cars/items.json", "targets": "books/cars/targets.mind",
+    "pagesDir": "assets/ar/books/cars/pages", "thumbsDir": "assets/ar/books/cars/thumbs"
+  }
+]

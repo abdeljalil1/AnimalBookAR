@@ -180,5 +180,131 @@
   "page": "https://commons.wikimedia.org/wiki/File:Giraffe_Hum.oga",
   "license": "CC BY-SA 4.0",
   "artist": "Anton Baotic, Florian Sicks and Angela S. Stoeger"
+ },
+ "car_photo": {
+  "title": "File:Toyota Camry 2.5 Hybrid Ascent Sport (IX) – f 02012026.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Toyota_Camry_2.5_Hybrid_Ascent_Sport_%28IX%29_%E2%80%93_f_02012026.jpg/1280px-Toyota_Camry_2.5_Hybrid_Ascent_Sport_%28IX%29_%E2%80%93_f_02012026.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Toyota_Camry_2.5_Hybrid_Ascent_Sport_(IX)_%E2%80%93_f_02012026.jpg",
+  "license": "CC BY-SA 3.0 de",
+  "artist": "©  M 93"
+ },
+ "taxi_photo": {
+  "title": "File:TAXI.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/TAXI.jpg/1280px-TAXI.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:TAXI.jpg",
+  "license": "CC BY-SA 4.0",
+  "artist": "Petar Milošević"
+ },
+ "police_photo": {
+  "title": "File:Washington DC Metropolitan Police Department Dodge Charger No. 1605.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Washington_DC_Metropolitan_Police_Department_Dodge_Charger_No._1605.jpg/1280px-Washington_DC_Metropolitan_Police_Department_Dodge_Charger_No._1605.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Washington_DC_Metropolitan_Police_Department_Dodge_Charger_No._1605.jpg",
+  "license": "CC BY 2.0",
+  "artist": "Raymond Wambsgans"
+ },
+ "ambulance_photo": {
+  "title": "File:Stockholm, ambulans, 2014, 21.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cd/Stockholm%2C_ambulans%2C_2014%2C_21.jpg/1280px-Stockholm%2C_ambulans%2C_2014%2C_21.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Stockholm,_ambulans,_2014,_21.jpg",
+  "license": "CC BY-SA 4.0",
+  "artist": "AleWi"
+ },
+ "firetruck_photo": {
+  "title": "File:Dublin Fire Brigade Pump Ladder D32.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d0/Dublin_Fire_Brigade_Pump_Ladder_D32.jpg/1280px-Dublin_Fire_Brigade_Pump_Ladder_D32.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Dublin_Fire_Brigade_Pump_Ladder_D32.jpg",
+  "license": "CC BY-SA 2.0",
+  "artist": "William Murphy"
+ },
+ "bus_photo": {
+  "title": "File:IC CE school bus (shortened chassis).jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/90/IC_CE_school_bus_%28shortened_chassis%29.jpg/1280px-IC_CE_school_bus_%28shortened_chassis%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:IC_CE_school_bus_(shortened_chassis).jpg",
+  "license": "CC BY-SA 2.0",
+  "artist": "Atomic Taco"
+ },
+ "tractor_photo": {
+  "title": "File:Ford 8N.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/Ford_8N.jpg/1280px-Ford_8N.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Ford_8N.jpg",
+  "license": "CC BY 2.0",
+  "artist": "Mulad"
+ },
+ "truck_photo": {
+  "title": "File:13-08-09-hongkong-by-RalfR-091.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/13-08-09-hongkong-by-RalfR-091.jpg/1280px-13-08-09-hongkong-by-RalfR-091.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:13-08-09-hongkong-by-RalfR-091.jpg",
+  "license": "CC BY 3.0",
+  "artist": "Ralf Roletschek"
+ },
+ "motorcycle_photo": {
+  "title": "File:2007-06-15 34 Moto Guzzi PE, Fg.-Nr. SP7032.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/32/2007-06-15_34_Moto_Guzzi_PE%2C_Fg.-Nr._SP7032.jpg/1280px-2007-06-15_34_Moto_Guzzi_PE%2C_Fg.-Nr._SP7032.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:2007-06-15_34_Moto_Guzzi_PE,_Fg.-Nr._SP7032.jpg",
+  "license": "CC BY-SA 2.0 de",
+  "artist": "Lothar Spurzem"
+ },
+ "car_sound": {
+  "title": "File:Car Horn.wav",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Car_Horn.wav?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:Car_Horn.wav",
+  "license": "CC0",
+  "artist": "15HPanska_Ruttner_Jan"
+ },
+ "taxi_sound": {
+  "title": "File:Speeding-car-horn doppler effect sample.ogg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/9/90/Speeding-car-horn_doppler_effect_sample.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:Speeding-car-horn_doppler_effect_sample.ogg",
+  "license": "CC BY-SA 3.0",
+  "artist": "Magickallwiz"
+ },
+ "police_sound": {
+  "title": "File:American police siren i.ogg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/a/ae/American_police_siren_i.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:American_police_siren_i.ogg",
+  "license": "Public domain",
+  "artist": "lezer"
+ },
+ "ambulance_sound": {
+  "title": "File:AmbulanceSound1.wav",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/4/41/AmbulanceSound1.wav?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:AmbulanceSound1.wav",
+  "license": "CC BY-SA 4.0",
+  "artist": "Demircimehmed"
+ },
+ "firetruck_sound": {
+  "title": "File:WWS Fireenginesiren.ogg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/4/47/WWS_Fireenginesiren.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:WWS_Fireenginesiren.ogg",
+  "license": "CC BY 4.0",
+  "artist": "Work With Sounds  / Konrad Gutkowski"
+ },
+ "bus_sound": {
+  "title": "File:WWS CityBusMANSG220horn.ogg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/3/39/WWS_CityBusMANSG220horn.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:WWS_CityBusMANSG220horn.ogg",
+  "license": "CC BY 4.0",
+  "artist": "Work With Sounds  / Technical Museum of Slovenia"
+ },
+ "tractor_sound": {
+  "title": "File:WWS TractorUrsusC328driving.ogg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/0/08/WWS_TractorUrsusC328driving.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:WWS_TractorUrsusC328driving.ogg",
+  "license": "CC BY 4.0",
+  "artist": "Work With Sounds  / Museum of Municipal Engineering"
+ },
+ "truck_sound": {
+  "title": "File:Trophy Truck and American V8s.ogg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Trophy_Truck_and_American_V8s.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:Trophy_Truck_and_American_V8s.ogg",
+  "license": "CC BY-SA 3.0",
+  "artist": "Edvvc"
+ },
+ "motorcycle_sound": {
+  "title": "File:Garelli Bonanza starten 01.ogg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/5/54/Garelli_Bonanza_starten_01.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:Garelli_Bonanza_starten_01.ogg",
+  "license": "CC BY-SA 3.0",
+  "artist": "Huhu Uet"
  }
 }

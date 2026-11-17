@@ -52,6 +52,9 @@ class Animal {
     required this.factAr,
     required this.color,
     required this.parts,
+    this.pagesDir = 'assets/ar/pages',
+    this.thumbsDir = 'assets/thumbs',
+    this.helps,
   });
 
   final String id;
@@ -68,9 +71,14 @@ class Animal {
   final String factAr;
   final Color color;
   final List<BodyPart> parts;
+  final String pagesDir;
+  final String thumbsDir;
 
-  String get pageAsset => 'assets/ar/pages/$id.jpg';
-  String get thumbAsset => 'assets/thumbs/$id.jpg';
+  /// "Who helps?" question for vehicles ({en, fr, ar}); null for animals.
+  final Map<String, String>? helps;
+
+  String get pageAsset => '$pagesDir/$id.jpg';
+  String get thumbAsset => '$thumbsDir/$id.jpg';
 
   String name(Lang lang) => switch (lang) { Lang.en => en, Lang.fr => fr, Lang.ar => ar };
   String fact(Lang lang) => switch (lang) { Lang.en => factEn, Lang.fr => factFr, Lang.ar => factAr };
@@ -78,7 +86,9 @@ class Animal {
   /// "le renard" / "la cigogne", from "du renard" / "de la cigogne".
   String get frDef => frOf.startsWith('du ') ? 'le ${frOf.substring(3)}' : frOf.replaceFirst('de ', '');
 
-  factory Animal.fromJson(Map<String, dynamic> j) => Animal(
+  factory Animal.fromJson(Map<String, dynamic> j,
+          {String pagesDir = 'assets/ar/pages', String thumbsDir = 'assets/thumbs'}) =>
+      Animal(
         id: j['id'] as String,
         page: j['page'] as int,
         en: j['en'] as String,
@@ -91,6 +101,9 @@ class Animal {
         factAr: j['fact_ar'] as String,
         color: Color(int.parse((j['color'] as String).substring(1), radix: 16) | 0xFF000000),
         parts: (j['parts'] as List).map((p) => BodyPart.fromJson(p as Map<String, dynamic>)).toList(),
+        pagesDir: pagesDir,
+        thumbsDir: thumbsDir,
+        helps: (j['helps'] as Map?)?.map((k, v) => MapEntry(k as String, v as String)),
       );
 
   static Future<List<Animal>> load([AssetBundle? bundle]) async {

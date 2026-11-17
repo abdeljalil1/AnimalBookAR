@@ -28,9 +28,10 @@ const q = new URLSearchParams(location.search);
 const SHOW_PARTS = q.has('parts');
 const only = q.get('only');
 const files = q.get('files'); // preview models not in animals.json yet: ?files=models/x.glb,...
+const data = q.get('data') || 'animals.json';
 const animals = files
   ? files.split(',').map((m) => ({ id: m.split('/').pop(), model: m, parts: [] }))
-  : (await (await fetch('animals.json')).json()).filter((a) => !only || only.split(',').includes(a.id));
+  : (await (await fetch(data)).json()).filter((a) => !only || only.split(',').includes(a.id));
 const loader = new GLTFLoader();
 const W = 360, H = 240;
 

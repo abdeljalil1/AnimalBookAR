@@ -9,7 +9,8 @@
   const log = (m) => { document.getElementById('log').textContent += '\n' + m; };
   const report = (path, body) => fetch(path, { method: 'POST', body });
   try {
-    const animals = await (await fetch('animals.json')).json();
+    const data = new URLSearchParams(location.search).get('data') || 'animals.json';
+    const animals = await (await fetch(data)).json();
     const images = await Promise.all(animals.map((a) => new Promise((ok, fail) => {
       const img = new Image();
       img.onload = () => ok(img);

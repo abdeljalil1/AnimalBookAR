@@ -42,8 +42,8 @@ class S {
   String levelTitle(int level) => _t('Level $level', 'Niveau $level', 'المستوى $level');
   String finishFirst(int level) =>
       _t('Finish level $level first', 'Termine d\'abord le niveau $level', 'أكمل المستوى $level أولًا');
-  String levelProgress(int level, int done, int total) => switch (level) {
-        1 => _t('$done of $total animals', '$done sur $total animaux', '$done من $total حيوانات'),
+  String levelProgress(int level, int done, int total, {bool vehicles = false}) => switch (level) {
+        1 => metOf(vehicles, done, total),
         2 => _t('$done of $total parts', '$done sur $total parties', '$done من $total أجزاء'),
         _ => _t('$done of $total answers', '$done sur $total réponses', '$done من $total إجابات'),
       };
@@ -152,11 +152,26 @@ class S {
   String get statTime => _t('Time in the camera', 'Temps avec la caméra', 'الوقت مع الكاميرا');
   String minutes(int m) => _t('$m min', '$m min', '$m دقيقة');
 
+  // Bookshelf
+  String get yourBooks => _t('Your books', 'Tes livres', 'كتبك');
+  String get comingSoon => _t('Coming soon', 'Bientôt', 'قريبًا');
+  String get lettersBook => _t('Letters', 'Les lettres', 'الحروف');
+  String get heritageBook => _t('Algeria', 'L\'Algérie', 'الجزائر');
+  String metOf(bool vehicles, int done, int total) => vehicles
+      ? _t('$done of $total vehicles', '$done sur $total véhicules', '$done من $total مركبات')
+      : _t('$done of $total animals', '$done sur $total animaux', '$done من $total حيوانات');
+  String get town => _t('TOWN', 'VILLE', 'المدينة');
+  String get statVehicles => _t('Vehicles met', 'Véhicules découverts', 'مركبات تعرّف عليها');
+  String get helpsGame => _t('Who helps?', 'Qui aide ?', 'من يساعد؟');
+  String get helpsHint => _t('Find who does the job', 'Trouve qui fait ce travail', 'اعثر على من يقوم بالعمل');
+  String get booksTitle => _t('Library', 'Bibliothèque', 'المكتبة');
+
   // Games
   String get games => _t('Games', 'Jeux', 'ألعاب');
   String get memoryGame => _t('Memory', 'Mémoire', 'الذاكرة');
-  String get memoryHint =>
-      _t('Match each animal to its name', 'Associe chaque animal à son nom', 'طابق كل حيوان مع اسمه');
+  String memoryHint({bool vehicles = false}) => vehicles
+      ? _t('Match each vehicle to its name', 'Associe chaque véhicule à son nom', 'طابق كل مركبة مع اسمها')
+      : _t('Match each animal to its name', 'Associe chaque animal à son nom', 'طابق كل حيوان مع اسمه');
   String get soundQuiz => _t('Sound quiz', 'Quiz des sons', 'اختبار الأصوات');
   String get soundQuizHint => _t('Who makes this sound?', 'Qui fait ce bruit ?', 'من يصدر هذا الصوت؟');
   String movesWin(int moves) => _t('Bravo! You found all the pairs in $moves moves.',

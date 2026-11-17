@@ -2,7 +2,7 @@
 """Compiles the book pages (book/pages/*.png) into app/assets/ar/targets.mind (MindAR image targets).
 
 Run after tool/make_pages.py whenever a page changes:
-    python3 tool/compile_targets.py
+    python3 tool/compile_targets.py [--book=cars]
 
 It serves app/assets/ar on a local port, opens tool/compile_targets.html in
 headless Chrome (MindAR's compiler runs in the browser) and saves the result.
@@ -15,9 +15,11 @@ import sys
 import threading
 from pathlib import Path
 
+from bookcfg import BOOK
+
 ROOT = Path(__file__).resolve().parent.parent
 AR = ROOT / "app" / "assets" / "ar"
-OUT = AR / "targets.mind"
+OUT = AR / BOOK.targets
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 done = threading.Event()
 result = {}
@@ -29,7 +31,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         if self.path.startswith("/__pages/"):
-            f = ROOT / "book" / "pages" / Path(self.path).name
+            f = BOOK.pages / Path(self.path).name
             self.send_response(200 if f.is_file() else 404)
             self.send_header("Content-Type", "image/png")
             self.end_headers()
@@ -64,7 +66,7 @@ def main():
     chrome = subprocess.Popen(
         [CHROME, "--headless=new", "--use-angle=swiftshader", "--enable-unsafe-swiftshader",
          f"--user-data-dir={profile}", "--remote-debugging-port=0",
-         f"http://127.0.0.1:{port}/__compile.html"],
+         f"http://127.0.0.1:{port}/__compile.html?data={BOOK.data}"],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         if not done.wait(timeout=600):

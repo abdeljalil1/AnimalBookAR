@@ -85,7 +85,11 @@ void main() {
   });
 
   test('version 1 progress moves into the first child', () async {
-    SharedPreferences.setMockInitialValues({'name': 'Yahia', 'met': ['horse'], 'quiz': ['horse=2']});
+    SharedPreferences.setMockInitialValues({
+      'name': 'Yahia',
+      'met': ['horse'],
+      'quiz': ['horse=2']
+    });
     final p = await Progress.load(animals);
     expect(p.children, hasLength(1));
     expect(p.name, 'Yahia');

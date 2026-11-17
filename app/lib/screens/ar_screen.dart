@@ -19,7 +19,7 @@ import '../speech.dart';
 /// met, body parts found, quiz answers) from the page's events.
 /// explore: find pages, body parts, feed; quiz: "Find the tail!";
 /// sound: "Who makes this sound?" (scan the right page).
-enum ArMode { explore, quiz, sound }
+enum ArMode { explore, quiz, sound, helps }
 
 class ArScreen extends StatefulWidget {
   const ArScreen({super.key, required this.progress, this.mode = ArMode.explore});
@@ -102,7 +102,7 @@ class _ArScreenState extends State<ArScreen> with WidgetsBindingObserver {
       case 'quiz':
         HapticFeedback.heavyImpact(); // right answer
         return animal == null ? null : p.markQuiz(animal);
-      case 'sound':
+      case 'sound' || 'helps':
         HapticFeedback.heavyImpact(); // right animal for the sound
         return p.markSoundQuiz();
       case 'hold':
@@ -142,6 +142,7 @@ class _ArScreenState extends State<ArScreen> with WidgetsBindingObserver {
 
   Uri get _pageUrl => _url!.replace(queryParameters: {
         'lang': widget.progress.lang.name,
+        'book': widget.progress.book.id,
         if (widget.progress.name.isNotEmpty) 'name': widget.progress.name,
         if (widget.mode != ArMode.explore) 'mode': widget.mode.name,
       });

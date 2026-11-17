@@ -29,8 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Progress get p => widget.progress;
 
-  void _openAr({bool quiz = false, bool soundQuiz = false}) {
-    final mode = soundQuiz ? ArMode.sound : (quiz ? ArMode.quiz : ArMode.explore);
+  void _openAr({bool quiz = false, bool soundQuiz = false, bool helps = false}) {
+    final mode = helps ? ArMode.helps : (soundQuiz ? ArMode.sound : (quiz ? ArMode.quiz : ArMode.explore));
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => ArScreen(progress: p, mode: mode)));
   }
 
@@ -91,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 14),
                   _Games(
                     progress: p,
+                    onHelps: p.book.vehicles ? () => _openAr(helps: true) : null,
                     onMemory: () =>
                         Navigator.of(context).push(MaterialPageRoute(builder: (_) => MemoryGame(progress: p))),
                     onSoundQuiz: () => _openAr(soundQuiz: true),
@@ -127,6 +128,13 @@ class _Header extends StatelessWidget {
     final s = progress.s;
     final name = progress.name.isEmpty ? s.explorer : progress.name;
     return Row(children: [
+      if (Navigator.of(context).canPop())
+        IconButton(
+          key: const Key('back-to-books'),
+          tooltip: s.booksTitle,
+          onPressed: () => Navigator.of(context).maybePop(),
+          icon: const Icon(Icons.arrow_back_rounded, color: ink),
+        ),
       CircleAvatar(
         radius: 22,
         backgroundColor: const Color(0xFFFFE3CC),
@@ -137,7 +145,8 @@ class _Header extends StatelessWidget {
       Expanded(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(s.hello(name), style: const TextStyle(color: Color(0xFF7A6A5C), fontSize: 13)),
-          Text(s.appTitle, style: const TextStyle(color: ink, fontSize: 19, fontWeight: FontWeight.w800, height: 1.15)),
+          Text(progress.book.title(progress.lang),
+              style: const TextStyle(color: ink, fontSize: 19, fontWeight: FontWeight.w800, height: 1.15)),
         ]),
       ),
       Container(
@@ -331,7 +340,8 @@ class _LevelBar extends StatelessWidget {
         ),
       ),
       const SizedBox(width: 10),
-      Text(s.levelProgress(level, done, total), style: const TextStyle(fontSize: 12, color: Color(0xFF7A6A5C))),
+      Text(s.levelProgress(level, done, total, vehicles: progress.book.vehicles),
+          style: const TextStyle(fontSize: 12, color: Color(0xFF7A6A5C))),
     ]);
   }
 }
@@ -367,10 +377,11 @@ class _ScanButton extends StatelessWidget {
 
 /// Two games: memory (no camera) and the sound quiz (camera).
 class _Games extends StatelessWidget {
-  const _Games({required this.progress, required this.onMemory, required this.onSoundQuiz});
+  const _Games({required this.progress, required this.onMemory, required this.onSoundQuiz, this.onHelps});
   final Progress progress;
   final VoidCallback onMemory;
   final VoidCallback onSoundQuiz;
+  final VoidCallback? onHelps; // vehicles: "Who helps?"
 
   @override
   Widget build(BuildContext context) {
@@ -403,12 +414,21 @@ class _Games extends StatelessWidget {
             ),
           ),
         );
-    return Row(children: [
-      tile(const Key('game-memory'), Icons.grid_view_rounded, s.memoryGame, s.memoryHint, const Color(0xFF7A6BB5),
-          onMemory),
-      const SizedBox(width: 10),
-      tile(const Key('game-sound'), Icons.hearing_rounded, s.soundQuiz, s.soundQuizHint, const Color(0xFF1F8A8A),
-          onSoundQuiz),
+    return Column(children: [
+      Row(children: [
+        tile(const Key('game-memory'), Icons.grid_view_rounded, s.memoryGame,
+            s.memoryHint(vehicles: progress.book.vehicles), const Color(0xFF7A6BB5), onMemory),
+        const SizedBox(width: 10),
+        tile(const Key('game-sound'), Icons.hearing_rounded, s.soundQuiz, s.soundQuizHint, const Color(0xFF1F8A8A),
+            onSoundQuiz),
+      ]),
+      if (onHelps != null) ...[
+        const SizedBox(height: 10),
+        Row(children: [
+          tile(const Key('game-helps'), Icons.volunteer_activism_rounded, s.helpsGame, s.helpsHint,
+              const Color(0xFFD9483B), onHelps!),
+        ]),
+      ],
     ]);
   }
 }

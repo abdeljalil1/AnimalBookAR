@@ -43,7 +43,12 @@ class ZooPath extends StatelessWidget {
         height: heightFor(animals.length) * k,
         child: Stack(clipBehavior: Clip.none, children: [
           Positioned.fill(
-            child: CustomPaint(painter: _ZooPainter(gateText: progress.s.zoo, ids: [for (final a in animals) a.id])),
+            child: CustomPaint(
+                painter: _ZooPainter(
+              gateText: progress.book.map == 'town' ? progress.s.town : progress.s.zoo,
+              ids: [for (final a in animals) a.id],
+              town: progress.book.map == 'town',
+            )),
           ),
           for (var i = 0; i < animals.length; i++)
             Positioned(
@@ -221,9 +226,10 @@ const _greyscale = <double>[
 // ---------------------------------------------------------------------------
 
 class _ZooPainter extends CustomPainter {
-  _ZooPainter({required this.gateText, required this.ids});
+  _ZooPainter({required this.gateText, required this.ids, this.town = false});
 
   final String gateText;
+  final bool town; // vehicles: roads and buildings instead of paths and enclosures
   final List<String> ids; // animal ids in path order, for their scenes
 
   static const _grass = Color(0xFFCDE8B0);
@@ -246,10 +252,10 @@ class _ZooPainter extends CustomPainter {
 
     // grass with lighter patches
     final bg = RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, w, h), const Radius.circular(28));
-    canvas.drawRRect(bg, Paint()..color = _grass);
+    canvas.drawRRect(bg, Paint()..color = town ? const Color(0xFFD5E3C6) : _grass);
     canvas.save();
     canvas.clipRRect(bg);
-    final patch = Paint()..color = _grassLight;
+    final patch = Paint()..color = town ? const Color(0xFFE3ECD6) : _grassLight;
     for (var y = 120.0, left = true; y < h; y += 140, left = !left) {
       canvas.drawOval(Rect.fromCenter(center: Offset(left ? 60 : 300, y), width: 150, height: 70), patch);
     }
@@ -265,28 +271,39 @@ class _ZooPainter extends CustomPainter {
     canvas.drawPath(
         path,
         Paint()
-          ..color = _sandEdge
+          ..color = town ? const Color(0xFF5E6670) : _sandEdge
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 44
+          ..strokeWidth = town ? 48 : 44
           ..strokeCap = StrokeCap.round);
     canvas.drawPath(
         path,
         Paint()
-          ..color = _sand
+          ..color = town ? const Color(0xFF7A838E) : _sand
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 37
+          ..strokeWidth = town ? 41 : 37
           ..strokeCap = StrokeCap.round);
-    // footprints along the middle
+    // footprints along the middle (zoo), a dashed white line (town)
     final dots = Paint()..color = _sandEdge.withOpacity(0.8);
+    final dash = Paint()
+      ..color = const Color(0xFFF4F4F4)
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
     final samples = <Offset>[];
     for (final m in path.computeMetrics()) {
       for (var d = 0.0; d < m.length; d += 6) {
         final t = m.getTangentForOffset(d);
         if (t != null) samples.add(t.position);
       }
-      for (var d = 20.0; d < m.length; d += 24) {
-        final t = m.getTangentForOffset(d);
-        if (t != null) canvas.drawCircle(t.position, 2.2, dots);
+      if (town) {
+        for (var d = 30.0; d + 12 < m.length; d += 28) {
+          final a = m.getTangentForOffset(d), b = m.getTangentForOffset(d + 12);
+          if (a != null && b != null) canvas.drawLine(a.position, b.position, dash);
+        }
+      } else {
+        for (var d = 20.0; d < m.length; d += 24) {
+          final t = m.getTangentForOffset(d);
+          if (t != null) canvas.drawCircle(t.position, 2.2, dots);
+        }
       }
     }
 
@@ -304,6 +321,10 @@ class _ZooPainter extends CustomPainter {
     // a little scene for each animal
     for (var i = 0; i < ids.length; i++) {
       final o = scenePos[i];
+      if (town) {
+        _townBuilding(canvas, ids[i], o);
+        continue;
+      }
       switch (ids[i]) {
         case 'horse' || 'sheep' || 'llama':
           _hay(canvas, o);
@@ -330,7 +351,11 @@ class _ZooPainter extends CustomPainter {
 
     // fences around the enclosures (the lower arc)
     for (final s in spots) {
-      _fence(canvas, s, 58);
+      if (town) {
+        _parking(canvas, s);
+      } else {
+        _fence(canvas, s, 58);
+      }
     }
 
     // trees and flowers wherever there is room (fixed seed: same zoo every time)
@@ -537,8 +562,8 @@ class _ZooPainter extends CustomPainter {
   }
 
   void _gate(Canvas c, Offset o) {
-    final post = Paint()..color = _wood;
-    final cap = Paint()..color = _woodDark;
+    final post = Paint()..color = town ? const Color(0xFF9AA3AD) : _wood;
+    final cap = Paint()..color = town ? const Color(0xFF6B7480) : _woodDark;
     for (final dx in [-78.0, 78.0]) {
       final p = o + Offset(dx, 6);
       _shadow(c, p + const Offset(0, 36), 14, 4);
@@ -554,11 +579,11 @@ class _ZooPainter extends CustomPainter {
     final sign = RRect.fromRectAndRadius(
         Rect.fromCenter(center: o + const Offset(0, -20), width: 190, height: 40), const Radius.circular(12));
     c.drawRRect(sign.shift(const Offset(0, 3)), Paint()..color = const Color(0x33000000));
-    c.drawRRect(sign, Paint()..color = const Color(0xFF8B5A2B));
+    c.drawRRect(sign, Paint()..color = town ? const Color(0xFF2F6FD0) : const Color(0xFF8B5A2B));
     c.drawRRect(
         sign.deflate(4),
         Paint()
-          ..color = const Color(0xFFB07A44)
+          ..color = town ? const Color(0xFFFFFFFF) : const Color(0xFFB07A44)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1.5);
     // Shrinks to fit ("حديقة الحيوانات" is longer than "ZOO"); no letter
@@ -588,6 +613,170 @@ class _ZooPainter extends CustomPainter {
     }
   }
 
+  // ---- town pieces ----
+  void _parking(Canvas c, Offset center) {
+    // a round paved stop with a kerb, like a little roundabout
+    final r = Rect.fromCircle(center: center + const Offset(0, 6), radius: 56);
+    c.drawArc(
+        r,
+        math.pi * 0.08,
+        math.pi * 0.84,
+        false,
+        Paint()
+          ..color = const Color(0xFFB9BEC4)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 5);
+    final stripe = Paint()
+      ..color = const Color(0xFFE04F3F)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5;
+    for (var a = math.pi * 0.08; a < math.pi * 0.9; a += math.pi * 0.16) {
+      c.drawArc(r, a, math.pi * 0.06, false, stripe);
+    }
+  }
+
+  void _house(Canvas c, Offset o,
+      {required double w,
+      required double h,
+      required Color wall,
+      required Color roof,
+      bool flat = false,
+      int windows = 2,
+      Color? door}) {
+    _shadow(c, o + Offset(0, h / 2 + 4), w * 0.55, 6);
+    final body = Rect.fromCenter(center: o, width: w, height: h);
+    c.drawRRect(RRect.fromRectAndRadius(body, const Radius.circular(3)), Paint()..color = wall);
+    if (flat) {
+      c.drawRect(Rect.fromLTWH(body.left - 3, body.top - 6, w + 6, 7), Paint()..color = roof);
+    } else {
+      final p = Path()
+        ..moveTo(body.left - 6, body.top + 1)
+        ..lineTo(o.dx, body.top - h * 0.5)
+        ..lineTo(body.right + 6, body.top + 1)
+        ..close();
+      c.drawPath(p, Paint()..color = roof);
+    }
+    final glass = Paint()..color = const Color(0xFFBFE3F5);
+    for (var i = 0; i < windows; i++) {
+      final x = body.left + w * (i + 0.5) / windows;
+      c.drawRect(Rect.fromCenter(center: Offset(x, body.top + h * 0.3), width: 9, height: 8), glass);
+    }
+    if (door != null) {
+      c.drawRect(Rect.fromLTWH(o.dx - 6, body.bottom - 14, 12, 14), Paint()..color = door);
+    }
+  }
+
+  void _text(Canvas c, String t, Offset o, double size, Color color) {
+    final tp = TextPainter(
+      text: TextSpan(text: t, style: TextStyle(color: color, fontSize: size, fontWeight: FontWeight.w900)),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(c, o - Offset(tp.width / 2, tp.height / 2));
+  }
+
+  void _townBuilding(Canvas c, String id, Offset o) {
+    switch (id) {
+      case 'firetruck': // fire station: red, two big doors
+        _house(c, o,
+            w: 66, h: 38, wall: const Color(0xFFD9473A), roof: const Color(0xFF8E2A22), flat: true, windows: 0);
+        for (final dx in [-15.0, 15.0]) {
+          c.drawRect(Rect.fromCenter(center: o + Offset(dx, 6), width: 24, height: 24),
+              Paint()..color = const Color(0xFFF2D3CF));
+          for (var y = -3.0; y < 18; y += 5) {
+            c.drawLine(o + Offset(dx - 12, y), o + Offset(dx + 12, y), Paint()..color = const Color(0xFFC9A9A4));
+          }
+        }
+        c.drawCircle(o + const Offset(0, -15), 5, Paint()..color = const Color(0xFFFFD166));
+      case 'police': // police station: blue, flat, a light on top
+        _house(c, o,
+            w: 62,
+            h: 36,
+            wall: const Color(0xFF3E6FB8),
+            roof: const Color(0xFF223F6B),
+            flat: true,
+            windows: 3,
+            door: const Color(0xFF223F6B));
+        c.drawRect(Rect.fromCenter(center: o + const Offset(0, -26), width: 10, height: 7),
+            Paint()..color = const Color(0xFF5BB4FF));
+      case 'ambulance': // hospital: white, red cross / H
+        _house(c, o,
+            w: 60,
+            h: 46,
+            wall: const Color(0xFFF6F6F6),
+            roof: const Color(0xFFB9BEC4),
+            flat: true,
+            windows: 3,
+            door: const Color(0xFF9BC3E0));
+        c.drawCircle(o + const Offset(0, -2), 9, Paint()..color = const Color(0xFFE04F3F));
+        _text(c, 'H', o + const Offset(0, -2), 12, Colors.white);
+      case 'bus': // school: yellow with a clock and a flag
+        _house(c, o,
+            w: 64,
+            h: 36,
+            wall: const Color(0xFFF2C14E),
+            roof: const Color(0xFFB5452F),
+            windows: 3,
+            door: const Color(0xFF8A5A2E));
+        c.drawCircle(o + const Offset(0, -26), 6, Paint()..color = Colors.white);
+        c.drawLine(o + const Offset(0, -26), o + const Offset(0, -30), Paint()..color = const Color(0xFF333333));
+        c.drawLine(o + const Offset(0, -26), o + const Offset(3, -26), Paint()..color = const Color(0xFF333333));
+      case 'tractor': // farm: red barn and a little field
+        for (var i = 0; i < 4; i++) {
+          c.drawRect(Rect.fromLTWH(o.dx - 52, o.dy + 22 + i * 5.0, 104, 3), Paint()..color = const Color(0xFFB98A4E));
+        }
+        _house(c, o, w: 48, h: 36, wall: const Color(0xFFB5452F), roof: const Color(0xFF6E2A1F), windows: 0);
+        final x = Paint()
+          ..color = Colors.white
+          ..strokeWidth = 2;
+        c.drawRect(Rect.fromCenter(center: o + const Offset(0, 6), width: 18, height: 22),
+            Paint()..color = const Color(0xFF6E2A1F));
+        c.drawLine(o + const Offset(-9, -5), o + const Offset(9, 17), x);
+        c.drawLine(o + const Offset(9, -5), o + const Offset(-9, 17), x);
+      case 'taxi': // taxi stand: a sign and a shelter
+        _house(c, o,
+            w: 54, h: 26, wall: const Color(0xFFF7F1E1), roof: const Color(0xFF333333), flat: true, windows: 2);
+        c.drawRRect(
+            RRect.fromRectAndRadius(
+                Rect.fromCenter(center: o + const Offset(0, -24), width: 40, height: 14), const Radius.circular(3)),
+            Paint()..color = const Color(0xFFFFC928));
+        _text(c, 'TAXI', o + const Offset(0, -24), 9, const Color(0xFF222222));
+      case 'truck': // warehouse with boxes
+        _house(c, o, w: 70, h: 36, wall: const Color(0xFF9AA3AD), roof: const Color(0xFF5E6670), windows: 0);
+        c.drawRect(Rect.fromCenter(center: o + const Offset(-8, 6), width: 30, height: 24),
+            Paint()..color = const Color(0xFF6B7480));
+        for (final d in [const Offset(26, 14), const Offset(38, 14), const Offset(32, 4)]) {
+          c.drawRect(Rect.fromCenter(center: o + d, width: 11, height: 10), Paint()..color = const Color(0xFFC98A4E));
+        }
+      case 'motorcycle': // petrol station: canopy and a pump
+        c.drawRect(Rect.fromCenter(center: o + const Offset(0, -16), width: 70, height: 9),
+            Paint()..color = const Color(0xFF2E9E6A));
+        for (final dx in [-30.0, 30.0]) {
+          c.drawRect(Rect.fromCenter(center: o + Offset(dx, 4), width: 4, height: 32),
+              Paint()..color = const Color(0xFFB9BEC4));
+        }
+        _shadow(c, o + const Offset(0, 22), 30, 5);
+        c.drawRRect(
+            RRect.fromRectAndRadius(
+                Rect.fromCenter(center: o + const Offset(0, 8), width: 16, height: 24), const Radius.circular(3)),
+            Paint()..color = const Color(0xFFE04F3F));
+        c.drawRect(
+            Rect.fromCenter(center: o + const Offset(0, 2), width: 10, height: 6), Paint()..color = Colors.white);
+      default: // car: a house with a garage
+        _house(c, o + const Offset(-10, 0),
+            w: 42,
+            h: 34,
+            wall: const Color(0xFFF4E3C3),
+            roof: const Color(0xFFB5452F),
+            windows: 2,
+            door: const Color(0xFF8A5A2E));
+        c.drawRect(Rect.fromCenter(center: o + const Offset(24, 6), width: 26, height: 22),
+            Paint()..color = const Color(0xFFE9D3AB));
+        c.drawRect(Rect.fromCenter(center: o + const Offset(24, 9), width: 20, height: 16),
+            Paint()..color = const Color(0xFFB9BEC4));
+    }
+  }
+
   @override
-  bool shouldRepaint(covariant _ZooPainter old) => old.gateText != gateText || old.ids.join() != ids.join();
+  bool shouldRepaint(covariant _ZooPainter old) =>
+      old.gateText != gateText || old.town != town || old.ids.join() != ids.join();
 }
