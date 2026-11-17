@@ -7,6 +7,9 @@
 //   - every page is found in order, and lost when it leaves the camera,
 //   - the animal's sound plays when its page is found,
 //   - dragging turns the animal and the mouse wheel resizes it,
+//   - body-part dots show on the animal; tapping one shows its name,
+//   - Hold keeps the stork on screen after its page leaves the camera,
+//     and releasing Hold goes back to scanning,
 //   - there are no page errors,
 // and saves screenshots to tool/test-output/.
 //
@@ -41,7 +44,10 @@ function makeVideo(dir) {
       '-pix_fmt', 'yuv420p', '-t', '6', join(dir, `${id}.mp4`));
   }
   ff('-f', 'lavfi', '-i', `${desk}:d=3`, '-pix_fmt', 'yuv420p', join(dir, 'blank.mp4'));
-  writeFileSync(join(dir, 'list.txt'), PAGES.flatMap((p) => [p, 'blank']).map((n) => `file ${n}.mp4`).join('\n'));
+  ff('-f', 'lavfi', '-i', `${desk}:d=12`, '-pix_fmt', 'yuv420p', join(dir, 'blank-long.mp4')); // room for the Hold test
+  const clips = PAGES.flatMap((p) => [p, 'blank']);
+  clips[clips.length - 1] = 'blank-long';
+  writeFileSync(join(dir, 'list.txt'), clips.map((n) => `file ${n}.mp4`).join('\n'));
   const y4m = join(dir, 'book.y4m');
   ff('-f', 'concat', '-safe', '0', '-i', join(dir, 'list.txt'), '-pix_fmt', 'yuv420p', '-f', 'yuv4mpegpipe', y4m);
   return y4m;
@@ -115,6 +121,13 @@ async function main() {
   await page.send('Page.navigate', { url });
 
   const evalJs = async (expr) => (await page.send('Runtime.evaluate', { expression: expr, returnByValue: true })).result.value;
+  const tap = async (x, y) => {
+    await page.send('Input.dispatchMouseEvent', { type: 'mousePressed', x, y, button: 'left', clickCount: 1 });
+    await page.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x, y, button: 'left', clickCount: 1 });
+  };
+  const centerOf = (selector) => evalJs(`(() => { const e = document.querySelector(${JSON.stringify(selector)});
+    if (!e) return null; const r = e.getBoundingClientRect(); return JSON.stringify({ x: r.x + r.width / 2, y: r.y + r.height / 2 }); })()`)
+    .then((s) => (s ? JSON.parse(s) : null));
   const shot = async (name) => {
     const { data } = await page.send('Page.captureScreenshot', { format: 'png' });
     writeFileSync(join(OUT, name), Buffer.from(data, 'base64'));
@@ -123,7 +136,7 @@ async function main() {
 
   // Watch the state for up to 60 s and note the order pages were found in.
   const seen = [];
-  let last = null, st = null, gestureDone = false;
+  let last = null, st = null, gestureDone = false, partsDone = false, holdDone = false;
   const t0 = Date.now();
   while (Date.now() - t0 < 120000) {
     await sleep(250);
@@ -137,6 +150,45 @@ async function main() {
     }
     if (!st.found && last) seen.push('lost');
     last = st.found;
+
+    if (st.found === 'horse' && !partsDone) {
+      partsDone = true;
+      await sleep(400);
+      const parts = await evalJs('JSON.stringify(window.__arState.parts)').then(JSON.parse);
+      check(parts.visible.length >= 2, `body-part dots show on the horse (${parts.visible.join(', ')})`);
+      const dot = await centerOf('.part-dot:not(.hidden)');
+      if (dot) {
+        await tap(dot.x, dot.y);
+        await sleep(400);
+        const sel = await evalJs('JSON.stringify({ s: window.__arState.parts.selected, label: !document.getElementById("part-label").classList.contains("hidden"), en: document.getElementById("part-en").textContent, ar: document.getElementById("part-ar").textContent })').then(JSON.parse);
+        check(sel.s && sel.label && sel.en && sel.ar, `tapping a dot names the part (${sel.en} / ${sel.ar})`);
+        const sounds = await evalJs('window.__arState.soundsPlayed');
+        check(sounds === 1, `tapping a dot selects it without replaying the sound (${sounds} sound)`);
+        await shot('horse-part.png');
+      } else {
+        check(false, 'a visible body-part dot to tap');
+      }
+    }
+
+    if (st.found === 'stork' && !holdDone) {
+      holdDone = true;
+      await sleep(700);
+      const btn = await centerOf('#btn-hold');
+      await tap(btn.x, btn.y);
+      await sleep(300);
+      const h1 = await evalJs('JSON.stringify(window.__arState)').then(JSON.parse);
+      check(h1.phase === 'held' && h1.held, `Hold turns on (${h1.phase})`);
+      await sleep(5500); // the stork page leaves the camera meanwhile
+      const h2 = await evalJs('JSON.stringify(window.__arState)').then(JSON.parse);
+      check(h2.phase === 'held' && h2.found === 'stork' && h2.parts.visible.length > 0,
+        `the stork stays on screen after its page leaves (${h2.phase}, ${h2.parts.visible.length} parts in view)`);
+      await shot('stork-held.png');
+      await tap(btn.x, btn.y); // release
+      await sleep(1000);
+      const h3 = await evalJs('JSON.stringify(window.__arState)').then(JSON.parse);
+      check(h3.phase === 'scanning' && !h3.held, `releasing Hold goes back to scanning (${h3.phase})`);
+      continue;
+    }
 
     if (st.found === 'horse' && !gestureDone) {
       gestureDone = true;

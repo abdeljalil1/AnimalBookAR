@@ -47,11 +47,13 @@ html, body {
 #card .fr { font-size: 20px; font-weight: 700; }
 #card .ar { font-size: 24px; font-weight: 700; margin-left: auto; }
 #card .fact { margin: 6px 0 10px; font-size: 15px; line-height: 1.35; }
-#card .buttons { display: flex; gap: 8px; }
+#card .buttons { display: flex; gap: 6px; }
 #card button {
-  flex: 1; border: 0; border-radius: 14px; padding: 12px 6px; font-size: 16px; font-weight: 700;
+  flex: 1; border: 0; border-radius: 14px; padding: 7px 2px 8px; font-size: 13px; font-weight: 700;
   background: var(--c, #ffb703); color: #fff; touch-action: manipulation;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
 }
+#card button span { font-size: 20px; line-height: 1.1; }
 #card button:active { transform: scale(.96); }
 #card .gesture-hint { margin: 8px 0 0; font-size: 12px; color: #666; text-align: center; }
 
@@ -59,4 +61,43 @@ html, body {
   position: fixed; top: calc(6px + env(safe-area-inset-top)); right: 6px; z-index: 6;
   background: rgba(0, 0, 0, .6); font: 11px/1.3 monospace; padding: 4px 6px; border-radius: 6px;
   white-space: pre;
+}
+
+/* ---- body parts ---- */
+#parts { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+.part-dot {
+  position: absolute; left: -11px; top: -11px; width: 22px; height: 22px; padding: 0;
+  border-radius: 50%; border: 3px solid #fff; background: var(--c, #ffb703);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .5); pointer-events: none; will-change: transform;
+}
+.part-dot.selected { background: #fff; border-color: var(--c, #ffb703); animation: beat 0.9s ease-in-out infinite; }
+@keyframes beat { 50% { box-shadow: 0 0 0 8px rgba(255, 255, 255, .45); } }
+
+#aim {
+  position: fixed; left: 50%; top: 42%; width: 46px; height: 46px; margin: -23px 0 0 -23px;
+  border: 3px solid rgba(255, 255, 255, .85); border-radius: 50%; z-index: 2; pointer-events: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .25), inset 0 0 0 1px rgba(0, 0, 0, .25);
+  transition: transform .15s, border-color .15s;
+}
+#aim span { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 50%; background: #fff; }
+#aim.on { border-color: var(--c, #ffb703); transform: scale(1.15); }
+
+/* zero-size anchor moved to the part by JS; the bubble sits above it */
+#part-label { position: fixed; left: 0; top: 0; width: 0; height: 0; z-index: 3; pointer-events: none; will-change: transform; }
+#part-label .bubble {
+  position: absolute; left: 0; bottom: 20px; transform: translateX(-50%); white-space: nowrap; text-align: center;
+  background: #fff; border: 3px solid var(--c, #ffb703); border-radius: 14px; padding: 3px 14px 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .35);
+}
+#part-label .bubble::after { /* pointer down to the dot */
+  content: ''; position: absolute; left: 50%; bottom: -12px; margin-left: -9px;
+  border: 9px solid transparent; border-top-color: var(--c, #ffb703); border-bottom: 0;
+}
+#part-label .en { display: block; color: var(--c, #222); font-weight: 900; font-size: 22px; }
+#part-label .row { display: block; color: #333; font-weight: 700; font-size: 16px; }
+
+#held-badge {
+  position: fixed; top: calc(14px + env(safe-area-inset-top)); left: 64px; right: 12px; z-index: 4;
+  background: rgba(0, 0, 0, .6); color: #fff; font-size: 14px; font-weight: 600; text-align: center;
+  padding: 8px 10px; border-radius: 14px;
 }

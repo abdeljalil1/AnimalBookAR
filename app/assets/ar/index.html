@@ -24,6 +24,17 @@
     <p id="error-text">The camera could not start.</p>
   </div>
 
+  <!-- body parts: dots on the animal, the aim target, the selected part's name -->
+  <div id="parts" class="hidden"></div>
+  <div id="aim" class="hidden"><span></span></div>
+  <div id="part-label" class="hidden">
+    <div class="bubble">
+      <span id="part-en" class="en"></span>
+      <span class="row"><span id="part-fr"></span> · <span id="part-ar" dir="rtl"></span></span>
+    </div>
+  </div>
+  <div id="held-badge" class="hidden">✋ Holding: turn the phone to look around</div>
+
   <div id="card" class="hidden">
     <div class="names">
       <span id="name-en" class="en"></span>
@@ -32,11 +43,12 @@
     </div>
     <p id="fact" class="fact"></p>
     <div class="buttons">
-      <button id="btn-sound" aria-label="Play the sound">🔊 Sound</button>
-      <button id="btn-move" aria-label="Change the animation">🐾 Move</button>
-      <button id="btn-reset" aria-label="Reset position">↺ Reset</button>
+      <button id="btn-sound" aria-label="Play the sound"><span>🔊</span>Sound</button>
+      <button id="btn-move" aria-label="Change the animation"><span>🐾</span>Move</button>
+      <button id="btn-hold" aria-label="Keep the animal when the page leaves the camera"><span>✋</span>Hold</button>
+      <button id="btn-reset" aria-label="Reset position"><span>↺</span>Reset</button>
     </div>
-    <p class="gesture-hint">1 finger: turn · 2 fingers: pinch to resize, drag to move</p>
+    <p class="gesture-hint">Aim the ◎ at a body part · 1 finger: turn and tip · 2 fingers: zoom, move</p>
   </div>
 
   <div id="debug" class="hidden"></div>

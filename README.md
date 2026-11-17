@@ -3,7 +3,12 @@
 A phone app for children: point the camera at an animal page in the book and a
 3D animated animal appears standing on the page. It plays the animal's sound,
 shows its name in English, French and Arabic with a fun fact, and the child can
-turn it, resize it and move it with their fingers.
+turn it, tip it, zoom in and move it with their fingers.
+
+It also teaches the body parts: dots mark the head, ears, tail, legs, wings or
+beak. Aim the circle in the middle of the screen at one (or tap it) to see its
+name in the three languages. **Hold** keeps the animal on screen when the page
+leaves the camera, so the child can turn the phone and look around it.
 
 Five animals: horse, fox, flamingo, parrot, stork.
 
@@ -16,7 +21,7 @@ Flutter app (Android + iOS)
                                └─ assets/ar/index.html
                                     ├─ MindAR: finds the page in the camera image (image tracking)
                                     ├─ three.js: draws and animates the 3D animal on the page
-                                    └─ gestures, sound, name card
+                                    └─ gestures, sound, name card, body parts, Hold
 ```
 
 Why a web AR engine inside Flutter rather than ARCore/ARKit:
@@ -37,10 +42,10 @@ the right behaviour.
 |---|---|
 | `app/` | Flutter app (`com.synapexa.animal_book_ar`) |
 | `app/assets/ar/` | AR page: `index.html`, `ar.js`, `ar.css`, `animals.json`, `targets.mind`, models, sounds, page JPEGs, vendored MindAR + three.js |
-| `app/assets/ar/animals.json` | **The list of animals.** Names, facts, model, sound, colour, size. Read by the app, the AR page and the page generator |
+| `app/assets/ar/animals.json` | **The list of animals.** Names, facts, model, sound, colour, size, body parts. Read by the app, the AR page and the page generator |
 | `book/animal-book.pdf` | Printable book, A4, one animal per page |
 | `book/pages/*.png` | The same pages as images (also what the tracker learns) |
-| `tool/` | Page generator, target compiler, end-to-end AR test, source photos |
+| `tool/` | Page generator, target compiler, model inspector (for placing body parts), end-to-end AR test, source photos |
 | `CREDITS.md` | Authors and licences of the photos, sounds and models |
 
 ## Try it
@@ -57,9 +62,19 @@ cd app && flutter run
    page is in view. Hold the phone at an angle, like reading, to see the animal
    stand up.
 
-Gestures: tap the animal to hear it · one finger left/right to turn it · two
-fingers to pinch (resize) and drag (move on the page) · **Move** changes the
-animation (the fox walks and runs, the others twirl) · **Reset**.
+Gestures: tap the animal to hear it · one finger left/right to turn it, up/down
+to tip it (see its back or belly) · two fingers to pinch (zoom up to 5×) and drag
+(move on the page) · **Move** changes the animation (the fox walks and runs, the
+others twirl) · **Reset**.
+
+Body parts: the dots on the side facing the camera show. Move the phone so a dot
+comes into the ◎ circle, or tap a dot: its name appears (e.g. "Head · Tête · رأس")
+and the phone gives a small vibration.
+
+**✋ Hold** keeps the animal where it is when the page leaves the camera. Turning
+the phone then looks around it (gyroscope). The phone can't track you walking
+(that would need ARCore/ARKit), so to see the other side turn it with a finger.
+**📖 Page** goes back to the book.
 
 ## Add or change an animal
 
@@ -79,6 +94,20 @@ python3 tool/compile_targets.py
 `size` is the animal's length as a share of the page width, `lift` raises
 flying animals above the page, `turn` is the facing angle in degrees.
 
+`parts` lists the body parts: names in the three languages and `at`, the spot as
+`[x, y, z]` fractions (0 to 1) of the model's bounding box. The app snaps each
+spot to the nearest point of the model, so the dot follows the animation. To
+find the spots, draw the models over a grid (side and top views), and check the
+parts as red dots:
+
+```bash
+python3 tool/inspect_models.py --only=horse,fox
+```
+
+```bash
+python3 tool/inspect_models.py --parts --only=horse,fox
+```
+
 Any printed page can become a target. To use an existing book instead of these
 pages, put photos of its pages in `book/pages/<id>.png` and run only
 `compile_targets.py`. Pages with lots of detail track best; plain or repetitive
@@ -93,7 +122,9 @@ node tool/test_web_ar.mjs
 This runs the AR page in headless Chrome with a fake camera playing a video of
 the five pages on a desk. It checks that every page is found in order and lost
 when it leaves the view, a sound plays for each, all models load, dragging
-turns and the wheel resizes. Screenshots go to `tool/test-output/`. Needs Chrome
+turns and the wheel resizes, body-part dots show and tapping one names it
+(without replaying the sound), and Hold keeps the stork on screen after its page
+leaves, then goes back to scanning when released. Screenshots go to `tool/test-output/`. Needs Chrome
 and ffmpeg.
 
 ```bash
@@ -103,7 +134,7 @@ cd app && flutter test
 Covers the animal list, the home screen and the local server (content types,
 byte ranges, 404s).
 
-## What has been verified (2026-11-16)
+## What has been verified (2026-11-16/17)
 
 - **Page tracking, 3D, sound, gestures:** `tool/test_web_ar.mjs` passes in
   headless Chrome. All 5 pages are found and lost in order, and each animal's sound plays.
@@ -118,14 +149,19 @@ byte ranges, 404s).
   horse page shown on a laptop screen was found within seconds. The horse
   appeared galloping on the page, the card showed, and the sound played. About 20 fps while
   scanning, 59 fps while tracking.
+- **Same phone, body parts and Hold:** with the fox page (shown on a second
+  phone), the fox appeared with its ear, leg and paw dots, and aiming picked out
+  leg, paw and ear. The gyroscope is active. Hold kept the fox in place while
+  the phone turned (checked by the user).
 
 ## Known limits / next steps
 
-- Not yet tried: a printed page, the other four pages on the phone, an iPhone.
+- Not yet tried: a printed page, the horse/flamingo/parrot/stork body parts
+  on the phone, an iPhone (including the iOS gyroscope permission for Hold).
 - The test emulator is `AnimalAR_API_35` (camera = virtual scene). To debug the
   WebView, run `adb forward tcp:9333 localabstract:webview_devtools_remote_<pid>`
   and open `chrome://inspect`.
 - The horse and birds are prototype models from the three.js examples (see
   CREDITS.md). Replace them before publishing.
 - The app UI is English; the animal names and facts are in English, French and Arabic.
-  Ideas: speak the name aloud, a quiz mode, more animals, an Arabic UI.
+  Ideas: speak the names aloud, a quiz ("find the tail!"), more animals, an Arabic UI.

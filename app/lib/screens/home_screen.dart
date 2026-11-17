@@ -98,7 +98,9 @@ class _HowTo extends StatelessWidget {
     const steps = [
       (Icons.menu_book, 'Open the book at an animal page'),
       (Icons.photo_camera, 'Point the camera at the whole page'),
-      (Icons.touch_app, 'Tap the animal to hear it. Drag to turn it, pinch to resize'),
+      (Icons.touch_app, 'Tap the animal to hear it. Drag to turn it, pinch to zoom'),
+      (Icons.center_focus_strong, 'Aim the circle at its head, tail or wings to learn their names'),
+      (Icons.back_hand, 'Tap Hold to keep the animal and look around it'),
     ];
     return Card(
       color: Colors.white,

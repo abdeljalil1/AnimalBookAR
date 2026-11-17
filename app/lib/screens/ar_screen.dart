@@ -66,7 +66,12 @@ class _ArScreenState extends State<ArScreen> with WidgetsBindingObserver {
 
   void _onArEvent(List<dynamic> args) {
     final event = args.isNotEmpty && args.first is Map ? args.first as Map : const {};
-    if (event['type'] == 'found') HapticFeedback.mediumImpact();
+    switch (event['type']) {
+      case 'found' || 'hold':
+        HapticFeedback.mediumImpact();
+      case 'part':
+        HapticFeedback.selectionClick(); // a body part was selected
+    }
     if (kDebugMode) debugPrint('AR event: $event');
   }
 
@@ -124,12 +129,14 @@ class _ArScreenState extends State<ArScreen> with WidgetsBindingObserver {
             controller.addJavaScriptHandler(handlerName: 'arEvent', callback: _onArEvent);
           },
           onPermissionRequest: (controller, request) async {
-            // Only our own page may use the camera, and only the camera.
+            // Only our own page, and only the camera and (iOS) the gyroscope
+            // that Hold uses to look around.
             final ours = request.origin.host == '127.0.0.1';
-            final cameraOnly = request.resources.every((r) => r == PermissionResourceType.CAMERA);
+            final allowed = request.resources.every(
+                (r) => r == PermissionResourceType.CAMERA || r == PermissionResourceType.DEVICE_ORIENTATION_AND_MOTION);
             return PermissionResponse(
               resources: request.resources,
-              action: ours && cameraOnly ? PermissionResponseAction.GRANT : PermissionResponseAction.DENY,
+              action: ours && allowed ? PermissionResponseAction.GRANT : PermissionResponseAction.DENY,
             );
           },
           onConsoleMessage: (controller, message) {

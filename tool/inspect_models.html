@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Model inspector</title>
+<style>
+  body { margin: 0; background: #fff; font: 12px monospace; }
+  .row { display: flex; gap: 8px; padding: 6px; align-items: flex-start; }
+  .cell { position: relative; }
+  .cell b { position: absolute; left: 4px; top: 2px; }
+  canvas { border: 1px solid #ccc; display: block; }
+</style>
+</head>
+<body>
+<!--
+  Draws every animal in its first animated pose, from the side (looking down
+  -X: Z across, Y up) and from above (Z across, X down), over a 10% grid of its
+  bounding box. Used to place body parts in animals.json: a part's "at" is
+  [x, y, z] as fractions (0..1) of the posed bounding box.
+  Serve app/assets/ar and open /__inspect.html (see tool/inspect_models.py).
+  ?parts draws the parts from animals.json as red dots, to check them.
+-->
+<div id="rows"></div>
+<script type="module">
+import * as THREE from './vendor/three/three.module.js';
+import { GLTFLoader } from './vendor/three/addons/loaders/GLTFLoader.js';
+const q = new URLSearchParams(location.search);
+const SHOW_PARTS = q.has('parts');
+const only = q.get('only');
+const animals = (await (await fetch('animals.json')).json()).filter((a) => !only || only.split(',').includes(a.id));
+const loader = new GLTFLoader();
+const W = 360, H = 240;
+
+function view(scene, box, axis) {
+  const size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+  const span = Math.max(size.x, size.y, size.z) * 0.6;
+  const cam = new THREE.OrthographicCamera(-span * W / H, span * W / H, span, -span, -1e5, 1e5);
+  if (axis === 'side') { cam.position.set(c.x + 1e3, c.y, c.z); cam.up.set(0, 1, 0); }
+  else { cam.position.set(c.x, c.y + 1e3, c.z); cam.up.set(-1, 0, 0); }
+  cam.lookAt(c);
+  const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  r.setSize(W, H); r.setClearColor(0xffffff);
+  r.render(scene, cam);
+  return { canvas: r.domElement, cam };
+}
+
+function grid(ctx, cam, box, axis) {
+  const p = (x, y, z) => { const v = new THREE.Vector3(x, y, z).project(cam); return [(v.x + 1) / 2 * W, (1 - v.y) / 2 * H]; };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  ctx.font = '9px monospace';
+  for (let i = 0; i <= 10; i++) {
+    const t = i / 10;
+    ctx.strokeStyle = i % 5 ? 'rgba(0,120,255,.18)' : 'rgba(0,120,255,.5)';
+    const z = lerp(box.min.z, box.max.z, t);
+    const a = axis === 'side' ? p(box.min.x, box.min.y, z) : p(box.min.x, box.max.y, z);
+    const b = axis === 'side' ? p(box.min.x, box.max.y, z) : p(box.max.x, box.max.y, z);
+    ctx.beginPath(); ctx.moveTo(...a); ctx.lineTo(...b); ctx.stroke();
+    ctx.fillStyle = '#05f'; ctx.fillText('z' + t.toFixed(1), a[0] - 8, H - 2);
+    const other = axis === 'side' ? [box.min.y, box.max.y] : [box.min.x, box.max.x];
+    const o = lerp(other[0], other[1], t);
+    const c = axis === 'side' ? p(box.min.x, o, box.min.z) : p(o, box.max.y, box.min.z);
+    const d = axis === 'side' ? p(box.min.x, o, box.max.z) : p(o, box.max.y, box.max.z);
+    ctx.beginPath(); ctx.moveTo(...c); ctx.lineTo(...d); ctx.stroke();
+    ctx.fillText((axis === 'side' ? 'y' : 'x') + t.toFixed(1), 2, c[1] + 3);
+  }
+}
+
+for (const a of animals) {
+  const gltf = await loader.loadAsync(a.model);
+  const model = gltf.scene;
+  if (gltf.animations.length) {
+    const mixer = new THREE.AnimationMixer(model);
+    mixer.clipAction(gltf.animations[0]).play();
+    mixer.update(0);
+  }
+  model.updateMatrixWorld(true);
+  model.traverse((o) => { if (o.isSkinnedMesh) o.skeleton.update(); });
+  const box = new THREE.Box3().setFromObject(model, true);
+  const scene = new THREE.Scene();
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x666666, 3));
+  scene.add(model);
+  if (SHOW_PARTS) {
+    const size = box.getSize(new THREE.Vector3());
+    for (const part of a.parts || []) {
+      const dot = new THREE.Mesh(new THREE.SphereGeometry(Math.max(size.x, size.y, size.z) * 0.025),
+        new THREE.MeshBasicMaterial({ color: 0xff0000, depthTest: false }));
+      dot.position.set(box.min.x + part.at[0] * size.x, box.min.y + part.at[1] * size.y, box.min.z + part.at[2] * size.z);
+      dot.renderOrder = 9;
+      scene.add(dot);
+    }
+  }
+  const row = document.createElement('div'); row.className = 'row';
+  for (const axis of ['side', 'top']) {
+    const { canvas, cam } = view(scene, box, axis);
+    const out = document.createElement('canvas'); out.width = W; out.height = H;
+    const ctx = out.getContext('2d'); ctx.drawImage(canvas, 0, 0);
+    grid(ctx, cam, box, axis);
+    const cell = document.createElement('div'); cell.className = 'cell';
+    cell.append(out);
+    const label = document.createElement('b'); label.textContent = `${a.id} ${axis}`; cell.append(label);
+    row.append(cell);
+  }
+  document.getElementById('rows').append(row);
+}
+document.title = 'done';
+</script>
+</body>
+</html>

@@ -8,8 +8,7 @@ import 'package:flutter/services.dart';
 /// one, so the AR page is loaded from here rather than from a file:// URL.
 /// Supports byte ranges because iOS will not play audio without them.
 class ArAssetServer {
-  ArAssetServer({this.root = 'assets/ar/', AssetBundle? bundle})
-      : _bundle = bundle ?? rootBundle;
+  ArAssetServer({this.root = 'assets/ar/', AssetBundle? bundle}) : _bundle = bundle ?? rootBundle;
 
   final String root;
   final AssetBundle _bundle;
