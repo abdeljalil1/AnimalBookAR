@@ -5,7 +5,7 @@
 
 Run after tool/make_learning_books.py. It opens tool/make_shapes.html in
 headless Chrome (three.js builds the shapes there) and writes:
-  app/assets/ar/books/letters_*/models/*.glb   one extruded letter per page
+  app/assets/ar/books/letters_ar/models/*.glb  one extruded letter per page
   app/assets/ar/books/colors/models/*.glb      four objects in each colour
   app/assets/ar/books/*/thumbs/*.jpg           thumbnails for the map
   tool/photos/colors/*.png                     the colour pictures for the pages
@@ -58,12 +58,12 @@ result = {}
 
 
 def config():
-    books = {b: json.loads((BOOKS / b / "items.json").read_text()) for b in ["letters_ar", "letters_fr", "colors"]}
+    books = {b: json.loads((BOOKS / b / "items.json").read_text()) for b in ["letters_ar", "colors"]}
     colors = []
     for i, it in enumerate(books["colors"]):
         colors.append({"id": it["id"], "cid": it["id"].removeprefix("color_"), "model": it["model"],
                        "color": it["color"], "objects": SETS[i % len(SETS)]})
-    return {"letters_ar": books["letters_ar"], "letters_fr": books["letters_fr"], "colors": colors, "layouts": LAYOUTS}
+    return {"letters_ar": books["letters_ar"], "colors": colors, "layouts": LAYOUTS}
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):

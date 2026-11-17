@@ -55,24 +55,6 @@
   "levels": 1
  },
  {
-  "id": "letters_fr",
-  "en": "French letters",
-  "fr": "Lettres françaises",
-  "ar": "الحروف الفرنسية",
-  "kind": "letters",
-  "map": "park",
-  "color": "#7E57C2",
-  "data": "books/letters_fr/items.json",
-  "targets": "books/letters_fr/targets.mind",
-  "pagesDir": "assets/ar/books/letters_fr/pages",
-  "thumbsDir": "assets/ar/books/letters_fr/thumbs",
-  "games": [
-   "memory",
-   "find"
-  ],
-  "levels": 1
- },
- {
   "id": "colors",
   "en": "Colours",
   "fr": "Les couleurs",
