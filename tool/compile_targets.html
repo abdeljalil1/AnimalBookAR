@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Compile MindAR targets</title></head>
+<body>
+<pre id="log">starting…</pre>
+<script type="module">
+  // Served by tool/compile_targets.py from the app/assets/ar folder.
+  import { Compiler } from './vendor/mindar/mindar-image.prod.js';
+  const log = (m) => { document.getElementById('log').textContent += '\n' + m; };
+  const report = (path, body) => fetch(path, { method: 'POST', body });
+  try {
+    const animals = await (await fetch('animals.json')).json();
+    const images = await Promise.all(animals.map((a) => new Promise((ok, fail) => {
+      const img = new Image();
+      img.onload = () => ok(img);
+      img.onerror = () => fail(new Error('cannot load page ' + a.id));
+      img.src = '/__pages/' + a.id + '.png';
+    })));
+    log('loaded ' + images.length + ' pages');
+    const compiler = new Compiler();
+    const t0 = performance.now();
+    await compiler.compileImageTargets(images, (p) => log('progress ' + p.toFixed(1)));
+    const buf = await compiler.exportData();
+    log('compiled in ' + ((performance.now() - t0) / 1000).toFixed(1) + 's');
+    await report('/__result', buf);
+  } catch (e) {
+    await report('/__error', String(e && e.stack || e));
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Animal Book AR</title>
+  <link rel="stylesheet" href="ar.css">
+</head>
+<body>
+  <div id="ar"></div>
+
+  <div id="loading" class="center-msg">
+    <div class="spinner"></div>
+    <p>Starting the camera…</p>
+  </div>
+
+  <div id="scan" class="hidden">
+    <div class="frame"><span></span><span></span><span></span><span></span></div>
+    <p class="hint">Point the camera at an animal page</p>
+  </div>
+
+  <div id="error" class="center-msg hidden">
+    <p class="big">📷</p>
+    <p id="error-text">The camera could not start.</p>
+  </div>
+
+  <div id="card" class="hidden">
+    <div class="names">
+      <span id="name-en" class="en"></span>
+      <span id="name-fr" class="fr"></span>
+      <span id="name-ar" class="ar" dir="rtl"></span>
+    </div>
+    <p id="fact" class="fact"></p>
+    <div class="buttons">
+      <button id="btn-sound" aria-label="Play the sound">🔊 Sound</button>
+      <button id="btn-move" aria-label="Change the animation">🐾 Move</button>
+      <button id="btn-reset" aria-label="Reset position">↺ Reset</button>
+    </div>
+    <p class="gesture-hint">1 finger: turn · 2 fingers: pinch to resize, drag to move</p>
+  </div>
+
+  <div id="debug" class="hidden"></div>
+
+  <script type="module" src="ar.js"></script>
+</body>
+</html>
