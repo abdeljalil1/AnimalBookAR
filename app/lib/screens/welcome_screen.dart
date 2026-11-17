@@ -31,7 +31,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     final s = S(_lang);
-    final animals = widget.progress.animals;
+    final animals = widget.progress.animals.take(7).toList(); // 7 fit across a phone
     return Directionality(
       textDirection: _lang.rtl ? TextDirection.rtl : TextDirection.ltr,
       child: Scaffold(
@@ -43,7 +43,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               child: Stack(alignment: Alignment.center, children: [
                 for (var i = 0; i < animals.length; i++)
                   Transform.translate(
-                    offset: Offset((i - (animals.length - 1) / 2) * 54, i.isEven ? 0 : 10),
+                    offset: Offset((i - (animals.length - 1) / 2) * 46, i.isEven ? 0 : 10),
                     child: Container(
                       padding: const EdgeInsets.all(3),
                       decoration: BoxDecoration(
