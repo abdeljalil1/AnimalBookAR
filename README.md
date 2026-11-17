@@ -29,6 +29,19 @@ flamingo, a big tree for the parrot, a nest for the stork), drawn in code
 - **Animal sheet:** tap an enclosure to see its photo, names, fact, parts found
   (the others stay "?"), quiz stars, **Show page** and **Scan** / **Start quiz**.
 
+## Learning extras
+
+- **Names read aloud:** the phone's own voice (flutter_tts) says the animal's
+  name when its page is found, each body part when aimed at, the quiz questions,
+  and names tapped on the card or in the animal sheet, in the chosen language.
+- **What do I eat?** **🍽️ Feed** opens a tray of 6 foods (the animal's real
+  foods plus others). Drag one onto the animal, or tap it: the right ones get
+  "Yum!" and a star the first time; the wrong ones get "No thanks!" and a head
+  shake. Diets are in `animals.json` (`eats`), foods in `ar.js` (`FOODS`).
+- **AR photo:** the 📸 button saves the camera picture, the 3D animal and a frame
+  with the child's name and the animal's names to the gallery, in an
+  "Animal Book AR" album (gal).
+
 Progress, the child's first name and the language are saved on the phone only
 (`lib/progress.dart`, shared_preferences). No account, nothing sent anywhere.
 
@@ -148,7 +161,8 @@ turns and the wheel resizes, body-part dots show and tapping one names it
 (without replaying the sound), and Hold keeps the stork on screen after its page
 leaves, then goes back to scanning when released. A second pass reloads in quiz
 mode in French: the question is in French, a wrong tap is refused, the right
-one counts. Screenshots go to `tool/test-output/`. Needs Chrome
+one counts. It also checks that names are spoken, the feeding game (a right
+food eaten, a wrong one refused) and the photo (a framed image is produced). Screenshots go to `tool/test-output/`. Needs Chrome
 and ffmpeg.
 
 ```bash

@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:gal/gal.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../ar_server.dart';
 import '../l10n.dart';
 import '../progress.dart';
+import '../speech.dart';
 
 /// The AR camera. Image tracking, 3D and sound run in a web page
 /// (assets/ar/index.html: MindAR + three.js) inside a WebView, served from
@@ -71,7 +75,7 @@ class _ArScreenState extends State<ArScreen> with WidgetsBindingObserver {
 
   /// Events from the AR page. The returned map goes back to the page, which
   /// uses it for "+1 star" toasts and "Level 2 unlocked" celebrations.
-  Object? _onArEvent(List<dynamic> args) {
+  Future<Object?> _onArEvent(List<dynamic> args) async {
     final event = args.isNotEmpty && args.first is Map ? args.first as Map : const {};
     if (kDebugMode) debugPrint('AR event: $event');
     final p = widget.progress;
@@ -89,12 +93,42 @@ class _ArScreenState extends State<ArScreen> with WidgetsBindingObserver {
         return animal == null ? null : p.markQuiz(animal);
       case 'hold':
         HapticFeedback.mediumImpact();
+      case 'speak':
+        final text = event['text'] as String?;
+        if (text != null && text.isNotEmpty) Speech.instance.say(text, p.lang);
+      case 'food':
+        final food = event['food'] as String?;
+        if (event['right'] == true && animal != null && food != null) {
+          HapticFeedback.mediumImpact();
+          return p.markFood(animal, food);
+        }
+        HapticFeedback.vibrate();
+      case 'photo':
+        return _savePhoto(event['data'] as String?);
     }
     return null;
   }
 
+  /// Saves the AR photo (a JPEG data URL from the page) to the gallery.
+  Future<Map<String, Object?>> _savePhoto(String? dataUrl) async {
+    if (dataUrl == null || !dataUrl.contains(',')) return {'saved': false};
+    try {
+      if (!await Gal.hasAccess(toAlbum: true) && !await Gal.requestAccess(toAlbum: true)) {
+        return {'saved': false, 'reason': 'permission'};
+      }
+      final bytes = base64Decode(dataUrl.substring(dataUrl.indexOf(',') + 1));
+      await Gal.putImageBytes(bytes, album: 'Animal Book AR');
+      HapticFeedback.mediumImpact();
+      return {'saved': true};
+    } catch (e) {
+      if (kDebugMode) debugPrint('photo not saved: $e');
+      return {'saved': false};
+    }
+  }
+
   Uri get _pageUrl => _url!.replace(queryParameters: {
         'lang': widget.progress.lang.name,
+        if (widget.progress.name.isNotEmpty) 'name': widget.progress.name,
         if (widget.quiz) 'mode': 'quiz',
       });
 

@@ -10,6 +10,8 @@
 //   - body-part dots show on the animal; tapping one shows its name,
 //   - Hold keeps the stork on screen after its page leaves the camera,
 //     and releasing Hold goes back to scanning,
+//   - names are spoken; the feeding game takes a right food and refuses a
+//     wrong one; the photo button makes a framed photo,
 //   - then, reloaded in quiz mode in French: the page is in French, a wrong
 //     answer is refused, the right one counts,
 //   - there are no page errors,
@@ -37,13 +39,14 @@ function makeVideo(dir) {
   const ff = (...args) => execFileSync('ffmpeg', ['-v', 'error', '-y', ...args]);
   const desk = 'color=c=0x7a5a3c:s=480x640:r=15';
   for (const id of PAGES) {
-    ff('-f', 'lavfi', '-i', `${desk}:d=6`, '-loop', '1', '-t', '6', '-r', '15', '-i', join(ROOT, 'book', 'pages', `${id}.png`),
+    const d = id === 'horse' ? 14 : 6; // the horse page stays longer: most checks run on it
+    ff('-f', 'lavfi', '-i', `${desk}:d=${d}`, '-loop', '1', '-t', String(d), '-r', '15', '-i', join(ROOT, 'book', 'pages', `${id}.png`),
       '-filter_complex',
       // The page seen from a phone held over a book: top edge farther away.
       '[1:v]scale=-1:600,pad=iw+40:ih+40:20:20:color=0x7a5a3c,' +
       'perspective=x0=70:y0=0:x1=W-70:y1=0:x2=0:y2=H:x3=W:y3=H:sense=destination,scale=iw:ih*0.72[p];' +
       "[0:v][p]overlay=x='(W-w)/2+10*sin(t*1.3)':y='(H-h)/2+6*cos(t)'",
-      '-pix_fmt', 'yuv420p', '-t', '6', join(dir, `${id}.mp4`));
+      '-pix_fmt', 'yuv420p', '-t', String(d), join(dir, `${id}.mp4`));
   }
   ff('-f', 'lavfi', '-i', `${desk}:d=3`, '-pix_fmt', 'yuv420p', join(dir, 'blank.mp4'));
   ff('-f', 'lavfi', '-i', `${desk}:d=12`, '-pix_fmt', 'yuv420p', join(dir, 'blank-long.mp4')); // room for the Hold test
@@ -114,8 +117,11 @@ async function main() {
   const page = await cdp(targets.find((t) => t.type === 'page').webSocketDebuggerUrl);
   const errors = [];
   page.on((msg) => {
-    if (msg.method === 'Runtime.exceptionThrown') errors.push(msg.params.exceptionDetails.exception?.description || msg.params.exceptionDetails.text);
-    if (msg.method === 'Runtime.consoleAPICalled' && msg.params.type === 'error') errors.push(msg.params.args.map((a) => a.value || a.description).join(' '));
+    if (msg.method === 'Runtime.exceptionThrown') {
+      const d = msg.params.exceptionDetails;
+      errors.push(`${d.exception?.description || d.exception?.value || d.text} @ ${d.url || ''}:${d.lineNumber}:${d.columnNumber}`);
+    }
+    if (msg.method === 'Runtime.consoleAPICalled' && msg.params.type === 'error') errors.push('console: ' + msg.params.args.map((a) => a.value ?? a.description ?? JSON.stringify(a.preview || a.type)).join(' '));
   });
   await page.send('Runtime.enable');
   await page.send('Page.enable');
@@ -138,7 +144,7 @@ async function main() {
 
   // Watch the state for up to 60 s and note the order pages were found in.
   const seen = [];
-  let last = null, st = null, gestureDone = false, partsDone = false, holdDone = false;
+  let last = null, st = null, gestureDone = false, partsDone = false, holdDone = false, learnDone = false;
   const t0 = Date.now();
   while (Date.now() - t0 < 120000) {
     await sleep(250);
@@ -172,6 +178,37 @@ async function main() {
       }
     }
 
+    if (st.found === 'horse' && partsDone && !learnDone) {
+      learnDone = true;
+      const sp = await evalJs('JSON.stringify({ n: window.__arState.spokenCount || 0, last: window.__arState.lastSpoken || "" })').then(JSON.parse);
+      check(sp.n > 0 && sp.last, `names are read aloud (last: "${sp.last}")`);
+      const photoBtn = await centerOf('#btn-photo');
+      await tap(photoBtn.x, photoBtn.y);
+      await sleep(600);
+      const ph = await evalJs('JSON.stringify(window.__arState.lastPhoto || null)').then(JSON.parse);
+      const photoUrl = await evalJs('window.__lastPhotoUrl || ""');
+      if (photoUrl) writeFileSync(join(OUT, 'photo.jpg'), Buffer.from(photoUrl.split(',')[1], 'base64'));
+      check(ph && ph.bytes > 30000 && ph.w > 300, `the photo button makes a framed photo (${ph?.w}x${ph?.h}, ${Math.round((ph?.bytes || 0) / 1024)} KB)`);
+      const feedBtn = await centerOf('#btn-feed');
+      await tap(feedBtn.x, feedBtn.y);
+      await sleep(250);
+      const tray = await evalJs('JSON.stringify(window.__arState.feed)').then(JSON.parse);
+      check(tray && tray.on && tray.items.length === 6, `Feed shows 6 foods (${tray?.items?.join(', ')})`);
+      const right = await centerOf('.food[data-food="carrot"]');
+      if (right) await tap(right.x, right.y);
+      await sleep(400);
+      const r1 = await evalJs('JSON.stringify({ f: window.__arState.feed, toast: document.getElementById("toast").textContent })').then(JSON.parse);
+      check(r1.f.fed.includes('carrot') && r1.toast.startsWith('Yum'), `the horse eats the carrot ("${r1.toast}")`);
+      const wrongId = tray.items.find((f) => !['grass', 'carrot', 'apple'].includes(f));
+      const wrong = await centerOf(`.food[data-food="${wrongId}"]`);
+      if (wrong) await tap(wrong.x, wrong.y);
+      await sleep(400);
+      const r2 = await evalJs('JSON.stringify({ f: window.__arState.feed, toast: document.getElementById("toast").textContent })').then(JSON.parse);
+      check(!r2.f.fed.includes(wrongId) && r2.f.last.right === false && r2.toast.includes('No thanks'), `the horse refuses ${wrongId} ("${r2.toast}")`);
+      await shot('horse-feed.png');
+      await feedBtn && tap(feedBtn.x, feedBtn.y); // close the tray
+    }
+
     if (st.found === 'stork' && !holdDone) {
       holdDone = true;
       await sleep(700);
@@ -185,6 +222,8 @@ async function main() {
       check(h2.phase === 'held' && h2.found === 'stork' && h2.parts.visible.length > 0,
         `the stork stays on screen after its page leaves (${h2.phase}, ${h2.parts.visible.length} parts in view)`);
       await shot('stork-held.png');
+      const under = await evalJs(`(() => { const e = document.elementFromPoint(${btn.x}, ${btn.y}); return e ? (e.id || e.className || e.tagName) + ' / ' + (e.closest('button') ? e.closest('button').id : '') : 'none'; })()`);
+      console.log('      under the Hold button:', under);
       await tap(btn.x, btn.y); // release
       await sleep(1000);
       const h3 = await evalJs('JSON.stringify(window.__arState)').then(JSON.parse);

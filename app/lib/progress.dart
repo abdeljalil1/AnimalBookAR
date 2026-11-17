@@ -25,6 +25,7 @@ class Progress extends ChangeNotifier {
         lang = Lang.parse(_prefs.getString('lang')),
         _met = (_prefs.getStringList('met') ?? const []).toSet(),
         _parts = (_prefs.getStringList('parts') ?? const []).toSet(),
+        _food = (_prefs.getStringList('food') ?? const []).toSet(),
         _quiz = {
           for (final e in _prefs.getStringList('quiz') ?? const <String>[])
             if (e.contains('=')) e.split('=').first: int.tryParse(e.split('=').last) ?? 0,
@@ -39,6 +40,7 @@ class Progress extends ChangeNotifier {
   final Set<String> _met;
   final Set<String> _parts; // "fox:tail"
   final Map<String, int> _quiz; // "fox" -> correct answers (max quizGoal)
+  final Set<String> _food; // "fox:mouse": foods fed (right ones only)
 
   bool get hasProfile => name.trim().isNotEmpty;
   S get s => S(lang);
@@ -53,7 +55,8 @@ class Progress extends ChangeNotifier {
   int get partsTotalFound => animals.fold(0, (n, a) => n + partsFound(a));
   int get metCount => animals.where((a) => met(a.id)).length;
   int get quizTotal => animals.fold(0, (n, a) => n + quizScore(a.id));
-  int get stars => metCount + partsTotalFound + quizTotal;
+  int get stars => metCount + partsTotalFound + quizTotal + _food.length;
+  bool fed(String animal, String food) => _food.contains('$animal:$food');
 
   (int done, int total) levelCount(int level) => switch (level) {
         1 => (metCount, animals.length),
@@ -90,6 +93,9 @@ class Progress extends ChangeNotifier {
   Map<String, Object?> markMet(String animal) => _change(() => _met.add(animal));
 
   Map<String, Object?> markPart(String animal, String part) => _change(() => _parts.add('$animal:$part'));
+
+  /// A right food given in the feeding game (a star the first time).
+  Map<String, Object?> markFood(String animal, String food) => _change(() => _food.add('$animal:$food'));
 
   Map<String, Object?> markQuiz(String animal) => _change(() {
         final n = quizScore(animal);
@@ -130,6 +136,7 @@ class Progress extends ChangeNotifier {
   void _save() {
     _prefs.setStringList('met', _met.toList());
     _prefs.setStringList('parts', _parts.toList());
+    _prefs.setStringList('food', _food.toList());
     _prefs.setStringList('quiz', [for (final e in _quiz.entries) '${e.key}=${e.value}']);
   }
 
@@ -138,6 +145,7 @@ class Progress extends ChangeNotifier {
     _met.clear();
     _parts.clear();
     _quiz.clear();
+    _food.clear();
     await _prefs.clear();
     name = '';
     notifyListeners();

@@ -16,6 +16,11 @@
     "size": 0.6,
     "lift": 0,
     "turn": 60,
+    "eats": [
+      "grass",
+      "carrot",
+      "apple"
+    ],
     "parts": [
       {
         "id": "head",
@@ -114,6 +119,11 @@
     "size": 0.55,
     "lift": 0,
     "turn": 60,
+    "eats": [
+      "mouse",
+      "berries",
+      "insect"
+    ],
     "parts": [
       {
         "id": "head",
@@ -212,6 +222,10 @@
     "size": 0.5,
     "lift": 0.25,
     "turn": 60,
+    "eats": [
+      "shrimp",
+      "seeds"
+    ],
     "parts": [
       {
         "id": "head",
@@ -297,6 +311,11 @@
     "size": 0.45,
     "lift": 0.25,
     "turn": 60,
+    "eats": [
+      "seeds",
+      "nuts",
+      "apple"
+    ],
     "parts": [
       {
         "id": "head",
@@ -382,6 +401,11 @@
     "size": 0.55,
     "lift": 0.25,
     "turn": 60,
+    "eats": [
+      "fish",
+      "frog",
+      "insect"
+    ],
     "parts": [
       {
         "id": "head",

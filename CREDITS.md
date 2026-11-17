@@ -40,4 +40,4 @@ The four ro.me birds and horse have no explicit licence of their own. They are f
 
 - MindAR 1.2.5, MIT, https://github.com/hiukim/mind-ar-js
 - three.js 0.160.0, MIT, https://github.com/mrdoob/three.js
-- flutter_inappwebview, Apache 2.0; permission_handler, MIT; shared_preferences, BSD-3-Clause
+- flutter_inappwebview, Apache 2.0; permission_handler, MIT; shared_preferences, BSD-3-Clause; flutter_tts, MIT; gal, BSD-3-Clause

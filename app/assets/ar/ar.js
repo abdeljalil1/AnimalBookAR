@@ -36,6 +36,8 @@ const $ = (id) => document.getElementById(id);
 // UI text in the three languages ({p} = a body part with its article).
 const TEXT = {
   en: {
+    feed: 'Feed', yum: 'Yum! {f}!', noThanks: '{f}? No thanks!', full: 'All full! 🎉',
+    saved: 'Saved to your photos 📸', notSaved: 'The photo was not saved',
     loading: 'Starting the camera…', scan: 'Point the camera at an animal page',
     held: '✋ Holding: turn the phone to look around',
     hint: 'Aim the ◎ at a body part · 1 finger: turn and tip · 2 fingers: zoom, move',
@@ -47,6 +49,8 @@ const TEXT = {
     loadFail: 'Something went wrong while loading: ',
   },
   fr: {
+    feed: 'Nourrir', yum: 'Miam ! {f} !', noThanks: '{f} ? Non merci !', full: 'Rassasié ! 🎉',
+    saved: 'Photo enregistrée 📸', notSaved: "La photo n'a pas été enregistrée",
     loading: 'Démarrage de la caméra…', scan: "Vise une page d'animal avec la caméra",
     held: '✋ Tenu : tourne le téléphone pour regarder autour',
     hint: 'Vise ◎ une partie du corps · 1 doigt : tourner, pencher · 2 doigts : zoomer, déplacer',
@@ -58,6 +62,8 @@ const TEXT = {
     loadFail: 'Erreur au chargement : ',
   },
   ar: {
+    feed: 'إطعام', yum: 'لذيذ! {f}!', noThanks: '{f}؟ لا شكرًا!', full: 'شبعت! 🎉',
+    saved: 'حُفظت الصورة 📸', notSaved: 'لم تُحفظ الصورة',
     loading: 'تشغيل الكاميرا…', scan: 'وجّه الكاميرا نحو صفحة حيوان',
     held: '✋ مثبّت: أدر الهاتف لترى ما حوله',
     hint: 'صوّب ◎ نحو جزء من الجسم · إصبع: تدوير وإمالة · إصبعان: تكبير وتحريك',
@@ -72,6 +78,42 @@ const TEXT = {
 const t = (key, vars = {}) => TEXT[LANG][key].replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
 const nameIn = (def, lang = LANG) => def[lang];
 const partWithArticle = (def) => ({ en: 'the ' + def.en.toLowerCase(), fr: def.fr_def, ar: def.ar_def })[LANG];
+// Foods for the feeding game; each animal lists the ones it eats ("eats").
+const FOODS = {
+  grass: { icon: '🌿', en: 'Grass', fr: 'Herbe', ar: 'عشب' },
+  carrot: { icon: '🥕', en: 'Carrot', fr: 'Carotte', ar: 'جزر' },
+  apple: { icon: '🍎', en: 'Apple', fr: 'Pomme', ar: 'تفاحة' },
+  mouse: { icon: '🐭', en: 'Mouse', fr: 'Souris', ar: 'فأر' },
+  berries: { icon: '🍓', en: 'Berries', fr: 'Baies', ar: 'توت' },
+  insect: { icon: '🐛', en: 'Insect', fr: 'Insecte', ar: 'حشرة' },
+  shrimp: { icon: '🦐', en: 'Shrimp', fr: 'Crevette', ar: 'روبيان' },
+  seeds: { icon: '🌻', en: 'Seeds', fr: 'Graines', ar: 'بذور' },
+  nuts: { icon: '🥜', en: 'Nuts', fr: 'Noix', ar: 'مكسرات' },
+  fish: { icon: '🐟', en: 'Fish', fr: 'Poisson', ar: 'سمك' },
+  frog: { icon: '🐸', en: 'Frog', fr: 'Grenouille', ar: 'ضفدع' },
+};
+const TRAY_SIZE = 6;
+
+// Reads text aloud: the app's voice (flutter_tts), or the browser's when testing.
+let lastSpoken = { text: '', at: 0 };
+function speak(text) {
+  if (!text) return;
+  const now = performance.now();
+  if (text === lastSpoken.text && now - lastSpoken.at < 2500) return; // no stutter
+  lastSpoken = { text, at: now };
+  state.spokenCount = (state.spokenCount || 0) + 1;
+  state.lastSpoken = text;
+  const bridge = window.flutter_inappwebview;
+  if (bridge && bridge.callHandler) { ask('speak', { text }); return; }
+  try {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = { en: 'en-US', fr: 'fr-FR', ar: 'ar-SA' }[LANG];
+    u.rate = 0.85;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  } catch (_) { /* no voice */ }
+}
+
 const otherNames = (def) => ['en', 'fr', 'ar'].filter((l) => l !== LANG).map((l) => def[l]).join(' · ');
 
 // Readable by tests (tool/test_web_ar.mjs) and handy when debugging.
@@ -110,6 +152,8 @@ function setPhase(phase) {
   $('parts').classList.toggle('hidden', !showing);
   $('held-badge').classList.toggle('hidden', phase !== 'held');
   $('quiz').classList.toggle('hidden', !QUIZ || !showing || !$('quiz-text').textContent);
+  $('btn-photo').classList.toggle('hidden', !showing);
+  if (!showing) $('food-tray').classList.add('hidden');
   $('error').classList.toggle('hidden', phase !== 'error');
 }
 
@@ -200,7 +244,7 @@ function applyLanguage() {
   $('scan-hint').textContent = t('scan');
   $('held-badge').textContent = t('held');
   $('gesture-hint').textContent = t('hint');
-  for (const [id, key, icon] of [['btn-sound', 'sound', '🔊'], ['btn-move', 'move', '🐾'], ['btn-hold', 'hold', '✋'], ['btn-reset', 'reset', '↺']]) {
+  for (const [id, key, icon] of [['btn-sound', 'sound', '🔊'], ['btn-move', 'move', '🐾'], ['btn-feed', 'feed', '🍽️'], ['btn-hold', 'hold', '✋'], ['btn-reset', 'reset', '↺']]) {
     $(id).innerHTML = `<span>${icon}</span>${t(key)}`;
   }
 }
@@ -406,6 +450,7 @@ async function main() {
     if (isNew) showPartsOf(entry);
     setPhase('found');
     if (isNew || performance.now() - entry.lastSoundAt > SOUND_REPEAT_MS) playSound(entry);
+    if (isNew) { speak(nameIn(entry.a)); closeFeed(); }
     ask('found', { id: entry.a.id }).then((r) => reward(r, t('newAnimal')));
     if (QUIZ) quizStart(entry);
   }
@@ -581,6 +626,12 @@ async function main() {
       }
     }
     if (QUIZ) quizCheckAim(aimed, now);
+    if (!QUIZ && chosen) {
+      if (selection.voiceFor !== chosen) { selection.voiceFor = chosen; selection.voiceAt = now; selection.voiced = false; }
+      else if (!selection.voiced && now - selection.voiceAt > 350) { selection.voiced = true; speak(nameIn(chosen.def)); }
+    } else if (!chosen) {
+      selection.voiceFor = null;
+    }
     if (chosen) {
       $('part-label').style.transform = `translate(${chosen.screen.x}px, ${chosen.screen.y}px)`;
     }
@@ -608,6 +659,7 @@ async function main() {
     quiz.asked.add(quiz.target.def.id);
     quiz.aimSince = null;
     banner(t('find', { p: partWithArticle(quiz.target.def) }), otherNames(quiz.target.def));
+    speak(t('find', { p: partWithArticle(quiz.target.def) }));
   }
 
   function quizCheckAim(aimed, now) {
@@ -627,6 +679,7 @@ async function main() {
     quiz.busy = true;
     tone([330, 262]);
     banner(t('wrong', { p: partWithArticle(part.def) }), '', 'wrong');
+    speak(t('wrong', { p: partWithArticle(part.def) }));
     setTimeout(() => {
       quiz.busy = false;
       if (quiz.target) banner(t('find', { p: partWithArticle(quiz.target.def) }), otherNames(quiz.target.def));
@@ -642,6 +695,7 @@ async function main() {
     tone([523, 659, 784, 1047]);
     confetti(70);
     banner(t('right', { p: partWithArticle(part.def) }), '', 'right');
+    speak(t('right', { p: partWithArticle(part.def) }));
     const animal = quiz.animal;
     ask('quiz', { animal, part: part.def.id }).then((r) => reward(r, null));
     setTimeout(() => {
@@ -675,6 +729,187 @@ async function main() {
       celebrate(r.levelUp >= 4 ? t('allDone') : t('levelUp', { n: r.levelUp }));
     }
   }
+
+  // ---- Feeding game ("What do I eat?") -----------------------------------------
+  const feed = { on: false, animal: null, items: [], fed: new Set() };
+
+  function shuffled(list) {
+    const a = [...list];
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+
+  function openFeed() {
+    if (!current) return;
+    if (feed.animal !== current.a.id) {
+      const eats = current.a.eats || [];
+      const others = shuffled(Object.keys(FOODS).filter((f) => !eats.includes(f)));
+      feed.animal = current.a.id;
+      feed.items = shuffled([...eats, ...others.slice(0, Math.max(0, TRAY_SIZE - eats.length))]);
+      feed.fed = new Set();
+    }
+    feed.on = !feed.on;
+    renderTray();
+  }
+
+  function closeFeed() { feed.on = false; renderTray(); }
+
+  function renderTray() {
+    const tray = $('food-tray');
+    tray.innerHTML = '';
+    tray.classList.toggle('hidden', !feed.on);
+    state.feed = { on: feed.on, items: feed.items, fed: [...feed.fed] };
+    if (!feed.on) return;
+    for (const f of feed.items) {
+      const el = document.createElement('div');
+      el.className = 'food' + (feed.fed.has(f) ? ' eaten' : '');
+      el.dataset.food = f;
+      el.innerHTML = `<b>${FOODS[f].icon}</b><small>${FOODS[f][LANG]}</small>`;
+      el.addEventListener('pointerdown', (e) => startFoodDrag(e, f, el));
+      tray.append(el);
+    }
+  }
+
+  // Where the animal is on screen (its box, projected), to drop food on it.
+  function animalScreenBox() {
+    if (!current || !current.model) return null;
+    const box = new THREE.Box3().setFromObject(current.model);
+    const r = renderer.domElement.getBoundingClientRect();
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (let i = 0; i < 8; i++) {
+      const v = new THREE.Vector3(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z).project(camera);
+      const x = r.left + ((v.x + 1) / 2) * r.width, y = r.top + ((1 - v.y) / 2) * r.height;
+      x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y);
+    }
+    return { x0: x0 - 30, y0: y0 - 30, x1: x1 + 30, y1: y1 + 30 };
+  }
+
+  function mouthPoint() {
+    const head = current && current.parts.find((p) => p.def.id === 'head' || p.def.id === 'beak' || p.def.id === 'snout');
+    if (head && head.visible) return { x: head.screen.x, y: head.screen.y };
+    const b = animalScreenBox();
+    return b ? { x: (b.x0 + b.x1) / 2, y: (b.y0 + b.y1) / 2 } : { x: innerWidth / 2, y: innerHeight * 0.4 };
+  }
+
+  function startFoodDrag(e, food, el) {
+    e.preventDefault();
+    el.setPointerCapture(e.pointerId);
+    const start = { x: e.clientX, y: e.clientY, t: performance.now() };
+    const ghost = document.createElement('div');
+    ghost.className = 'food-ghost';
+    ghost.textContent = FOODS[food].icon;
+    ghost.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    document.body.append(ghost);
+    el.classList.add('dragging');
+    const move = (ev) => { ghost.style.transform = `translate(${ev.clientX}px, ${ev.clientY}px)`; };
+    const up = (ev) => {
+      el.removeEventListener('pointermove', move);
+      el.removeEventListener('pointerup', up);
+      el.removeEventListener('pointercancel', up);
+      el.classList.remove('dragging');
+      const tapped = Math.hypot(ev.clientX - start.x, ev.clientY - start.y) < 10; // a tap feeds too (small hands)
+      const b = animalScreenBox();
+      const onAnimal = b && ev.clientX > b.x0 && ev.clientX < b.x1 && ev.clientY > b.y0 && ev.clientY < b.y1;
+      if (tapped || onAnimal) giveFood(food, ghost);
+      else backToTray(ghost, start);
+    };
+    el.addEventListener('pointermove', move);
+    el.addEventListener('pointerup', up);
+    el.addEventListener('pointercancel', up);
+  }
+
+  function backToTray(ghost, start) {
+    ghost.classList.add('back');
+    ghost.style.transform = `translate(${start.x}px, ${start.y}px)`;
+    setTimeout(() => ghost.remove(), 320);
+  }
+
+  function giveFood(food, ghost) {
+    if (!current) { ghost.remove(); return; }
+    const right = (current.a.eats || []).includes(food);
+    const name = FOODS[food][LANG];
+    const entry = current;
+    if (right) {
+      const m = mouthPoint();
+      ghost.classList.add('fly');
+      requestAnimationFrame(() => { ghost.style.transform = `translate(${m.x}px, ${m.y}px) scale(.3)`; });
+      setTimeout(() => ghost.remove(), 380);
+      entry.popT = 0.45;
+      tone([523, 784, 1047]);
+      toast(t('yum', { f: name }));
+      speak(t('yum', { f: name }));
+      const firstTime = !feed.fed.has(food);
+      feed.fed.add(food);
+      renderTray();
+      ask('food', { animal: entry.a.id, food, right: true }).then((r) => { if (r && r.new) setTimeout(() => toast(t('newPart')), 900); reward({ ...r, new: false }, null); });
+      if (firstTime && (entry.a.eats || []).every((f) => feed.fed.has(f))) {
+        setTimeout(() => { toast(t('full')); confetti(120); }, 1000);
+      }
+    } else {
+      ghost.classList.add('back');
+      ghost.style.transform = `translate(${innerWidth / 2}px, ${innerHeight}px)`;
+      setTimeout(() => ghost.remove(), 320);
+      entry.shakeT = 0.6;
+      tone([330, 262]);
+      toast(t('noThanks', { f: name }));
+      speak(t('noThanks', { f: name }));
+      ask('food', { animal: entry.a.id, food, right: false });
+    }
+    state.feed = { on: feed.on, items: feed.items, fed: [...feed.fed], last: { food, right } };
+  }
+
+  // ---- AR photo --------------------------------------------------------------------
+  // Camera image + 3D animal + a frame with the child's name, saved to the gallery.
+  async function takePhoto() {
+    if (!current) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const W = innerWidth, H = innerHeight;
+    const c = document.createElement('canvas');
+    c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+    const g = c.getContext('2d');
+    g.scale(dpr, dpr);
+    const video = document.querySelector('#ar video');
+    if (video) { const vr = video.getBoundingClientRect(); g.drawImage(video, vr.left, vr.top, vr.width, vr.height); }
+    renderer.render(scene, camera); // draw now: WebGL keeps the image only until the next frame
+    const cr = renderer.domElement.getBoundingClientRect();
+    g.drawImage(renderer.domElement, cr.left, cr.top, cr.width, cr.height);
+
+    // the frame
+    const a = current.a, color = a.color;
+    g.lineWidth = 16; g.strokeStyle = color; g.strokeRect(8, 8, W - 16, H - 16);
+    const kid = (params.get('name') || '').slice(0, 20);
+    const title = kid ? `${kid} ♥ ${nameIn(a)}` : nameIn(a);
+    const sub = otherNames(a);
+    const bw = Math.min(W - 48, 340), bh = 78, bx = (W - bw) / 2, by = H - bh - 34;
+    g.fillStyle = 'rgba(255,250,240,.95)';
+    g.beginPath(); g.roundRect ? g.roundRect(bx, by, bw, bh, 18) : g.rect(bx, by, bw, bh); g.fill();
+    g.fillStyle = color; g.textAlign = 'center'; g.direction = LANG === 'ar' ? 'rtl' : 'ltr';
+    g.font = '900 26px -apple-system, Roboto, "Noto Sans Arabic", sans-serif';
+    g.fillText(title, W / 2, by + 34, bw - 20);
+    g.fillStyle = '#5a4a3c'; g.font = '700 15px -apple-system, Roboto, "Noto Sans Arabic", sans-serif';
+    g.fillText(`${sub} · Animal Book AR`, W / 2, by + 60, bw - 20);
+
+    $('flash').classList.remove('hidden');
+    setTimeout(() => $('flash').classList.add('hidden'), 520);
+    tone([1568]);
+    const url = c.toDataURL('image/jpeg', 0.9);
+    state.lastPhoto = { bytes: url.length, w: c.width, h: c.height };
+    if (DEBUG) window.__lastPhotoUrl = url;
+    const bridge = window.flutter_inappwebview;
+    if (bridge && bridge.callHandler) {
+      const r = await ask('photo', { data: url });
+      toast(r && r.saved ? t('saved') : t('notSaved'));
+    } else { // a normal browser: download it
+      const link = document.createElement('a');
+      link.href = url; link.download = `animal-book-${a.id}.jpg`;
+      if (!DEBUG) link.click();
+      toast(t('saved'));
+    }
+  }
+
+  $('btn-feed').addEventListener('click', openFeed);
+  $('btn-photo').addEventListener('click', takePhoto);
+  document.querySelector('#card .names').addEventListener('click', () => current && speak(nameIn(current.a)));
 
   // ---- Gestures -----------------------------------------------------------
   const container = $('ar');
@@ -801,6 +1036,10 @@ async function main() {
       if (e.popT > 0) {
         e.popT = Math.max(0, e.popT - dt);
         e.pop.scale.setScalar(1 + 0.18 * Math.sin((e.popT / 0.45) * Math.PI));
+      }
+      if (e.shakeT > 0) { // "no thanks"
+        e.shakeT = Math.max(0, e.shakeT - dt);
+        e.turn.rotation.y = e.baseTurn + Math.sin((0.6 - e.shakeT) * 28) * 0.3 * (e.shakeT / 0.6);
       }
       if (e.twirlT > 0) {
         e.twirlT = Math.max(0, e.twirlT - dt);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../animals.dart';
 import '../progress.dart';
+import '../speech.dart';
 import 'page_screen.dart';
 
 /// Opens from the zoo path: the animal's photo, names, fact, the body parts
@@ -44,9 +45,19 @@ class AnimalSheet extends StatelessWidget {
                   bottom: 10,
                   end: 14,
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(a.name(lang),
-                        style: const TextStyle(
-                            color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800, height: 1.1)),
+                    Row(children: [
+                      Flexible(
+                        child: Text(a.name(lang),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800, height: 1.1)),
+                      ),
+                      IconButton(
+                        key: const Key('speak-name'),
+                        tooltip: a.name(lang),
+                        onPressed: () => Speech.instance.say(a.name(lang), lang),
+                        icon: const Icon(Icons.volume_up_rounded, color: Colors.white),
+                      ),
+                    ]),
                     Text('$others · ${s.page(a.page)}', style: const TextStyle(color: Colors.white, fontSize: 13)),
                   ]),
                 ),
@@ -66,7 +77,10 @@ class AnimalSheet extends StatelessWidget {
           Wrap(spacing: 8, runSpacing: 8, children: [
             for (final part in a.parts)
               p.partFound(a.id, part.id)
-                  ? _Chip(text: part.name(lang), found: true)
+                  ? GestureDetector(
+                      onTap: () => Speech.instance.say(part.name(lang), lang),
+                      child: _Chip(text: part.name(lang), found: true),
+                    )
                   : const _Chip(text: '?', found: false),
           ]),
           if (p.unlocked(3)) ...[
