@@ -49,11 +49,11 @@ void main() {
     await _settle(tester);
 
     expect(find.text("Find the horse's head"), findsOneWidget); // level 2 mission
-    expect(find.text('2 of 55 parts'), findsOneWidget);
+    expect(find.text('2 of 88 parts'), findsOneWidget);
     for (final name in ['Horse', 'Fox', 'Flamingo', 'Parrot', 'Stork', 'Cow', 'Sheep', 'Zebra', 'Llama', 'Dog']) {
       expect(find.text(name), findsOneWidget); // the zoo signs
     }
-    expect(find.text('2/6'), findsOneWidget); // fox sign: 2 of 6 parts
+    expect(find.text('2/9'), findsOneWidget); // fox sign: 2 of 9 parts
 
     // level 3 is locked
     await tester.tap(find.byKey(const Key('level-3')));
@@ -63,9 +63,9 @@ void main() {
     await tester.tap(find.text('Fox'));
     await _settle(tester);
     expect(find.byType(AnimalSheet), findsOneWidget);
-    expect(find.text('2 of 6 found'), findsOneWidget);
+    expect(find.text('2 of 9 found'), findsOneWidget);
     expect(find.text('Head'), findsOneWidget);
-    expect(find.text('?'), findsNWidgets(4)); // parts not found yet stay a mystery
+    expect(find.text('?'), findsNWidgets(7)); // parts not found yet stay a mystery
   });
 
   testWidgets('switching to Arabic lays the app out right to left', (tester) async {
