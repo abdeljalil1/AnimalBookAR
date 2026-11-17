@@ -3,8 +3,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../cloud.dart';
+import '../l10n.dart';
 import '../progress.dart';
-import 'home_screen.dart' show brand, ink;
+import '../ui.dart';
+import 'home_screen.dart' show brand;
 
 /// Asks a small sum children usually can't do yet, then opens [ParentsScreen].
 Future<void> openParents(BuildContext context, Progress progress, Cloud? cloud) async {
@@ -14,17 +16,42 @@ Future<void> openParents(BuildContext context, Progress progress, Cloud? cloud) 
   final answers = {a + b, a + b + 1 + r.nextInt(3), a + b - 1 - r.nextInt(3)}.toList()..shuffle();
   final ok = await showDialog<bool>(
     context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text(s.forParents),
-      content: Text(s.gateQuestion(a, b), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-      actions: [
-        for (final n in answers)
-          FilledButton.tonal(
-            key: Key('gate-$n'),
-            onPressed: () => Navigator.of(ctx).pop(n == a + b),
-            child: Text('$n', style: const TextStyle(fontSize: 18)),
+    builder: (ctx) => Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(22, 22, 22, 18),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: AppColors.brand.withOpacity(0.12), shape: BoxShape.circle),
+            child: const Icon(Icons.lock_rounded, color: AppColors.brand, size: 28),
           ),
-      ],
+          const SizedBox(height: 12),
+          Text(s.forParents, style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: AppColors.ink)),
+          const SizedBox(height: 6),
+          Text(s.gateQuestion(a, b),
+              textAlign: TextAlign.center, style: const TextStyle(fontSize: 17, color: AppColors.muted)),
+          const SizedBox(height: 18),
+          Row(children: [
+            for (final n in answers) ...[
+              Expanded(
+                child: FilledButton.tonal(
+                  key: Key('gate-$n'),
+                  onPressed: () => Navigator.of(ctx).pop(n == a + b),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: Text('$n', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                ),
+              ),
+              if (n != answers.last) const SizedBox(width: 10),
+            ],
+          ]),
+          const SizedBox(height: 6),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(s.cancel)),
+        ]),
+      ),
     ),
   );
   if (ok == true && context.mounted) {
@@ -45,11 +72,24 @@ class ParentsScreen extends StatelessWidget {
       builder: (context, _) {
         final s = progress.s;
         return Scaffold(
-          appBar: AppBar(title: Text(s.parents), backgroundColor: const Color(0xFFFFFAF0)),
-          body: ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 32), children: [
-            _Section(title: s.account, child: _AccountCard(progress: progress, cloud: cloud)),
-            _Section(title: s.children, child: _ChildrenCard(progress: progress)),
-            _Section(title: s.progressOf(progress.name), child: _StatsCard(progress: progress)),
+          backgroundColor: AppColors.cream,
+          appBar: AppBar(
+            title: Text(s.parents, style: const TextStyle(fontWeight: FontWeight.w800)),
+            backgroundColor: AppColors.cream,
+            surfaceTintColor: Colors.transparent,
+          ),
+          body: ListView(padding: const EdgeInsets.fromLTRB(16, 0, 16, 32), children: [
+            _ChildHeader(progress: progress),
+            SectionLabel(s.overview),
+            _Overview(progress: progress),
+            SectionLabel(s.byBook),
+            _BookProgress(progress: progress),
+            SectionLabel(s.children),
+            AppCard(padding: const EdgeInsets.fromLTRB(14, 6, 6, 12), child: _ChildrenCard(progress: progress)),
+            SectionLabel(s.account),
+            AppCard(child: _AccountCard(progress: progress, cloud: cloud)),
+            SectionLabel(s.settings),
+            AppCard(child: _Settings(progress: progress)),
           ]),
         );
       },
@@ -57,28 +97,163 @@ class ParentsScreen extends StatelessWidget {
   }
 }
 
-class _Section extends StatelessWidget {
-  const _Section({required this.title, required this.child});
-  final String title;
-  final Widget child;
+/// The active child: a big avatar, the name and stars, and how far along.
+class _ChildHeader extends StatelessWidget {
+  const _ChildHeader({required this.progress});
+  final Progress progress;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: ink)),
+    final p = progress;
+    final s = p.s;
+    final total = p.books.fold(0, (n, b) => n + b.items.length);
+    return AppCard(
+      child: Row(children: [
+        Avatar(name: p.name, size: 60),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(p.name, style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w800, color: AppColors.ink)),
+            const SizedBox(height: 4),
+            Text(s.progressOf(p.name), style: const TextStyle(color: AppColors.muted, fontSize: 13)),
+            const SizedBox(height: 8),
+            ProgressBar(value: total == 0 ? 0 : p.metAll / total, color: AppColors.brand),
+          ]),
         ),
-        Card(
-          elevation: 0,
-          color: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-          child: Padding(padding: const EdgeInsets.all(14), child: child),
-        ),
+        const SizedBox(width: 12),
+        StarsChip(p.stars),
       ]),
     );
+  }
+}
+
+class _Overview extends StatelessWidget {
+  const _Overview({required this.progress});
+  final Progress progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = progress;
+    final s = p.s;
+    final c = p.child;
+    final tiles = [
+      StatTile(
+          icon: Icons.explore_rounded, value: '${p.metAll}', label: s.statDiscovered, color: const Color(0xFF2F6FD0)),
+      StatTile(
+          icon: Icons.translate_rounded,
+          value: '${p.wordsLearned}',
+          label: s.statWords,
+          color: const Color(0xFF00897B)),
+      StatTile(
+          icon: Icons.timer_rounded,
+          value: s.minutes((c.playSeconds / 60).round()),
+          label: s.statTime,
+          color: AppColors.green),
+      StatTile(
+          icon: Icons.emoji_events_rounded,
+          value: '${c.memoryWins + c.soundCorrect}',
+          label: s.statGames,
+          color: const Color(0xFF7E57C2)),
+      StatTile(
+          icon: Icons.quiz_rounded,
+          value: '${c.quiz.values.fold<int>(0, (n, v) => n + v)}',
+          label: s.statQuiz,
+          color: const Color(0xFFD81B60)),
+      StatTile(
+          icon: Icons.volunteer_activism_rounded, value: '${c.food.length}', label: s.statFood, color: AppColors.brand),
+    ];
+    return GridView.count(
+      crossAxisCount: 3,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      childAspectRatio: 0.86,
+      children: tiles,
+    );
+  }
+}
+
+/// One row per book: met, and the parts and quiz when the book has them.
+class _BookProgress extends StatelessWidget {
+  const _BookProgress({required this.progress});
+  final Progress progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = progress;
+    final s = p.s;
+    return AppCard(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      child: Column(children: [
+        for (final (i, b) in p.books.indexed) ...[
+          if (i > 0) const Divider(height: 1, color: AppColors.line),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Row(children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  color: b.color,
+                  padding: const EdgeInsets.all(3),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(9),
+                    child: Image.asset(b.items.first.thumbAsset, width: 40, height: 40, fit: BoxFit.cover),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(children: [
+                    Expanded(
+                      child: Text(b.title(p.lang),
+                          style: const TextStyle(fontWeight: FontWeight.w800, color: AppColors.ink, fontSize: 14.5)),
+                    ),
+                    Text('${p.metIn(b)} / ${b.items.length}',
+                        style: const TextStyle(fontWeight: FontWeight.w800, color: AppColors.ink, fontSize: 13)),
+                  ]),
+                  const SizedBox(height: 6),
+                  ProgressBar(value: b.items.isEmpty ? 0 : p.metIn(b) / b.items.length, color: b.color, height: 6),
+                  if (b.levels > 1) ...[
+                    const SizedBox(height: 5),
+                    Text(s.partsQuiz(p.partsIn(b), p.totalPartsIn(b), p.quizIn(b), b.items.length * quizGoal),
+                        style: const TextStyle(color: AppColors.muted, fontSize: 11.5)),
+                  ],
+                ]),
+              ),
+            ]),
+          ),
+        ],
+      ]),
+    );
+  }
+}
+
+class _Settings extends StatelessWidget {
+  const _Settings({required this.progress});
+  final Progress progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = progress.s;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [
+        const Icon(Icons.translate_rounded, size: 18, color: AppColors.brand),
+        const SizedBox(width: 8),
+        Text(s.appLanguage, style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.ink)),
+      ]),
+      const SizedBox(height: 10),
+      SizedBox(
+        width: double.infinity,
+        child: SegmentedButton<Lang>(
+          showSelectedIcon: false,
+          segments: [for (final l in Lang.values) ButtonSegment(value: l, label: Text(l.label))],
+          selected: {progress.lang},
+          onSelectionChanged: (v) => progress.setLang(v.first),
+        ),
+      ),
+    ]);
   }
 }
 
@@ -91,7 +266,13 @@ class _AccountCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = progress.s;
     final c = cloud;
-    if (c == null) return Text(s.cloudOff);
+    if (c == null) {
+      return Row(children: [
+        const Icon(Icons.cloud_off_rounded, size: 20, color: AppColors.faint),
+        const SizedBox(width: 8),
+        Expanded(child: Text(s.cloudOff, style: const TextStyle(color: AppColors.muted))),
+      ]);
+    }
     final user = c.user;
     final error = c.lastError;
     if (user != null) {
@@ -123,7 +304,13 @@ class _AccountCard extends StatelessWidget {
       ]);
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      Text(s.syncPitch, style: const TextStyle(color: Color(0xFF4A3C30))),
+      Row(children: [
+        const Icon(Icons.cloud_off_rounded, size: 20, color: AppColors.faint),
+        const SizedBox(width: 8),
+        Expanded(child: Text(s.notSignedIn, style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.ink))),
+      ]),
+      const SizedBox(height: 8),
+      Text(s.syncPitch, style: const TextStyle(color: AppColors.muted, height: 1.35)),
       const SizedBox(height: 12),
       FilledButton.icon(
         key: const Key('google-sign-in'),
@@ -264,12 +451,7 @@ class _ChildrenCard extends StatelessWidget {
         ListTile(
           contentPadding: EdgeInsets.zero,
           onTap: () => p.switchChild(c.id),
-          leading: CircleAvatar(
-            backgroundColor: c.id == p.child.id ? brand : const Color(0xFFFFE3CC),
-            child: Text(c.name.isEmpty ? '?' : c.name.characters.first.toUpperCase(),
-                style: TextStyle(
-                    color: c.id == p.child.id ? Colors.white : const Color(0xFF9A3F12), fontWeight: FontWeight.w800)),
-          ),
+          leading: Avatar(name: c.name, size: 40, selected: c.id == p.child.id && p.children.length > 1),
           title: Text(c.name, style: TextStyle(fontWeight: c.id == p.child.id ? FontWeight.w800 : FontWeight.w600)),
           subtitle: Row(children: [
             const Icon(Icons.star_rounded, size: 16, color: Color(0xFFF2A60C)),
@@ -304,72 +486,5 @@ class _ChildrenCard extends StatelessWidget {
         label: Text(s.addChild),
       ),
     ]);
-  }
-}
-
-class _StatsCard extends StatelessWidget {
-  const _StatsCard({required this.progress});
-  final Progress progress;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = progress;
-    final s = p.s;
-    final c = p.child;
-    final tiles = [
-      (
-        switch (p.book.kind) {
-          'vehicles' => Icons.directions_car_rounded,
-          'letters' => Icons.abc_rounded,
-          'colors' => Icons.palette_rounded,
-          _ => Icons.pets_rounded,
-        },
-        s.statMet(p.book.kind),
-        '${p.metCount} / ${p.animals.length}'
-      ),
-      (Icons.touch_app_rounded, s.statParts, '${p.partsTotalFound} / ${p.totalParts}'),
-      (Icons.quiz_rounded, s.statQuiz, '${p.quizTotal} / ${p.animals.length * quizGoal}'),
-      (Icons.translate_rounded, s.statWords, '${p.wordsLearned}'),
-      (Icons.restaurant_rounded, s.statFood, '${c.food.length}'),
-      (Icons.emoji_events_rounded, s.statGames, '${c.memoryWins + c.soundCorrect}'),
-      (Icons.timer_rounded, s.statTime, s.minutes((c.playSeconds / 60).round())),
-      (Icons.star_rounded, '★', '${p.stars}'),
-    ];
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      childAspectRatio: 1.55,
-      mainAxisSpacing: 8,
-      crossAxisSpacing: 8,
-      children: [
-        for (final (icon, label, value) in tiles)
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: const Color(0xFFFFF6E9), borderRadius: BorderRadius.circular(14)),
-            child: Row(children: [
-              Icon(icon, color: brand),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: AlignmentDirectional.centerStart,
-                        child:
-                            Text(value, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17, color: ink)),
-                      ),
-                      Text(label,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 11, color: Color(0xFF7A6A5C))),
-                    ]),
-              ),
-            ]),
-          ),
-      ],
-    );
   }
 }

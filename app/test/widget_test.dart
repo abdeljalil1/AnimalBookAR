@@ -32,7 +32,7 @@ void main() {
     await tester.pumpWidget(AnimalBookApp(progress: p));
     await _settle(tester);
 
-    expect(find.text('Welcome to the zoo!'), findsOneWidget);
+    expect(find.text('Welcome!'), findsOneWidget);
     await tester.enterText(find.byKey(const Key('name')), 'Yahia');
     await tester.pump();
     await tester.tap(find.byKey(const Key('start')));
@@ -71,7 +71,7 @@ void main() {
     });
     await tester.pumpWidget(AnimalBookApp(progress: p));
     await _settle(tester);
-    expect(find.text('14 of 14 animals'), findsOneWidget); // the book cover's progress
+    expect(find.text('14 of 14 animals'), findsWidgets); // the book cover's progress
     await _openBook(tester, 'animals');
 
     expect(find.text("Find the horse's head"), findsOneWidget); // level 2 mission
@@ -129,9 +129,12 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
     }
     expect(find.text('Parents'), findsOneWidget);
+    expect(find.text('1 / 14'), findsOneWidget); // animals met, in "Progress by book"
+    await tester.scrollUntilVisible(find.byKey(const Key('add-child')), 300, scrollable: find.byType(Scrollable).first);
+    await tester.scrollUntilVisible(find.textContaining('Accounts are not available'), 300,
+        scrollable: find.byType(Scrollable).first);
     expect(find.text('Accounts are not available right now (no connection).'), findsOneWidget); // no Firebase in tests
     expect(find.text('Yahia'), findsWidgets);
-    expect(find.text('1 / 14'), findsOneWidget); // animals met
 
     await tester.pageBack();
     for (var i = 0; i < 4; i++) {
@@ -171,7 +174,7 @@ void main() {
     await _settle(tester);
 
     expect(find.text('Cars and trucks'), findsOneWidget);
-    expect(find.text('0 of 9 vehicles'), findsOneWidget);
+    expect(find.text('0 of 9 vehicles'), findsWidgets);
     await _openBook(tester, 'cars');
     expect(p.book.id, 'cars');
     expect(find.text('Meet the car'), findsOneWidget); // the first mission
@@ -215,7 +218,8 @@ void main() {
     await _settle(tester);
     await tester.pump(const Duration(milliseconds: 400));
 
-    await tester.scrollUntilVisible(find.byKey(const Key('book-colors')), 300);
+    await tester.scrollUntilVisible(find.byKey(const Key('book-colors')), 300,
+        scrollable: find.byType(Scrollable).first);
     await _openBook(tester, 'colors');
     expect(find.text('Discover red'), findsOneWidget);
     expect(find.text('Things'), findsOneWidget); // level 2 is about the objects
