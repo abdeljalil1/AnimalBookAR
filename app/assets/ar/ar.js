@@ -15,7 +15,12 @@ import * as THREE from './vendor/three/three.module.js';
 import { GLTFLoader } from './vendor/three/addons/loaders/GLTFLoader.js';
 import { MindARThree } from './vendor/mindar/mindar-image-three.prod.js';
 
-const DEBUG = new URLSearchParams(location.search).has('debug');
+const params = new URLSearchParams(location.search);
+const DEBUG = params.has('debug');
+const LANG = ['en', 'fr', 'ar'].includes(params.get('lang')) ? params.get('lang') : 'en';
+const QUIZ = params.get('mode') === 'quiz'; // level 3: "Find the tail!"
+const QUIZ_GOAL = 3; // right answers per animal
+const QUIZ_DWELL_MS = 400; // aim at the right part this long to answer
 const PAGE_HALF_W = 0.5;
 const PAGE_HALF_H = 0.5 * (1755 / 1241); // pages are A4 portrait
 const SOUND_REPEAT_MS = 8000; // replay the sound when a page is found again after this long
@@ -28,12 +33,60 @@ const TAP_SELECT_MS = 4000; // a tapped part stays selected this long
 
 const $ = (id) => document.getElementById(id);
 
+// UI text in the three languages ({p} = a body part with its article).
+const TEXT = {
+  en: {
+    loading: 'Starting the camera…', scan: 'Point the camera at an animal page',
+    held: '✋ Holding: turn the phone to look around',
+    hint: 'Aim the ◎ at a body part · 1 finger: turn and tip · 2 fingers: zoom, move',
+    sound: 'Sound', move: 'Move', hold: 'Hold', page: 'Page', reset: 'Reset',
+    find: 'Find {p}!', wrong: "That's {p}. Try again!", right: "Bravo! That's {p}!", quizDone: 'Quiz done! 🎉',
+    newAnimal: 'New animal! +1 ★', newPart: '+1 ★', levelUp: 'Level {n} unlocked!', allDone: 'All levels done! 🏆',
+    cameraOff: 'Camera permission is off. Allow the camera for Animal Book AR, then try again.',
+    cameraFail: 'The camera could not start. Close other camera apps and try again.',
+    loadFail: 'Something went wrong while loading: ',
+  },
+  fr: {
+    loading: 'Démarrage de la caméra…', scan: "Vise une page d'animal avec la caméra",
+    held: '✋ Tenu : tourne le téléphone pour regarder autour',
+    hint: 'Vise ◎ une partie du corps · 1 doigt : tourner, pencher · 2 doigts : zoomer, déplacer',
+    sound: 'Son', move: 'Bouger', hold: 'Tenir', page: 'Page', reset: 'Remettre',
+    find: 'Trouve {p} !', wrong: "Ça, c'est {p}. Essaie encore !", right: "Bravo ! C'est {p} !", quizDone: 'Quiz fini ! 🎉',
+    newAnimal: 'Nouvel animal ! +1 ★', newPart: '+1 ★', levelUp: 'Niveau {n} débloqué !', allDone: 'Tous les niveaux sont finis ! 🏆',
+    cameraOff: "La caméra n'est pas autorisée. Autorise-la pour Animal Book AR, puis réessaie.",
+    cameraFail: "La caméra n'a pas pu démarrer. Ferme les autres applis photo et réessaie.",
+    loadFail: 'Erreur au chargement : ',
+  },
+  ar: {
+    loading: 'تشغيل الكاميرا…', scan: 'وجّه الكاميرا نحو صفحة حيوان',
+    held: '✋ مثبّت: أدر الهاتف لترى ما حوله',
+    hint: 'صوّب ◎ نحو جزء من الجسم · إصبع: تدوير وإمالة · إصبعان: تكبير وتحريك',
+    sound: 'صوت', move: 'حركة', hold: 'تثبيت', page: 'الصفحة', reset: 'إعادة',
+    find: 'أين {p}؟', wrong: 'هذا {p}. حاول مرة أخرى!', right: 'أحسنت! هذا {p}!', quizDone: 'انتهى الاختبار! 🎉',
+    newAnimal: 'حيوان جديد! +1 ★', newPart: '+1 ★', levelUp: 'فتحت المستوى {n}!', allDone: 'أكملت كل المستويات! 🏆',
+    cameraOff: 'إذن الكاميرا متوقف. اسمح للتطبيق باستخدام الكاميرا ثم حاول مرة أخرى.',
+    cameraFail: 'تعذّر تشغيل الكاميرا. أغلق تطبيقات الكاميرا الأخرى وحاول مرة أخرى.',
+    loadFail: 'حدث خطأ أثناء التحميل: ',
+  },
+};
+const t = (key, vars = {}) => TEXT[LANG][key].replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
+const nameIn = (def, lang = LANG) => def[lang];
+const partWithArticle = (def) => ({ en: 'the ' + def.en.toLowerCase(), fr: def.fr_def, ar: def.ar_def })[LANG];
+const otherNames = (def) => ['en', 'fr', 'ar'].filter((l) => l !== LANG).map((l) => def[l]).join(' · ');
+
 // Readable by tests (tool/test_web_ar.mjs) and handy when debugging.
 const state = (window.__arState = {
   phase: 'loading', found: null, foundCount: 0, soundsPlayed: 0,
   modelsLoaded: 0, frames: 0, error: null, held: false, gyro: false,
   parts: { visible: [], selected: null },
 });
+
+// Ask the Flutter app (progress, stars); resolves to null in a normal browser.
+async function ask(type, data = {}) {
+  const bridge = window.flutter_inappwebview;
+  if (!bridge || !bridge.callHandler) return null;
+  try { return await bridge.callHandler('arEvent', { type, ...data }); } catch (_) { return null; }
+}
 
 // Messages to the Flutter app; a no-op in a normal browser.
 function notifyApp(type, data = {}) {
@@ -56,6 +109,7 @@ function setPhase(phase) {
   $('aim').classList.toggle('hidden', !showing);
   $('parts').classList.toggle('hidden', !showing);
   $('held-badge').classList.toggle('hidden', phase !== 'held');
+  $('quiz').classList.toggle('hidden', !QUIZ || !showing || !$('quiz-text').textContent);
   $('error').classList.toggle('hidden', phase !== 'error');
 }
 
@@ -65,6 +119,92 @@ function showError(message) {
   setPhase('error');
   notifyApp('error', { message });
 }
+
+// ---- Feedback: toast, big celebration, confetti, chime ----------------------
+let toastTimer = null;
+function toast(text) {
+  const el = $('toast');
+  el.textContent = text;
+  el.classList.remove('hidden', 'pop');
+  void el.offsetWidth; // restart the animation
+  el.classList.add('pop');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.add('hidden'), 1700);
+}
+
+function celebrate(text) {
+  const el = $('celebrate');
+  $('celebrate-text').textContent = text;
+  el.classList.remove('hidden');
+  confetti(220);
+  tone([523, 659, 784, 1047, 1319]);
+  setTimeout(() => el.classList.add('hidden'), 2600);
+}
+
+function confetti(n) {
+  const canvas = $('confetti');
+  const ctx = canvas.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = innerWidth * dpr;
+  canvas.height = innerHeight * dpr;
+  const colors = ['#ff6b6b', '#ffd166', '#06d6a0', '#4cc9f0', '#f72585', '#ffb703'];
+  const bits = Array.from({ length: n }, () => ({
+    x: innerWidth / 2 + (Math.random() - 0.5) * 120, y: innerHeight * 0.35,
+    vx: (Math.random() - 0.5) * 9, vy: -Math.random() * 10 - 4,
+    r: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.3,
+    w: 6 + Math.random() * 6, h: 4 + Math.random() * 4, c: colors[Math.floor(Math.random() * colors.length)],
+  }));
+  const t0 = performance.now();
+  canvas.classList.remove('hidden');
+  (function step(now) {
+    const k = (now - t0) / 2200;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    for (const b of bits) {
+      b.vy += 0.32; b.x += b.vx; b.y += b.vy; b.r += b.vr;
+      ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.r);
+      ctx.globalAlpha = Math.max(0, 1 - k);
+      ctx.fillStyle = b.c; ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+      ctx.restore();
+    }
+    if (k < 1) requestAnimationFrame(step); else canvas.classList.add('hidden');
+  })(t0);
+}
+
+let audioCtx = null;
+function tone(notes) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    notes.forEach((f, i) => {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      const at = audioCtx.currentTime + i * 0.09;
+      o.type = 'triangle';
+      o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, at);
+      g.gain.exponentialRampToValueAtTime(0.25, at + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, at + 0.28);
+      o.connect(g).connect(audioCtx.destination);
+      o.start(at);
+      o.stop(at + 0.3);
+    });
+  } catch (_) { /* no audio: fine */ }
+}
+
+// Static texts in the chosen language.
+function applyLanguage() {
+  document.documentElement.lang = LANG;
+  document.documentElement.dir = LANG === 'ar' ? 'rtl' : 'ltr';
+  $('loading-text').textContent = t('loading');
+  $('scan-hint').textContent = t('scan');
+  $('held-badge').textContent = t('held');
+  $('gesture-hint').textContent = t('hint');
+  for (const [id, key, icon] of [['btn-sound', 'sound', '🔊'], ['btn-move', 'move', '🐾'], ['btn-hold', 'hold', '✋'], ['btn-reset', 'reset', '↺']]) {
+    $(id).innerHTML = `<span>${icon}</span>${t(key)}`;
+  }
+}
+applyLanguage();
 
 // A soft round shadow drawn on the page under each animal.
 function makeShadowTexture() {
@@ -234,7 +374,7 @@ async function main() {
     $('name-en').textContent = a.en;
     $('name-fr').textContent = a.fr;
     $('name-ar').textContent = a.ar;
-    $('fact').textContent = a.fact_en;
+    $('fact').textContent = a['fact_' + LANG] || a.fact_en;
   }
 
   function playSound(entry) {
@@ -266,7 +406,8 @@ async function main() {
     if (isNew) showPartsOf(entry);
     setPhase('found');
     if (isNew || performance.now() - entry.lastSoundAt > SOUND_REPEAT_MS) playSound(entry);
-    notifyApp('found', { id: entry.a.id });
+    ask('found', { id: entry.a.id }).then((r) => reward(r, t('newAnimal')));
+    if (QUIZ) quizStart(entry);
   }
 
   function onLost(entry) {
@@ -314,7 +455,7 @@ async function main() {
     clearTimeout(lostTimer);
     state.held = true;
     state.found = current.a.id;
-    $('btn-hold').innerHTML = '<span>📖</span>Page';
+    $('btn-hold').innerHTML = `<span>📖</span>${t('page')}`;
     setPhase('held');
     notifyApp('hold', { id: current.a.id, gyro: hold.useGyro });
   }
@@ -323,7 +464,7 @@ async function main() {
     if (!state.held) return;
     state.held = false;
     holdGroup.visible = false;
-    $('btn-hold').innerHTML = '<span>✋</span>Hold';
+    $('btn-hold').innerHTML = `<span>✋</span>${t('hold')}`;
     if (current) current.anchor.group.add(current.root);
     // The camera may already see a page (this one or another): show it.
     const seen = entries.find((e) => e.anchor.group.visible);
@@ -379,9 +520,11 @@ async function main() {
     for (const e of entries) for (const q of e.parts) q.el.classList.toggle('selected', q === p);
     $('aim').classList.toggle('on', !!p);
     if (!p) { label.classList.add('hidden'); return; }
-    $('part-en').textContent = p.def.en;
-    $('part-fr').textContent = p.def.fr;
-    $('part-ar').textContent = p.def.ar;
+    // In the quiz the names stay hidden until the right answer.
+    if (QUIZ && quiz.reveal !== p) { label.classList.add('hidden'); return; }
+    $('part-en').textContent = nameIn(p.def);
+    $('part-other').textContent = otherNames(p.def);
+    label.classList.toggle('right', QUIZ);
     label.classList.remove('hidden');
   }
 
@@ -431,13 +574,105 @@ async function main() {
     if (chosen !== selection.part) {
       selection.part = chosen;
       renderSelection();
-      if (chosen) notifyApp('part', { id: chosen.def.id });
+      if (chosen && !QUIZ) {
+        notifyApp('selected', { id: chosen.def.id });
+        const part = chosen;
+        ask('part', { animal: current.a.id, id: part.def.id }).then((r) => reward(r, `${t('newPart')} ${nameIn(part.def)}`));
+      }
     }
+    if (QUIZ) quizCheckAim(aimed, now);
     if (chosen) {
       $('part-label').style.transform = `translate(${chosen.screen.x}px, ${chosen.screen.y}px)`;
     }
     if (checkOcclusion) {
       state.parts = { visible: current.parts.filter((p) => p.visible).map((p) => p.def.id), selected: chosen ? chosen.def.id : null };
+      state.quiz = { target: quiz.target ? quiz.target.def.id : null, correct: quiz.correct, done: quiz.done, animal: quiz.animal };
+      state.partsAt = Object.fromEntries(current.parts.filter((p) => p.visible).map((p) => [p.def.id, [Math.round(p.screen.x), Math.round(p.screen.y)]]));
+    }
+  }
+
+  // ---- Quiz (level 3) ---------------------------------------------------------
+  const quiz = { animal: null, target: null, correct: 0, done: false, asked: new Set(), aimSince: null, busy: false, reveal: null };
+
+  function quizStart(entry) {
+    if (quiz.animal === entry.a.id) return;
+    Object.assign(quiz, { animal: entry.a.id, target: null, correct: 0, done: false, asked: new Set(), aimSince: null, busy: false });
+    quizNext();
+  }
+
+  function quizNext() {
+    if (!current || !current.parts.length) { quiz.target = null; return; } // model still loading
+    let pool = current.parts.filter((p) => !quiz.asked.has(p.def.id));
+    if (!pool.length) { quiz.asked.clear(); pool = current.parts; }
+    quiz.target = pool[Math.floor(Math.random() * pool.length)];
+    quiz.asked.add(quiz.target.def.id);
+    quiz.aimSince = null;
+    banner(t('find', { p: partWithArticle(quiz.target.def) }), otherNames(quiz.target.def));
+  }
+
+  function quizCheckAim(aimed, now) {
+    if (!quiz.target && !quiz.done && !quiz.busy && current && quiz.animal === current.a.id) quizNext();
+    if (!quiz.target || quiz.busy) return;
+    if (aimed === quiz.target) {
+      if (quiz.aimSince === null) quiz.aimSince = now;
+      else if (now - quiz.aimSince > QUIZ_DWELL_MS) quizRight(aimed);
+    } else {
+      quiz.aimSince = null;
+    }
+  }
+
+  function quizAnswer(part) {
+    if (!quiz.target || quiz.busy) return;
+    if (part === quiz.target) { quizRight(part); return; }
+    quiz.busy = true;
+    tone([330, 262]);
+    banner(t('wrong', { p: partWithArticle(part.def) }), '', 'wrong');
+    setTimeout(() => {
+      quiz.busy = false;
+      if (quiz.target) banner(t('find', { p: partWithArticle(quiz.target.def) }), otherNames(quiz.target.def));
+    }, 1600);
+  }
+
+  function quizRight(part) {
+    quiz.busy = true;
+    quiz.correct++;
+    quiz.reveal = part;
+    selection.part = part;
+    renderSelection();
+    tone([523, 659, 784, 1047]);
+    confetti(70);
+    banner(t('right', { p: partWithArticle(part.def) }), '', 'right');
+    const animal = quiz.animal;
+    ask('quiz', { animal, part: part.def.id }).then((r) => reward(r, null));
+    setTimeout(() => {
+      quiz.busy = false;
+      quiz.reveal = null;
+      renderSelection();
+      if (quiz.correct >= QUIZ_GOAL) {
+        quiz.done = true;
+        quiz.target = null;
+        banner(t('quizDone'), '', 'right');
+        confetti(160);
+      } else {
+        quizNext();
+      }
+    }, 1800);
+  }
+
+  function banner(text, sub = '', mood = '') {
+    $('quiz-text').textContent = text;
+    $('quiz-sub').textContent = sub;
+    $('quiz').className = mood;
+    $('quiz').classList.toggle('hidden', !(state.phase === 'found' || state.phase === 'held'));
+  }
+
+  // ---- Rewards ------------------------------------------------------------------
+  // The app answers with { new, stars, levelUp }.
+  function reward(r, newText) {
+    if (!r) return;
+    if (r.new && newText) toast(newText);
+    if (r.levelUp) {
+      celebrate(r.levelUp >= 4 ? t('allDone') : t('levelUp', { n: r.levelUp }));
     }
   }
 
@@ -536,6 +771,7 @@ async function main() {
       if (part) {
         selection.tapped = part;
         selection.tappedAt = performance.now();
+        if (QUIZ) quizAnswer(part);
       } else if (hitsAnimal(p.x, p.y)) {
         playSound(current);
       }
@@ -615,13 +851,11 @@ async function main() {
   } catch (err) {
     console.error(err);
     const name = err && err.name;
-    showError(name === 'NotAllowedError'
-      ? 'Camera permission is off. Allow the camera for Animal Book AR, then try again.'
-      : 'The camera could not start. Close other camera apps and try again.');
+    showError(name === 'NotAllowedError' ? t('cameraOff') : t('cameraFail'));
   }
 }
 
 main().catch((err) => {
   console.error(err);
-  showError('Something went wrong while loading: ' + (err && err.message ? err.message : err));
+  showError(t('loadFail') + (err && err.message ? err.message : err));
 });

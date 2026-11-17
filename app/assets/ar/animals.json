@@ -1,9 +1,12 @@
 [
   {
     "id": "horse",
+    "page": 1,
     "en": "Horse",
     "fr": "Cheval",
     "ar": "حصان",
+    "fr_of": "du cheval",
+    "ar_def": "الحصان",
     "fact_en": "Horses can sleep standing up.",
     "fact_fr": "Le cheval peut dormir debout.",
     "fact_ar": "يستطيع الحصان أن ينام واقفًا.",
@@ -19,6 +22,8 @@
         "en": "Head",
         "fr": "Tête",
         "ar": "رأس",
+        "fr_def": "la tête",
+        "ar_def": "الرأس",
         "at": [
           0.5,
           0.82,
@@ -30,6 +35,8 @@
         "en": "Ear",
         "fr": "Oreille",
         "ar": "أذن",
+        "fr_def": "l'oreille",
+        "ar_def": "الأذن",
         "at": [
           0.5,
           0.98,
@@ -41,6 +48,8 @@
         "en": "Mane",
         "fr": "Crinière",
         "ar": "عُرف",
+        "fr_def": "la crinière",
+        "ar_def": "العُرف",
         "at": [
           0.5,
           0.82,
@@ -52,6 +61,8 @@
         "en": "Leg",
         "fr": "Jambe",
         "ar": "ساق",
+        "fr_def": "la jambe",
+        "ar_def": "الساق",
         "at": [
           0.5,
           0.3,
@@ -63,6 +74,8 @@
         "en": "Hoof",
         "fr": "Sabot",
         "ar": "حافر",
+        "fr_def": "le sabot",
+        "ar_def": "الحافر",
         "at": [
           0.5,
           0.02,
@@ -74,6 +87,8 @@
         "en": "Tail",
         "fr": "Queue",
         "ar": "ذيل",
+        "fr_def": "la queue",
+        "ar_def": "الذيل",
         "at": [
           0.5,
           0.72,
@@ -84,9 +99,12 @@
   },
   {
     "id": "fox",
+    "page": 2,
     "en": "Fox",
     "fr": "Renard",
     "ar": "ثعلب",
+    "fr_of": "du renard",
+    "ar_def": "الثعلب",
     "fact_en": "A fox uses its bushy tail as a warm blanket.",
     "fact_fr": "Le renard se sert de sa queue touffue comme d'une couverture.",
     "fact_ar": "يستعمل الثعلب ذيله الكثيف كغطاء دافئ.",
@@ -102,6 +120,8 @@
         "en": "Head",
         "fr": "Tête",
         "ar": "رأس",
+        "fr_def": "la tête",
+        "ar_def": "الرأس",
         "at": [
           0.5,
           0.78,
@@ -113,6 +133,8 @@
         "en": "Ear",
         "fr": "Oreille",
         "ar": "أذن",
+        "fr_def": "l'oreille",
+        "ar_def": "الأذن",
         "at": [
           0.2,
           0.97,
@@ -124,6 +146,8 @@
         "en": "Snout",
         "fr": "Museau",
         "ar": "خَطم",
+        "fr_def": "le museau",
+        "ar_def": "الخطم",
         "at": [
           0.5,
           0.62,
@@ -131,14 +155,16 @@
         ]
       },
       {
-        "id": "leg",
-        "en": "Leg",
-        "fr": "Patte",
-        "ar": "ساق",
+        "id": "back",
+        "en": "Back",
+        "fr": "Dos",
+        "ar": "ظهر",
+        "fr_def": "le dos",
+        "ar_def": "الظهر",
         "at": [
           0.5,
-          0.25,
-          0.75
+          0.9,
+          0.5
         ]
       },
       {
@@ -146,6 +172,8 @@
         "en": "Paw",
         "fr": "Patte",
         "ar": "قدم",
+        "fr_def": "la patte",
+        "ar_def": "القدم",
         "at": [
           0.5,
           0.02,
@@ -157,6 +185,8 @@
         "en": "Tail",
         "fr": "Queue",
         "ar": "ذيل",
+        "fr_def": "la queue",
+        "ar_def": "الذيل",
         "at": [
           0.5,
           0.3,
@@ -167,9 +197,12 @@
   },
   {
     "id": "flamingo",
+    "page": 3,
     "en": "Flamingo",
     "fr": "Flamant rose",
     "ar": "نحام",
+    "fr_of": "du flamant rose",
+    "ar_def": "النحام",
     "fact_en": "Flamingos are pink because of the food they eat.",
     "fact_fr": "Le flamant est rose grâce à ce qu'il mange.",
     "fact_ar": "لون النحام وردي بسبب الطعام الذي يأكله.",
@@ -185,6 +218,8 @@
         "en": "Head",
         "fr": "Tête",
         "ar": "رأس",
+        "fr_def": "la tête",
+        "ar_def": "الرأس",
         "at": [
           0.5,
           0.92,
@@ -196,6 +231,8 @@
         "en": "Beak",
         "fr": "Bec",
         "ar": "منقار",
+        "fr_def": "le bec",
+        "ar_def": "المنقار",
         "at": [
           0.5,
           0.82,
@@ -207,6 +244,8 @@
         "en": "Neck",
         "fr": "Cou",
         "ar": "رقبة",
+        "fr_def": "le cou",
+        "ar_def": "الرقبة",
         "at": [
           0.5,
           0.9,
@@ -218,6 +257,8 @@
         "en": "Wing",
         "fr": "Aile",
         "ar": "جناح",
+        "fr_def": "l'aile",
+        "ar_def": "الجناح",
         "at": [
           0.2,
           0.5,
@@ -229,6 +270,8 @@
         "en": "Leg",
         "fr": "Patte",
         "ar": "ساق",
+        "fr_def": "la patte",
+        "ar_def": "الساق",
         "at": [
           0.5,
           0.62,
@@ -239,9 +282,12 @@
   },
   {
     "id": "parrot",
+    "page": 4,
     "en": "Parrot",
     "fr": "Perroquet",
     "ar": "ببغاء",
+    "fr_of": "du perroquet",
+    "ar_def": "الببغاء",
     "fact_en": "Parrots can learn to copy words.",
     "fact_fr": "Le perroquet peut apprendre à répéter des mots.",
     "fact_ar": "يستطيع الببغاء أن يتعلم تقليد الكلمات.",
@@ -257,6 +303,8 @@
         "en": "Head",
         "fr": "Tête",
         "ar": "رأس",
+        "fr_def": "la tête",
+        "ar_def": "الرأس",
         "at": [
           0.5,
           0.55,
@@ -268,6 +316,8 @@
         "en": "Beak",
         "fr": "Bec",
         "ar": "منقار",
+        "fr_def": "le bec",
+        "ar_def": "المنقار",
         "at": [
           0.5,
           0.4,
@@ -279,6 +329,8 @@
         "en": "Wing",
         "fr": "Aile",
         "ar": "جناح",
+        "fr_def": "l'aile",
+        "ar_def": "الجناح",
         "at": [
           0.15,
           0.6,
@@ -290,6 +342,8 @@
         "en": "Foot",
         "fr": "Patte",
         "ar": "قدم",
+        "fr_def": "la patte",
+        "ar_def": "القدم",
         "at": [
           0.5,
           0.08,
@@ -301,6 +355,8 @@
         "en": "Tail",
         "fr": "Queue",
         "ar": "ذيل",
+        "fr_def": "la queue",
+        "ar_def": "الذيل",
         "at": [
           0.5,
           0.5,
@@ -311,9 +367,12 @@
   },
   {
     "id": "stork",
+    "page": 5,
     "en": "Stork",
     "fr": "Cigogne",
     "ar": "لقلق",
+    "fr_of": "de la cigogne",
+    "ar_def": "اللقلق",
     "fact_en": "White storks talk by clattering their beaks.",
     "fact_fr": "La cigogne « parle » en claquant du bec.",
     "fact_ar": "يتواصل اللقلق بطقطقة منقاره.",
@@ -329,6 +388,8 @@
         "en": "Head",
         "fr": "Tête",
         "ar": "رأس",
+        "fr_def": "la tête",
+        "ar_def": "الرأس",
         "at": [
           0.5,
           0.85,
@@ -340,6 +401,8 @@
         "en": "Beak",
         "fr": "Bec",
         "ar": "منقار",
+        "fr_def": "le bec",
+        "ar_def": "المنقار",
         "at": [
           0.5,
           0.75,
@@ -351,6 +414,8 @@
         "en": "Neck",
         "fr": "Cou",
         "ar": "رقبة",
+        "fr_def": "le cou",
+        "ar_def": "الرقبة",
         "at": [
           0.5,
           0.8,
@@ -362,6 +427,8 @@
         "en": "Wing",
         "fr": "Aile",
         "ar": "جناح",
+        "fr_def": "l'aile",
+        "ar_def": "الجناح",
         "at": [
           0.1,
           0.8,
@@ -373,6 +440,8 @@
         "en": "Leg",
         "fr": "Patte",
         "ar": "ساق",
+        "fr_def": "la patte",
+        "ar_def": "الساق",
         "at": [
           0.5,
           0.3,

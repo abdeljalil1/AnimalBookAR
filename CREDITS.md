@@ -31,8 +31,13 @@ Everything here is free to use, but **CC BY-SA** items need attribution, and cop
 
 The four ro.me birds and horse have no explicit licence of their own. They are fine for a prototype, but **replace them before publishing** (for example with CC0 animated animals from Quaternius), or get written permission.
 
+## Fonts
+
+- Poppins, by Indian Type Foundry and Jonny Pinhorn, SIL Open Font License 1.1 (`app/assets/fonts/OFL-Poppins.txt`)
+- Tajawal, by Boutros Fonts, SIL Open Font License 1.1 (`app/assets/fonts/OFL-Tajawal.txt`)
+
 ## Libraries
 
 - MindAR 1.2.5, MIT, https://github.com/hiukim/mind-ar-js
 - three.js 0.160.0, MIT, https://github.com/mrdoob/three.js
-- flutter_inappwebview, Apache 2.0; permission_handler, MIT
+- flutter_inappwebview, Apache 2.0; permission_handler, MIT; shared_preferences, BSD-3-Clause

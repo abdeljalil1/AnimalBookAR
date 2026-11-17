@@ -11,12 +11,12 @@
 
   <div id="loading" class="center-msg">
     <div class="spinner"></div>
-    <p>Starting the camera…</p>
+    <p id="loading-text">Starting the camera…</p>
   </div>
 
   <div id="scan" class="hidden">
     <div class="frame"><span></span><span></span><span></span><span></span></div>
-    <p class="hint">Point the camera at an animal page</p>
+    <p class="hint" id="scan-hint">Point the camera at an animal page</p>
   </div>
 
   <div id="error" class="center-msg hidden">
@@ -30,10 +30,16 @@
   <div id="part-label" class="hidden">
     <div class="bubble">
       <span id="part-en" class="en"></span>
-      <span class="row"><span id="part-fr"></span> · <span id="part-ar" dir="rtl"></span></span>
+      <span class="row" id="part-other"></span>
     </div>
   </div>
   <div id="held-badge" class="hidden">✋ Holding: turn the phone to look around</div>
+
+  <!-- quiz question, small rewards, big celebrations -->
+  <div id="quiz" class="hidden"><span id="quiz-text"></span><span id="quiz-sub"></span></div>
+  <div id="toast" class="hidden"></div>
+  <div id="celebrate" class="hidden"><span>🎉</span><b id="celebrate-text"></b></div>
+  <canvas id="confetti" class="hidden"></canvas>
 
   <div id="card" class="hidden">
     <div class="names">
@@ -48,7 +54,7 @@
       <button id="btn-hold" aria-label="Keep the animal when the page leaves the camera"><span>✋</span>Hold</button>
       <button id="btn-reset" aria-label="Reset position"><span>↺</span>Reset</button>
     </div>
-    <p class="gesture-hint">Aim the ◎ at a body part · 1 finger: turn and tip · 2 fingers: zoom, move</p>
+    <p class="gesture-hint" id="gesture-hint">Aim the ◎ at a body part · 1 finger: turn and tip · 2 fingers: zoom, move</p>
   </div>
 
   <div id="debug" class="hidden"></div>

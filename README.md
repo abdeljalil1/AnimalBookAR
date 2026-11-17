@@ -10,7 +10,27 @@ beak. Aim the circle in the middle of the screen at one (or tap it) to see its
 name in the three languages. **Hold** keeps the animal on screen when the page
 leaves the camera, so the child can turn the phone and look around it.
 
-Five animals: horse, fox, flamingo, parrot, stork.
+Five animals: horse, fox, flamingo, parrot, stork. The app speaks English,
+French or Arabic (right to left), chosen on first launch or from the home screen.
+
+## Home and levels
+
+The home screen is a zoo map: an entrance gate, a sandy path and one fenced
+enclosure per animal (hay for the horse, rocks for the fox, a pond for the
+flamingo, a big tree for the parrot, a nest for the stork), drawn in code
+(`lib/widgets/zoo_path.dart`). Above it:
+
+- **Next mission:** always says what to do next ("Find the fox's tail, page 2"). **Go** opens the camera.
+- **Three levels:** 1 Meet (scan each animal's page) → 2 Body parts (find every
+  part) → 3 Quiz (the camera asks "Find the tail!", 3 right answers per animal).
+  A level unlocks when the one before is done.
+- **Stars:** one per animal met, part found and right quiz answer. New stars show
+  as "+1 ★" in the camera, and a new level as a celebration with confetti.
+- **Animal sheet:** tap an enclosure to see its photo, names, fact, parts found
+  (the others stay "?"), quiz stars, **Show page** and **Scan** / **Start quiz**.
+
+Progress, the child's first name and the language are saved on the phone only
+(`lib/progress.dart`, shared_preferences). No account, nothing sent anywhere.
 
 ## How it works
 
@@ -40,7 +60,9 @@ the right behaviour.
 
 | Path | What |
 |---|---|
-| `app/` | Flutter app (`com.synapexa.animal_book_ar`) |
+| `app/` | Flutter app (`com.synapexa.animal_book_ar`): `lib/screens/` (welcome, home, animal sheet, AR, page), `lib/widgets/zoo_path.dart`, `lib/progress.dart`, `lib/l10n.dart` (all UI text, 3 languages) |
+| `app/assets/thumbs/` | Round photos for the zoo path (made by `make_pages.py`) |
+| `app/assets/fonts/` | Poppins and Tajawal (Arabic), SIL Open Font License |
 | `app/assets/ar/` | AR page: `index.html`, `ar.js`, `ar.css`, `animals.json`, `targets.mind`, models, sounds, page JPEGs, vendored MindAR + three.js |
 | `app/assets/ar/animals.json` | **The list of animals.** Names, facts, model, sound, colour, size, body parts. Read by the app, the AR page and the page generator |
 | `book/animal-book.pdf` | Printable book, A4, one animal per page |
@@ -124,15 +146,18 @@ the five pages on a desk. It checks that every page is found in order and lost
 when it leaves the view, a sound plays for each, all models load, dragging
 turns and the wheel resizes, body-part dots show and tapping one names it
 (without replaying the sound), and Hold keeps the stork on screen after its page
-leaves, then goes back to scanning when released. Screenshots go to `tool/test-output/`. Needs Chrome
+leaves, then goes back to scanning when released. A second pass reloads in quiz
+mode in French: the question is in French, a wrong tap is refused, the right
+one counts. Screenshots go to `tool/test-output/`. Needs Chrome
 and ffmpeg.
 
 ```bash
 cd app && flutter test
 ```
 
-Covers the animal list, the home screen and the local server (content types,
-byte ranges, 404s).
+Covers levels, missions and stars (with the French and Arabic sentences),
+saving progress, the welcome flow, the home screen and animal sheet, Arabic
+right-to-left layout, and the local server (content types, byte ranges, 404s).
 
 ## What has been verified (2026-11-16/17)
 
@@ -163,5 +188,6 @@ byte ranges, 404s).
   and open `chrome://inspect`.
 - The horse and birds are prototype models from the three.js examples (see
   CREDITS.md). Replace them before publishing.
-- The app UI is English; the animal names and facts are in English, French and Arabic.
-  Ideas: speak the names aloud, a quiz ("find the tail!"), more animals, an Arabic UI.
+  Ideas: speak the names aloud, more animals, a parents' page, sound on/off.
+- The French and Arabic texts were written by Claude, not by a native speaker:
+  have them checked before publishing.

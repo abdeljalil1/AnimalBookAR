@@ -10,6 +10,8 @@
 //   - body-part dots show on the animal; tapping one shows its name,
 //   - Hold keeps the stork on screen after its page leaves the camera,
 //     and releasing Hold goes back to scanning,
+//   - then, reloaded in quiz mode in French: the page is in French, a wrong
+//     answer is refused, the right one counts,
 //   - there are no page errors,
 // and saves screenshots to tool/test-output/.
 //
@@ -160,8 +162,8 @@ async function main() {
       if (dot) {
         await tap(dot.x, dot.y);
         await sleep(400);
-        const sel = await evalJs('JSON.stringify({ s: window.__arState.parts.selected, label: !document.getElementById("part-label").classList.contains("hidden"), en: document.getElementById("part-en").textContent, ar: document.getElementById("part-ar").textContent })').then(JSON.parse);
-        check(sel.s && sel.label && sel.en && sel.ar, `tapping a dot names the part (${sel.en} / ${sel.ar})`);
+        const sel = await evalJs('JSON.stringify({ s: window.__arState.parts.selected, label: !document.getElementById("part-label").classList.contains("hidden"), en: document.getElementById("part-en").textContent, other: document.getElementById("part-other").textContent })').then(JSON.parse);
+        check(sel.s && sel.label && sel.en && sel.other.includes(' · '), `tapping a dot names the part (${sel.en} / ${sel.other})`);
         const sounds = await evalJs('window.__arState.soundsPlayed');
         check(sounds === 1, `tapping a dot selects it without replaying the sound (${sounds} sound)`);
         await shot('horse-part.png');
@@ -206,6 +208,42 @@ async function main() {
       await shot('horse-turned-bigger.png');
     }
     if (seen.includes(PAGES.at(-1)) && seen.at(-1) === 'lost') break;
+  }
+
+  // ---- second pass: quiz mode, in French ----
+  await page.send('Page.navigate', { url: url + '&mode=quiz&lang=fr' });
+  let q = null;
+  const tq = Date.now();
+  while (Date.now() - tq < 60000) {
+    await sleep(300);
+    q = await evalJs('JSON.stringify(window.__arState || null)').then((x) => JSON.parse(x)).catch(() => null);
+    if (q && q.quiz && q.quiz.target && Object.keys(q.partsAt || {}).length >= 2) break;
+  }
+  const texts = await evalJs('JSON.stringify({ btn: document.getElementById("btn-sound").textContent, quiz: document.getElementById("quiz-text").textContent, hidden: document.getElementById("quiz").classList.contains("hidden") })').then(JSON.parse);
+  check(texts.btn.includes('Son') && texts.quiz.startsWith('Trouve') && !texts.hidden,
+    `quiz mode asks in French (${q?.found}: "${texts.quiz}", button "${texts.btn}")`);
+  if (q && q.quiz && q.quiz.target) {
+    const target = q.quiz.target;
+    const wrongId = Object.keys(q.partsAt).find((id) => id !== target);
+    if (wrongId) {
+      await tap(...q.partsAt[wrongId]);
+      await sleep(300);
+      const w = await evalJs('JSON.stringify({ cls: document.getElementById("quiz").className, correct: window.__arState.quiz.correct })').then(JSON.parse);
+      check(w.cls.includes('wrong') && w.correct === 0, `a wrong answer is refused (${wrongId} for ${target})`);
+      await sleep(1800);
+    }
+    const now = await evalJs('JSON.stringify(window.__arState.partsAt)').then(JSON.parse);
+    if (now[target]) {
+      await tap(...now[target]);
+      await sleep(500);
+      const r = await evalJs('JSON.stringify({ cls: document.getElementById("quiz").className, text: document.getElementById("quiz-text").textContent, correct: window.__arState.quiz.correct })').then(JSON.parse);
+      check(r.correct === 1 && r.cls.includes('right') && r.text.startsWith('Bravo'), `the right answer counts ("${r.text}")`);
+      await shot('quiz-right.png');
+    } else {
+      check(false, `the quiz target ${target} is on screen to tap`);
+    }
+  } else {
+    check(false, 'quiz mode asks a question');
   }
 
   console.log('      final state', JSON.stringify(st));

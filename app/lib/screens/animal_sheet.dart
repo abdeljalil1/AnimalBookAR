@@ -1,0 +1,137 @@
+import 'package:flutter/material.dart';
+
+import '../animals.dart';
+import '../progress.dart';
+import 'page_screen.dart';
+
+/// Opens from the zoo path: the animal's photo, names, fact, the body parts
+/// found so far (the others stay a mystery), its quiz score, and buttons.
+class AnimalSheet extends StatelessWidget {
+  const AnimalSheet({super.key, required this.animal, required this.progress, required this.onScan});
+  final Animal animal;
+  final Progress progress;
+  final void Function({bool quiz}) onScan;
+
+  @override
+  Widget build(BuildContext context) {
+    final a = animal;
+    final p = progress;
+    final s = p.s;
+    final lang = p.lang;
+    final others = [a.en, a.fr, a.ar].where((n) => n != a.name(lang)).join(' · ');
+    final found = p.partsFound(a);
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: SizedBox(
+              height: 150,
+              child: Stack(fit: StackFit.expand, children: [
+                Image.asset(a.pageAsset, fit: BoxFit.cover, alignment: const Alignment(0, -0.62)),
+                const DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Color(0x00000000), Color(0x99000000)],
+                    ),
+                  ),
+                ),
+                PositionedDirectional(
+                  start: 14,
+                  bottom: 10,
+                  end: 14,
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(a.name(lang),
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800, height: 1.1)),
+                    Text('$others · ${s.page(a.page)}', style: const TextStyle(color: Colors.white, fontSize: 13)),
+                  ]),
+                ),
+              ]),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(p.met(a.id) ? a.fact(lang) : s.notMet,
+              style: const TextStyle(fontSize: 15, height: 1.35, color: Color(0xFF4A3C30))),
+          const SizedBox(height: 14),
+          Row(children: [
+            Text(s.bodyParts, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+            const Spacer(),
+            Text(s.found(found, a.parts.length), style: const TextStyle(color: Color(0xFF7A6A5C), fontSize: 13)),
+          ]),
+          const SizedBox(height: 8),
+          Wrap(spacing: 8, runSpacing: 8, children: [
+            for (final part in a.parts)
+              p.partFound(a.id, part.id)
+                  ? _Chip(text: part.name(lang), found: true)
+                  : const _Chip(text: '?', found: false),
+          ]),
+          if (p.unlocked(3)) ...[
+            const SizedBox(height: 12),
+            Row(children: [
+              for (var i = 0; i < quizGoal; i++)
+                Icon(i < p.quizScore(a.id) ? Icons.star_rounded : Icons.star_outline_rounded,
+                    color: const Color(0xFFF2A60C), size: 22),
+              const SizedBox(width: 6),
+              Text(s.quizScore(p.quizScore(a.id)), style: const TextStyle(color: Color(0xFF7A6A5C))),
+            ]),
+          ],
+          const SizedBox(height: 18),
+          Row(children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () =>
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => PageScreen(animal: a, progress: p))),
+                icon: const Icon(Icons.menu_book_rounded),
+                label: Text(s.showPage),
+                style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: FilledButton.icon(
+                onPressed: () => onScan(quiz: p.unlocked(3)),
+                icon: Icon(p.unlocked(3) ? Icons.quiz_rounded : Icons.photo_camera_rounded),
+                label: Text(p.unlocked(3) ? s.startQuiz : s.scan),
+                style: FilledButton.styleFrom(
+                  backgroundColor: a.color,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
+            ),
+          ]),
+        ]),
+      ),
+    );
+  }
+}
+
+class _Chip extends StatelessWidget {
+  const _Chip({required this.text, required this.found});
+  final String text;
+  final bool found;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      decoration: BoxDecoration(
+        color: found ? const Color(0xFFDFF3E7) : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: found ? const Color(0xFF9ED6B4) : const Color(0xFFD9CDBE)),
+      ),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        if (found) ...[
+          const Icon(Icons.check_rounded, size: 16, color: Color(0xFF1F7A4D)),
+          const SizedBox(width: 4),
+        ],
+        Text(text,
+            style: TextStyle(
+                fontWeight: FontWeight.w700, color: found ? const Color(0xFF1F7A4D) : const Color(0xFFA89A8C))),
+      ]),
+    );
+  }
+}

@@ -4,7 +4,8 @@
 Reads app/assets/ar/animals.json and tool/photos/<id>.jpg, then writes:
   book/pages/<id>.png        one A4 page per animal (also the AR tracking image)
   book/animal-book.pdf       all pages, ready to print on A4
-  app/assets/ar/pages/<id>.jpg  smaller copies the app shows on its home screen
+  app/assets/ar/pages/<id>.jpg  smaller copies the app shows ("Show page")
+  app/assets/thumbs/<id>.jpg    round-photo thumbnails for the zoo path (square crops)
 
 Usage: python3 tool/make_pages.py
 Needs Google Chrome in /Applications.
@@ -21,6 +22,10 @@ ROOT = Path(__file__).resolve().parent.parent
 APP_AR = ROOT / "app" / "assets" / "ar"
 BOOK = ROOT / "book"
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+
+# Where each animal is in its photo (x, y as fractions), for the square thumbnails.
+THUMB_FOCUS = {"horse": (0.38, 0.5), "fox": (0.62, 0.45), "flamingo": (0.5, 0.5),
+               "parrot": (0.42, 0.45), "stork": (0.5, 0.45)}
 
 # A4 at 96 CSS px per inch is 794 x 1123. Screenshots use a 1.5625 scale
 # factor, giving 1240 x 1754 PNGs (150 dpi).
@@ -89,6 +94,19 @@ def chrome(*args):
                    check=True, capture_output=True, timeout=120)
 
 
+def make_thumb(animal_id):
+    out = ROOT / "app" / "assets" / "thumbs" / f"{animal_id}.jpg"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fx, fy = THUMB_FOCUS.get(animal_id, (0.5, 0.5))
+    with Image.open(ROOT / "tool" / "photos" / f"{animal_id}.jpg") as im:
+        im = im.convert("RGB")
+        w, h = im.size
+        s = min(w, h)
+        left = max(0, min(w - s, int(fx * w) - s // 2))
+        top = max(0, min(h - s, int(fy * h) - s // 2))
+        im.crop((left, top, left + s, top + s)).resize((256, 256), Image.LANCZOS).save(out, quality=85, optimize=True)
+
+
 def main():
     animals = json.loads((APP_AR / "animals.json").read_text())
     credits = json.loads((ROOT / "tool" / "credits.json").read_text())
@@ -110,6 +128,7 @@ def main():
             im = im.convert("RGB")
             im.thumbnail((900, 900 * PAGE_H // PAGE_W + 1))
             im.save(APP_AR / "pages" / f"{a['id']}.jpg", quality=85, optimize=True)
+        make_thumb(a["id"])
         print("page", out.relative_to(ROOT))
     book = tmp / "book.html"
     book.write_text(doc("".join(sections)))
