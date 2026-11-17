@@ -1,0 +1,989 @@
+[
+ {
+  "id": "car",
+  "page": 1,
+  "en": "Car",
+  "fr": "Voiture",
+  "ar": "سيارة",
+  "fr_of": "de la voiture",
+  "ar_def": "السيارة",
+  "fact_en": "A car has four wheels and a steering wheel.",
+  "fact_fr": "Une voiture a quatre roues et un volant.",
+  "fact_ar": "للسيارة أربع عجلات ومقود.",
+  "model": "books/cars/models/car.glb",
+  "sound": "books/cars/sounds/car.m4a",
+  "color": "#4F7CC2",
+  "size": 0.55,
+  "lift": 0,
+  "turn": 60,
+  "needs": [
+   "fuel",
+   "passengers",
+   "soap"
+  ],
+  "parts": [
+   {
+    "id": "wheel",
+    "en": "Wheel",
+    "fr": "Roue",
+    "ar": "عجلة",
+    "fr_def": "la roue",
+    "ar_def": "العجلة",
+    "at": [
+     0,
+     0.15,
+     0.79
+    ]
+   },
+   {
+    "id": "door",
+    "en": "Door",
+    "fr": "Porte",
+    "ar": "باب",
+    "fr_def": "la porte",
+    "ar_def": "الباب",
+    "at": [
+     0,
+     0.45,
+     0.5
+    ]
+   },
+   {
+    "id": "window",
+    "en": "Window",
+    "fr": "Vitre",
+    "ar": "نافذة",
+    "fr_def": "la vitre",
+    "ar_def": "النافذة",
+    "at": [
+     0,
+     0.8,
+     0.42
+    ]
+   },
+   {
+    "id": "headlight",
+    "en": "Headlight",
+    "fr": "Phare",
+    "ar": "مصباح أمامي",
+    "fr_def": "le phare",
+    "ar_def": "المصباح الأمامي",
+    "at": [
+     0.2,
+     0.5,
+     1.0
+    ]
+   },
+   {
+    "id": "bumper",
+    "en": "Bumper",
+    "fr": "Pare-chocs",
+    "ar": "مصد",
+    "fr_def": "le pare-chocs",
+    "ar_def": "المصد",
+    "at": [
+     0.5,
+     0.2,
+     1.0
+    ]
+   },
+   {
+    "id": "trunk",
+    "en": "Trunk",
+    "fr": "Coffre",
+    "ar": "صندوق خلفي",
+    "fr_def": "le coffre",
+    "ar_def": "الصندوق الخلفي",
+    "at": [
+     0.5,
+     0.62,
+     0.02
+    ]
+   },
+   {
+    "id": "roof",
+    "en": "Roof",
+    "fr": "Toit",
+    "ar": "سقف",
+    "fr_def": "le toit",
+    "ar_def": "السقف",
+    "at": [
+     0.5,
+     1.0,
+     0.45
+    ]
+   }
+  ]
+ },
+ {
+  "id": "taxi",
+  "page": 2,
+  "en": "Taxi",
+  "fr": "Taxi",
+  "ar": "سيارة أجرة",
+  "fr_of": "du taxi",
+  "ar_def": "سيارة الأجرة",
+  "fact_en": "You wave your hand to stop a taxi.",
+  "fact_fr": "On lève la main pour arrêter un taxi.",
+  "fact_ar": "نرفع اليد لإيقاف سيارة الأجرة.",
+  "model": "books/cars/models/taxi.glb",
+  "sound": "books/cars/sounds/taxi.m4a",
+  "color": "#D9A400",
+  "size": 0.55,
+  "lift": 0,
+  "turn": 60,
+  "needs": [
+   "fuel",
+   "passengers",
+   "soap"
+  ],
+  "helps": {
+   "en": "Dad must go to the train station! Who takes him?",
+   "fr": "Papa doit aller à la gare ! Qui l'emmène ?",
+   "ar": "يجب أن يذهب أبي إلى المحطة! من يوصله؟"
+  },
+  "parts": [
+   {
+    "id": "wheel",
+    "en": "Wheel",
+    "fr": "Roue",
+    "ar": "عجلة",
+    "fr_def": "la roue",
+    "ar_def": "العجلة",
+    "at": [
+     0,
+     0.15,
+     0.79
+    ]
+   },
+   {
+    "id": "door",
+    "en": "Door",
+    "fr": "Porte",
+    "ar": "باب",
+    "fr_def": "la porte",
+    "ar_def": "الباب",
+    "at": [
+     0,
+     0.45,
+     0.5
+    ]
+   },
+   {
+    "id": "window",
+    "en": "Window",
+    "fr": "Vitre",
+    "ar": "نافذة",
+    "fr_def": "la vitre",
+    "ar_def": "النافذة",
+    "at": [
+     0,
+     0.8,
+     0.42
+    ]
+   },
+   {
+    "id": "headlight",
+    "en": "Headlight",
+    "fr": "Phare",
+    "ar": "مصباح أمامي",
+    "fr_def": "le phare",
+    "ar_def": "المصباح الأمامي",
+    "at": [
+     0.2,
+     0.5,
+     1.0
+    ]
+   },
+   {
+    "id": "bumper",
+    "en": "Bumper",
+    "fr": "Pare-chocs",
+    "ar": "مصد",
+    "fr_def": "le pare-chocs",
+    "ar_def": "المصد",
+    "at": [
+     0.5,
+     0.2,
+     1.0
+    ]
+   },
+   {
+    "id": "trunk",
+    "en": "Trunk",
+    "fr": "Coffre",
+    "ar": "صندوق خلفي",
+    "fr_def": "le coffre",
+    "ar_def": "الصندوق الخلفي",
+    "at": [
+     0.5,
+     0.62,
+     0.02
+    ]
+   },
+   {
+    "id": "sign",
+    "en": "Taxi sign",
+    "fr": "Enseigne taxi",
+    "ar": "لافتة الأجرة",
+    "fr_def": "l'enseigne taxi",
+    "ar_def": "لافتة الأجرة",
+    "at": [
+     0.5,
+     1.0,
+     0.5
+    ]
+   }
+  ]
+ },
+ {
+  "id": "police",
+  "page": 3,
+  "en": "Police car",
+  "fr": "Voiture de police",
+  "ar": "سيارة شرطة",
+  "fr_of": "de la voiture de police",
+  "ar_def": "سيارة الشرطة",
+  "fact_en": "Police cars have flashing blue lights.",
+  "fact_fr": "Les voitures de police ont des gyrophares bleus.",
+  "fact_ar": "لسيارات الشرطة أضواء زرقاء وامضة.",
+  "model": "books/cars/models/police.glb",
+  "sound": "books/cars/sounds/police.m4a",
+  "color": "#2B3A67",
+  "size": 0.55,
+  "lift": 0,
+  "turn": 60,
+  "needs": [
+   "fuel",
+   "officer",
+   "soap"
+  ],
+  "helps": {
+   "en": "A child is lost! Who helps find the parents?",
+   "fr": "Un enfant est perdu ! Qui l'aide à retrouver ses parents ?",
+   "ar": "طفل تائه! من يساعده في إيجاد والديه؟"
+  },
+  "parts": [
+   {
+    "id": "wheel",
+    "en": "Wheel",
+    "fr": "Roue",
+    "ar": "عجلة",
+    "fr_def": "la roue",
+    "ar_def": "العجلة",
+    "at": [
+     0,
+     0.15,
+     0.79
+    ]
+   },
+   {
+    "id": "door",
+    "en": "Door",
+    "fr": "Porte",
+    "ar": "باب",
+    "fr_def": "la porte",
+    "ar_def": "الباب",
+    "at": [
+     0,
+     0.45,
+     0.5
+    ]
+   },
+   {
+    "id": "window",
+    "en": "Window",
+    "fr": "Vitre",
+    "ar": "نافذة",
+    "fr_def": "la vitre",
+    "ar_def": "النافذة",
+    "at": [
+     0,
+     0.8,
+     0.42
+    ]
+   },
+   {
+    "id": "headlight",
+    "en": "Headlight",
+    "fr": "Phare",
+    "ar": "مصباح أمامي",
+    "fr_def": "le phare",
+    "ar_def": "المصباح الأمامي",
+    "at": [
+     0.2,
+     0.5,
+     1.0
+    ]
+   },
+   {
+    "id": "bumper",
+    "en": "Bumper",
+    "fr": "Pare-chocs",
+    "ar": "مصد",
+    "fr_def": "le pare-chocs",
+    "ar_def": "المصد",
+    "at": [
+     0.5,
+     0.2,
+     1.0
+    ]
+   },
+   {
+    "id": "trunk",
+    "en": "Trunk",
+    "fr": "Coffre",
+    "ar": "صندوق خلفي",
+    "fr_def": "le coffre",
+    "ar_def": "الصندوق الخلفي",
+    "at": [
+     0.5,
+     0.62,
+     0.02
+    ]
+   },
+   {
+    "id": "siren",
+    "en": "Siren",
+    "fr": "Gyrophare",
+    "ar": "ضوء الإنذار",
+    "fr_def": "le gyrophare",
+    "ar_def": "ضوء الإنذار",
+    "at": [
+     0.5,
+     1.0,
+     0.6
+    ]
+   }
+  ]
+ },
+ {
+  "id": "ambulance",
+  "page": 4,
+  "en": "Ambulance",
+  "fr": "Ambulance",
+  "ar": "سيارة إسعاف",
+  "fr_of": "de l'ambulance",
+  "ar_def": "سيارة الإسعاف",
+  "fact_en": "Cars move aside to let the ambulance pass.",
+  "fact_fr": "Les voitures se poussent pour laisser passer l'ambulance.",
+  "fact_ar": "تفسح السيارات الطريق لسيارة الإسعاف.",
+  "model": "books/cars/models/ambulance.glb",
+  "sound": "books/cars/sounds/ambulance.m4a",
+  "color": "#C62828",
+  "size": 0.55,
+  "lift": 0,
+  "turn": 240,
+  "front": -1,
+  "needs": [
+   "fuel",
+   "doctor",
+   "patient"
+  ],
+  "helps": {
+   "en": "Someone is hurt! Who takes them to the hospital?",
+   "fr": "Quelqu'un est blessé ! Qui l'emmène à l'hôpital ?",
+   "ar": "شخص مصاب! من ينقله إلى المستشفى؟"
+  },
+  "parts": [
+   {
+    "id": "wheel",
+    "en": "Wheel",
+    "fr": "Roue",
+    "ar": "عجلة",
+    "fr_def": "la roue",
+    "ar_def": "العجلة",
+    "at": [
+     1,
+     0.1,
+     0.2
+    ]
+   },
+   {
+    "id": "windscreen",
+    "en": "Windscreen",
+    "fr": "Pare-brise",
+    "ar": "زجاج أمامي",
+    "fr_def": "le pare-brise",
+    "ar_def": "الزجاج الأمامي",
+    "at": [
+     0.5,
+     0.7,
+     0.2
+    ]
+   },
+   {
+    "id": "siren",
+    "en": "Siren",
+    "fr": "Gyrophare",
+    "ar": "ضوء الإنذار",
+    "fr_def": "le gyrophare",
+    "ar_def": "ضوء الإنذار",
+    "at": [
+     0.5,
+     1.0,
+     0.85
+    ]
+   },
+   {
+    "id": "backdoor",
+    "en": "Back door",
+    "fr": "Porte arrière",
+    "ar": "باب خلفي",
+    "fr_def": "la porte arrière",
+    "ar_def": "الباب الخلفي",
+    "at": [
+     0.5,
+     0.5,
+     1.0
+    ]
+   },
+   {
+    "id": "headlight",
+    "en": "Headlight",
+    "fr": "Phare",
+    "ar": "مصباح أمامي",
+    "fr_def": "le phare",
+    "ar_def": "المصباح الأمامي",
+    "at": [
+     0.2,
+     0.35,
+     0.0
+    ]
+   },
+   {
+    "id": "door",
+    "en": "Door",
+    "fr": "Porte",
+    "ar": "باب",
+    "fr_def": "la porte",
+    "ar_def": "الباب",
+    "at": [
+     1,
+     0.5,
+     0.3
+    ]
+   },
+   {
+    "id": "roof",
+    "en": "Roof",
+    "fr": "Toit",
+    "ar": "سقف",
+    "fr_def": "le toit",
+    "ar_def": "السقف",
+    "at": [
+     0.5,
+     1.0,
+     0.6
+    ]
+   }
+  ]
+ },
+ {
+  "id": "firetruck",
+  "page": 5,
+  "en": "Fire truck",
+  "fr": "Camion de pompiers",
+  "ar": "شاحنة إطفاء",
+  "fr_of": "du camion de pompiers",
+  "ar_def": "شاحنة الإطفاء",
+  "fact_en": "A fire truck carries water and a long ladder.",
+  "fact_fr": "Le camion de pompiers transporte de l'eau et une grande échelle.",
+  "fact_ar": "تحمل شاحنة الإطفاء الماء وسلّمًا طويلًا.",
+  "model": "books/cars/models/firetruck.glb",
+  "sound": "books/cars/sounds/firetruck.m4a",
+  "color": "#D9473A",
+  "size": 0.65,
+  "lift": 0,
+  "turn": 60,
+  "needs": [
+   "water",
+   "firefighter",
+   "fuel"
+  ],
+  "helps": {
+   "en": "There's a fire! Who comes to put it out?",
+   "fr": "Il y a un feu ! Qui vient l'éteindre ?",
+   "ar": "هناك حريق! من يأتي لإطفائه؟"
+  },
+  "parts": [
+   {
+    "id": "wheel",
+    "en": "Wheel",
+    "fr": "Roue",
+    "ar": "عجلة",
+    "fr_def": "la roue",
+    "ar_def": "العجلة",
+    "at": [
+     0,
+     0.1,
+     0.78
+    ]
+   },
+   {
+    "id": "ladder",
+    "en": "Ladder",
+    "fr": "Échelle",
+    "ar": "سلّم",
+    "fr_def": "l'échelle",
+    "ar_def": "السلّم",
+    "at": [
+     0.5,
+     1.0,
+     0.4
+    ]
+   },
+   {
+    "id": "cab",
+    "en": "Cab",
+    "fr": "Cabine",
+    "ar": "مقصورة",
+    "fr_def": "la cabine",
+    "ar_def": "المقصورة",
+    "at": [
+     0,
+     0.7,
+     0.88
+    ]
+   },
+   {
+    "id": "headlight",
+    "en": "Headlight",
+    "fr": "Phare",
+    "ar": "مصباح أمامي",
+    "fr_def": "le phare",
+    "ar_def": "المصباح الأمامي",
+    "at": [
+     0.2,
+     0.3,
+     1.0
+    ]
+   },
+   {
+    "id": "door",
+    "en": "Door",
+    "fr": "Porte",
+    "ar": "باب",
+    "fr_def": "la porte",
+    "ar_def": "الباب",
+    "at": [
+     0,
+     0.5,
+     0.82
+    ]
+   },
+   {
+    "id": "bumper",
+    "en": "Bumper",
+    "fr": "Pare-chocs",
+    "ar": "مصد",
+    "fr_def": "le pare-chocs",
+    "ar_def": "المصد",
+    "at": [
+     0.5,
+     0.15,
+     1.0
+    ]
+   }
+  ]
+ },
+ {
+  "id": "bus",
+  "page": 6,
+  "en": "School bus",
+  "fr": "Bus scolaire",
+  "ar": "حافلة مدرسية",
+  "fr_of": "du bus scolaire",
+  "ar_def": "الحافلة المدرسية",
+  "fact_en": "A school bus can carry more than 40 children.",
+  "fact_fr": "Un bus scolaire peut transporter plus de 40 enfants.",
+  "fact_ar": "تستطيع الحافلة المدرسية نقل أكثر من 40 طفلًا.",
+  "model": "books/cars/models/bus.glb",
+  "sound": "books/cars/sounds/bus.m4a",
+  "color": "#E39B10",
+  "size": 0.65,
+  "lift": 0,
+  "turn": 60,
+  "needs": [
+   "fuel",
+   "children"
+  ],
+  "helps": {
+   "en": "It's time for school! Who takes all the children?",
+   "fr": "C'est l'heure de l'école ! Qui emmène tous les enfants ?",
+   "ar": "حان وقت المدرسة! من يأخذ كل الأطفال؟"
+  },
+  "parts": [
+   {
+    "id": "wheel",
+    "en": "Wheel",
+    "fr": "Roue",
+    "ar": "عجلة",
+    "fr_def": "la roue",
+    "ar_def": "العجلة",
+    "at": [
+     0,
+     0.08,
+     0.9
+    ]
+   },
+   {
+    "id": "window",
+    "en": "Window",
+    "fr": "Vitre",
+    "ar": "نافذة",
+    "fr_def": "la vitre",
+    "ar_def": "النافذة",
+    "at": [
+     0,
+     0.65,
+     0.5
+    ]
+   },
+   {
+    "id": "door",
+    "en": "Door",
+    "fr": "Porte",
+    "ar": "باب",
+    "fr_def": "la porte",
+    "ar_def": "الباب",
+    "at": [
+     0,
+     0.4,
+     0.82
+    ]
+   },
+   {
+    "id": "roof",
+    "en": "Roof",
+    "fr": "Toit",
+    "ar": "سقف",
+    "fr_def": "le toit",
+    "ar_def": "السقف",
+    "at": [
+     0.5,
+     1.0,
+     0.5
+    ]
+   },
+   {
+    "id": "headlight",
+    "en": "Headlight",
+    "fr": "Phare",
+    "ar": "مصباح أمامي",
+    "fr_def": "le phare",
+    "ar_def": "المصباح الأمامي",
+    "at": [
+     0.2,
+     0.25,
+     1.0
+    ]
+   },
+   {
+    "id": "engine",
+    "en": "Engine",
+    "fr": "Moteur",
+    "ar": "محرك",
+    "fr_def": "le moteur",
+    "ar_def": "المحرك",
+    "at": [
+     0.5,
+     0.4,
+     0.97
+    ]
+   }
+  ]
+ },
+ {
+  "id": "tractor",
+  "page": 7,
+  "en": "Tractor",
+  "fr": "Tracteur",
+  "ar": "جرار",
+  "fr_of": "du tracteur",
+  "ar_def": "الجرار",
+  "fact_en": "Tractors have huge back wheels for muddy fields.",
+  "fact_fr": "Le tracteur a d'énormes roues arrière pour les champs boueux.",
+  "fact_ar": "للجرار عجلات خلفية ضخمة للحقول الموحلة.",
+  "model": "books/cars/models/tractor.glb",
+  "sound": "books/cars/sounds/tractor.m4a",
+  "color": "#B5452F",
+  "size": 0.5,
+  "lift": 0,
+  "turn": 60,
+  "needs": [
+   "fuel",
+   "seeds",
+   "hay"
+  ],
+  "helps": {
+   "en": "The field needs ploughing! Who helps the farmer?",
+   "fr": "Il faut labourer le champ ! Qui aide le fermier ?",
+   "ar": "يجب حرث الحقل! من يساعد الفلاح؟"
+  },
+  "parts": [
+   {
+    "id": "bigwheel",
+    "en": "Big wheel",
+    "fr": "Grande roue",
+    "ar": "عجلة كبيرة",
+    "fr_def": "la grande roue",
+    "ar_def": "العجلة الكبيرة",
+    "at": [
+     0,
+     0.5,
+     0.2
+    ]
+   },
+   {
+    "id": "wheel",
+    "en": "Wheel",
+    "fr": "Roue",
+    "ar": "عجلة",
+    "fr_def": "la roue",
+    "ar_def": "العجلة",
+    "at": [
+     0,
+     0.2,
+     0.88
+    ]
+   },
+   {
+    "id": "exhaust",
+    "en": "Exhaust pipe",
+    "fr": "Pot d'échappement",
+    "ar": "عادم",
+    "fr_def": "le pot d'échappement",
+    "ar_def": "العادم",
+    "at": [
+     0.5,
+     0.95,
+     0.72
+    ]
+   },
+   {
+    "id": "engine",
+    "en": "Engine",
+    "fr": "Moteur",
+    "ar": "محرك",
+    "fr_def": "le moteur",
+    "ar_def": "المحرك",
+    "at": [
+     0.5,
+     0.6,
+     0.85
+    ]
+   },
+   {
+    "id": "seat",
+    "en": "Seat",
+    "fr": "Selle",
+    "ar": "مقعد",
+    "fr_def": "la selle",
+    "ar_def": "المقعد",
+    "at": [
+     0.5,
+     0.7,
+     0.35
+    ]
+   }
+  ]
+ },
+ {
+  "id": "truck",
+  "page": 8,
+  "en": "Truck",
+  "fr": "Camion",
+  "ar": "شاحنة",
+  "fr_of": "du camion",
+  "ar_def": "الشاحنة",
+  "fact_en": "Trucks bring food and toys to the shops.",
+  "fact_fr": "Les camions apportent la nourriture et les jouets aux magasins.",
+  "fact_ar": "تنقل الشاحنات الطعام والألعاب إلى المتاجر.",
+  "model": "books/cars/models/truck.glb",
+  "sound": "books/cars/sounds/truck.m4a",
+  "color": "#6B8E23",
+  "size": 0.6,
+  "lift": 0,
+  "turn": 60,
+  "needs": [
+   "fuel",
+   "packages"
+  ],
+  "helps": {
+   "en": "Boxes must go to the shop! Who carries them?",
+   "fr": "Des cartons doivent aller au magasin ! Qui les transporte ?",
+   "ar": "يجب نقل الصناديق إلى المتجر! من يحملها؟"
+  },
+  "parts": [
+   {
+    "id": "cab",
+    "en": "Cab",
+    "fr": "Cabine",
+    "ar": "مقصورة",
+    "fr_def": "la cabine",
+    "ar_def": "المقصورة",
+    "at": [
+     0,
+     0.7,
+     0.85
+    ]
+   },
+   {
+    "id": "wheel",
+    "en": "Wheel",
+    "fr": "Roue",
+    "ar": "عجلة",
+    "fr_def": "la roue",
+    "ar_def": "العجلة",
+    "at": [
+     0,
+     0.1,
+     0.82
+    ]
+   },
+   {
+    "id": "cargo",
+    "en": "Cargo box",
+    "fr": "Caisse",
+    "ar": "صندوق الحمولة",
+    "fr_def": "la caisse",
+    "ar_def": "صندوق الحمولة",
+    "at": [
+     0,
+     0.6,
+     0.35
+    ]
+   },
+   {
+    "id": "headlight",
+    "en": "Headlight",
+    "fr": "Phare",
+    "ar": "مصباح أمامي",
+    "fr_def": "le phare",
+    "ar_def": "المصباح الأمامي",
+    "at": [
+     0.2,
+     0.35,
+     1.0
+    ]
+   },
+   {
+    "id": "backdoor",
+    "en": "Back door",
+    "fr": "Porte arrière",
+    "ar": "باب خلفي",
+    "fr_def": "la porte arrière",
+    "ar_def": "الباب الخلفي",
+    "at": [
+     0.5,
+     0.6,
+     0.0
+    ]
+   },
+   {
+    "id": "windscreen",
+    "en": "Windscreen",
+    "fr": "Pare-brise",
+    "ar": "زجاج أمامي",
+    "fr_def": "le pare-brise",
+    "ar_def": "الزجاج الأمامي",
+    "at": [
+     0.5,
+     0.75,
+     0.98
+    ]
+   }
+  ]
+ },
+ {
+  "id": "motorcycle",
+  "page": 9,
+  "en": "Motorcycle",
+  "fr": "Moto",
+  "ar": "دراجة نارية",
+  "fr_of": "de la moto",
+  "ar_def": "الدراجة النارية",
+  "fact_en": "A motorcycle has two wheels. Always wear a helmet!",
+  "fact_fr": "Une moto a deux roues. Mets toujours un casque !",
+  "fact_ar": "للدراجة النارية عجلتان. ارتدِ الخوذة دائمًا!",
+  "model": "books/cars/models/motorcycle.glb",
+  "sound": "books/cars/sounds/motorcycle.m4a",
+  "color": "#6A4FB5",
+  "size": 0.45,
+  "lift": 0,
+  "turn": 240,
+  "front": -1,
+  "needs": [
+   "fuel",
+   "helmet"
+  ],
+  "parts": [
+   {
+    "id": "wheel",
+    "en": "Wheel",
+    "fr": "Roue",
+    "ar": "عجلة",
+    "fr_def": "la roue",
+    "ar_def": "العجلة",
+    "at": [
+     1,
+     0.2,
+     0.1
+    ]
+   },
+   {
+    "id": "seat",
+    "en": "Seat",
+    "fr": "Selle",
+    "ar": "مقعد",
+    "fr_def": "la selle",
+    "ar_def": "المقعد",
+    "at": [
+     0.5,
+     0.75,
+     0.75
+    ]
+   },
+   {
+    "id": "handlebar",
+    "en": "Handlebars",
+    "fr": "Guidon",
+    "ar": "مقود",
+    "fr_def": "le guidon",
+    "ar_def": "المقود",
+    "at": [
+     0.5,
+     0.95,
+     0.2
+    ]
+   },
+   {
+    "id": "headlight",
+    "en": "Headlight",
+    "fr": "Phare",
+    "ar": "مصباح أمامي",
+    "fr_def": "le phare",
+    "ar_def": "المصباح الأمامي",
+    "at": [
+     0.5,
+     0.75,
+     0.02
+    ]
+   },
+   {
+    "id": "engine",
+    "en": "Engine",
+    "fr": "Moteur",
+    "ar": "محرك",
+    "fr_def": "le moteur",
+    "ar_def": "المحرك",
+    "at": [
+     0.5,
+     0.4,
+     0.45
+    ]
+   }
+  ]
+ }
+]

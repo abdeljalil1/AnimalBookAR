@@ -1,3 +1,4 @@
 tool/test-output/
 tool/.chrome-profile/
 tool/.cache/
+__pycache__/

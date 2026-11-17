@@ -20,6 +20,10 @@ const DEBUG = params.has('debug');
 const LANG = ['en', 'fr', 'ar'].includes(params.get('lang')) ? params.get('lang') : 'en';
 const QUIZ = params.get('mode') === 'quiz'; // level 3: "Find the tail!"
 const SOUND_QUIZ = params.get('mode') === 'sound'; // "Who makes this sound?": scan the right page
+const HELPS = params.get('mode') === 'helps'; // vehicles: "There's a fire! Who helps?": scan the right page
+const SCAN_QUIZ = SOUND_QUIZ || HELPS; // both are answered by scanning a page
+const BOOK_ID = params.get('book') || 'animals';
+let VEH = false; // the open book is about vehicles (set once books.json is read)
 const QUIZ_GOAL = 3; // right answers per animal
 const QUIZ_DWELL_MS = 400; // aim at the right part this long to answer
 const PAGE_HALF_W = 0.5;
@@ -50,6 +54,12 @@ const TEXT = {
     cameraOff: 'Camera permission is off. Allow the camera for Animal Book AR, then try again.',
     cameraFail: 'The camera could not start. Close other camera apps and try again.',
     loadFail: 'Something went wrong while loading: ',
+    // vehicles ("…V" replaces the key in a vehicle book)
+    feedV: 'Help', yumV: 'Thanks! {f}!', noThanksV: "{f}? I don't need that!", fullV: 'All set! 🎉',
+    scanV: 'Point the camera at a vehicle page', moveV: 'Drive', newAnimalV: 'New vehicle! +1 ★',
+    hintV: 'Aim the ◎ at a part · 1 finger: turn and tip · 2 fingers: zoom, move',
+    helpsAgain: 'Tap here to hear it again, then scan the right page',
+    helpsRight: "Yes! It's {a}!", helpsWrong: "That's {a}. Try another one!",
   },
   fr: {
     whoSound: 'Qui fait ce bruit ? 🔊', listenAgain: 'Touche ici pour réécouter, puis scanne la page',
@@ -65,6 +75,11 @@ const TEXT = {
     cameraOff: "La caméra n'est pas autorisée. Autorise-la pour Animal Book AR, puis réessaie.",
     cameraFail: "La caméra n'a pas pu démarrer. Ferme les autres applis photo et réessaie.",
     loadFail: 'Erreur au chargement : ',
+    feedV: 'Aider', yumV: 'Merci ! {f} !', noThanksV: "{f} ? Je n'en ai pas besoin !", fullV: 'Tout est prêt ! 🎉',
+    scanV: 'Vise une page de véhicule avec la caméra', moveV: 'Rouler', newAnimalV: 'Nouveau véhicule ! +1 ★',
+    hintV: 'Vise ◎ une partie · 1 doigt : tourner, pencher · 2 doigts : zoomer, déplacer',
+    helpsAgain: 'Touche ici pour réécouter, puis scanne la bonne page',
+    helpsRight: "Oui ! C'est {a} !", helpsWrong: "Ça, c'est {a}. Essaie un autre !",
   },
   ar: {
     whoSound: 'من يصدر هذا الصوت؟ 🔊', listenAgain: 'المس هنا للاستماع مرة أخرى، ثم امسح الصفحة',
@@ -80,9 +95,14 @@ const TEXT = {
     cameraOff: 'إذن الكاميرا متوقف. اسمح للتطبيق باستخدام الكاميرا ثم حاول مرة أخرى.',
     cameraFail: 'تعذّر تشغيل الكاميرا. أغلق تطبيقات الكاميرا الأخرى وحاول مرة أخرى.',
     loadFail: 'حدث خطأ أثناء التحميل: ',
+    feedV: 'ساعد', yumV: 'شكرًا! {f}!', noThanksV: '{f}؟ لا أحتاج هذا!', fullV: 'كل شيء جاهز! 🎉',
+    scanV: 'وجّه الكاميرا نحو صفحة مركبة', moveV: 'قيادة', newAnimalV: 'مركبة جديدة! +1 ★',
+    hintV: 'صوّب ◎ نحو جزء · إصبع: تدوير وإمالة · إصبعان: تكبير وتحريك',
+    helpsAgain: 'المس هنا للاستماع مرة أخرى، ثم امسح الصفحة الصحيحة',
+    helpsRight: 'نعم! إنها {a}!', helpsWrong: 'هذه {a}. جرّب غيرها!',
   },
 };
-const t = (key, vars = {}) => TEXT[LANG][key].replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
+const t = (key, vars = {}) => ((VEH && TEXT[LANG][key + 'V']) || TEXT[LANG][key]).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
 const nameIn = (def, lang = LANG) => def[lang];
 const partWithArticle = (def) => ({ en: 'the ' + def.en.toLowerCase(), fr: def.fr_def, ar: def.ar_def })[LANG];
 // Foods for the feeding game; each animal lists the ones it eats ("eats").
@@ -103,7 +123,25 @@ const FOODS = {
   leaves: { icon: '🍃', en: 'Leaves', fr: 'Feuilles', ar: 'أوراق' },
   dates: { icon: '🌴', en: 'Dates', fr: 'Dattes', ar: 'تمر' },
 };
+// What each vehicle needs ("What does it need?"); a vehicle lists its "needs".
+const NEEDS = {
+  fuel: { icon: '⛽', en: 'Fuel', fr: 'Carburant', ar: 'وقود' },
+  water: { icon: '💧', en: 'Water', fr: 'Eau', ar: 'ماء' },
+  passengers: { icon: '👨‍👩‍👧', en: 'Passengers', fr: 'Passagers', ar: 'ركاب' },
+  patient: { icon: '🤕', en: 'Hurt person', fr: 'Blessé', ar: 'مصاب' },
+  doctor: { icon: '👩‍⚕️', en: 'Doctor', fr: 'Médecin', ar: 'طبيب' },
+  officer: { icon: '👮', en: 'Police officer', fr: 'Policier', ar: 'شرطي' },
+  firefighter: { icon: '👨‍🚒', en: 'Firefighter', fr: 'Pompier', ar: 'رجل إطفاء' },
+  children: { icon: '🧒', en: 'Children', fr: 'Enfants', ar: 'أطفال' },
+  packages: { icon: '📦', en: 'Boxes', fr: 'Cartons', ar: 'صناديق' },
+  helmet: { icon: '⛑️', en: 'Helmet', fr: 'Casque', ar: 'خوذة' },
+  seeds: { icon: '🌱', en: 'Seeds', fr: 'Graines', ar: 'بذور' },
+  hay: { icon: '🌾', en: 'Hay', fr: 'Foin', ar: 'تبن' },
+  soap: { icon: '🧽', en: 'Sponge', fr: 'Éponge', ar: 'إسفنجة' },
+};
 const TRAY_SIZE = 6;
+const catalog = () => (VEH ? NEEDS : FOODS);
+const wants = (a) => a.eats || a.needs || [];
 
 // Reads text aloud: the app's voice (flutter_tts), or the browser's when testing.
 let lastSpoken = { text: '', at: 0 };
@@ -168,7 +206,7 @@ function setPhase(phase) {
   $('aim').classList.toggle('hidden', !showing);
   $('parts').classList.toggle('hidden', !showing);
   $('held-badge').classList.toggle('hidden', phase !== 'held');
-  $('quiz').classList.toggle('hidden', !((QUIZ && showing) || SOUND_QUIZ) || !$('quiz-text').textContent);
+  $('quiz').classList.toggle('hidden', !((QUIZ && showing) || SCAN_QUIZ) || !$('quiz-text').textContent);
   $('btn-photo').classList.toggle('hidden', !showing);
   if (!showing) $('food-tray').classList.add('hidden');
   $('error').classList.toggle('hidden', phase !== 'error');
@@ -261,7 +299,7 @@ function applyLanguage() {
   $('scan-hint').textContent = t('scan');
   $('held-badge').textContent = t('held');
   $('gesture-hint').textContent = t('hint');
-  for (const [id, key, icon] of [['btn-sound', 'sound', '🔊'], ['btn-move', 'move', '🐾'], ['btn-feed', 'feed', '🍽️'], ['btn-hold', 'hold', '✋'], ['btn-reset', 'reset', '↺']]) {
+  for (const [id, key, icon] of [['btn-sound', 'sound', VEH ? '📢' : '🔊'], ['btn-move', 'move', VEH ? '🚗' : '🐾'], ['btn-feed', 'feed', VEH ? '🧰' : '🍽️'], ['btn-hold', 'hold', '✋'], ['btn-reset', 'reset', '↺']]) {
     $(id).innerHTML = `<span>${icon}</span>${t(key)}`;
   }
 }
@@ -329,11 +367,16 @@ async function askGyroPermission() {
 }
 
 async function main() {
-  const animals = await (await fetch('animals.json')).json();
+  const books = await (await fetch('books.json')).json();
+  const book = books.find((b) => b.id === BOOK_ID) || books[0];
+  VEH = book.kind === 'vehicles';
+  state.book = book.id;
+  applyLanguage();
+  const animals = await (await fetch(book.data)).json();
 
   const mindar = new MindARThree({
     container: $('ar'),
-    imageTargetSrc: 'targets.mind',
+    imageTargetSrc: book.targets,
     maxTrack: 1,
     uiLoading: 'no', uiScanning: 'no', uiError: 'no',
     filterMinCF: 0.0001, filterBeta: 0.001, // steadier pose, a little more lag
@@ -419,6 +462,9 @@ async function main() {
       model.scale.setScalar(s);
       entry.baseScale = s;
       model.position.set(-center.x * s, -box.min.y * s + (a.lift || 0), -center.z * s);
+      entry.baseZ = model.position.z;
+      entry.baseY = model.position.y;
+      if (VEH) entry.wheels = makeWheels(model);
       turn.add(model);
       entry.model = model;
       state.modelsLoaded++;
@@ -428,6 +474,48 @@ async function main() {
     anchor.onTargetLost = () => onLost(entry);
     return entry;
   });
+
+  // Wheels that can turn: every node named like a wheel or tyre gets a pivot
+  // at its centre, so it spins in place about the vehicle's side axis (X).
+  function makeWheels(model) {
+    const found = [];
+    model.traverse((o) => { if (/wheel|tire|tyre/i.test(o.name) && !found.some((f) => isAncestor(f, o))) found.push(o); });
+    model.updateMatrixWorld(true);
+    const inv = new THREE.Matrix4().copy(model.matrixWorld).invert();
+    return found.map((node) => {
+      const parent = node.parent;
+      const box = new THREE.Box3().setFromObject(node, true).applyMatrix4(inv); // in model space
+      const centre = box.getCenter(new THREE.Vector3());
+      const radius = Math.max(box.getSize(new THREE.Vector3()).y / 2, 1e-4);
+      const pivot = new THREE.Group();
+      parent.add(pivot);
+      pivot.position.copy(parent.worldToLocal(centre.clone().applyMatrix4(model.matrixWorld)));
+      pivot.updateMatrixWorld(true);
+      pivot.attach(node); // keeps where the wheel is
+      const pInv = new THREE.Matrix4().copy(parent.matrixWorld).invert();
+      const axis = new THREE.Vector3(1, 0, 0).transformDirection(model.matrixWorld).transformDirection(pInv).normalize();
+      return { pivot, radius, axis, angle: 0 };
+    });
+  }
+  function isAncestor(a, b) { for (let o = b.parent; o; o = o.parent) if (o === a) return true; return false; }
+
+  // "Drive": forward a little and back, wheels turning (vehicles).
+  const DRIVE_S = 3;
+  function updateDrive(e, dt) {
+    if (!(e.driveT > 0) || !e.model) return;
+    e.driveT = Math.max(0, e.driveT - dt);
+    const k = 1 - e.driveT / DRIVE_S;
+    const d = 0.22 * Math.sin(k * Math.PI * 2) * (e.a.front || 1); // page widths
+    const z = e.baseZ + d;
+    const dz = (z - e.model.position.z) / e.baseScale; // in model units
+    e.model.position.z = z;
+    e.model.position.y = e.baseY + Math.abs(Math.sin(k * 40)) * 0.003 * (e.driveT > 0 ? 1 : 0); // bumps
+    for (const w of e.wheels || []) {
+      w.angle += dz / w.radius;
+      w.pivot.quaternion.setFromAxisAngle(w.axis, w.angle);
+    }
+    state.drive = { id: e.a.id, z: +d.toFixed(3), wheels: (e.wheels || []).length, angle: e.wheels && e.wheels[0] ? +e.wheels[0].angle.toFixed(2) : 0 };
+  }
 
   function showCard(a) {
     $('card').style.setProperty('--c', a.color);
@@ -468,7 +556,7 @@ async function main() {
     showCard(entry.a);
     if (isNew) showPartsOf(entry);
     setPhase('found');
-    if (SOUND_QUIZ) {
+    if (SCAN_QUIZ) {
       soundAnswer(entry);
     } else {
       if (isNew || performance.now() - entry.lastSoundAt > SOUND_REPEAT_MS) playSound(entry);
@@ -491,6 +579,10 @@ async function main() {
   }
 
   function nextMove(entry) {
+    if (VEH) {
+      if (!(entry.driveT > 0)) { entry.driveT = DRIVE_S; playSound(entry); }
+      return;
+    }
     if (entry.actions.length > 1) {
       entry.actions[entry.actionIndex].fadeOut(0.3);
       entry.actionIndex = (entry.actionIndex + 1) % entry.actions.length;
@@ -740,7 +832,7 @@ async function main() {
     $('quiz-text').textContent = text;
     $('quiz-sub').textContent = sub;
     $('quiz').className = mood;
-    $('quiz').classList.toggle('hidden', !(SOUND_QUIZ || state.phase === 'found' || state.phase === 'held'));
+    $('quiz').classList.toggle('hidden', !(SCAN_QUIZ || state.phase === 'found' || state.phase === 'held'));
   }
 
   // ---- Rewards ------------------------------------------------------------------
@@ -757,18 +849,20 @@ async function main() {
   const sq = { target: null, busy: false, correct: 0 };
 
   function soundPlay() {
+    if (HELPS) { if (sq.target) speak(sq.target.a.helps[LANG]); return; }
     if (!sq.target || !sq.target.audio) return;
     sq.target.audio.currentTime = 0;
     sq.target.audio.play().catch(() => {});
   }
 
   function soundNext() {
-    const pool = entries.filter((e) => e.audio && e !== sq.target);
+    const pool = entries.filter((e) => (HELPS ? e.a.helps : e.audio) && e !== sq.target);
     const forced = !sq.target && params.get('soundTarget'); // tests pick the first animal
     sq.target = pool.find((e) => e.a.id === forced) || pool[Math.floor(Math.random() * pool.length)];
     sq.busy = false;
     state.soundQuiz = { target: sq.target.a.id, correct: sq.correct };
-    banner(t('whoSound'), t('listenAgain'));
+    if (HELPS) banner(sq.target.a.helps[LANG], t('helpsAgain'));
+    else banner(t('whoSound'), t('listenAgain'));
     soundPlay();
   }
 
@@ -781,19 +875,22 @@ async function main() {
       entry.popT = 0.45;
       tone([523, 659, 784, 1047]);
       confetti(90);
-      banner(t('soundRight', { a: animalWithArticle(entry.a) }), otherNames(entry.a), 'right');
-      speak(t('soundRight', { a: animalWithArticle(entry.a) }));
-      ask('sound', { animal: entry.a.id }).then((r) => reward(r, null));
+      const right = HELPS ? 'helpsRight' : 'soundRight';
+      banner(t(right, { a: animalWithArticle(entry.a) }), otherNames(entry.a), 'right');
+      speak(t(right, { a: animalWithArticle(entry.a) }));
+      if (HELPS) { entry.driveT = DRIVE_S; playSound(entry); }
+      ask(HELPS ? 'helps' : 'sound', { animal: entry.a.id }).then((r) => reward(r, null));
       setTimeout(soundNext, 3000);
     } else {
       tone([330, 262]);
-      banner(t('soundWrong', { a: animalWithArticle(entry.a) }), t('listenAgain'), 'wrong');
-      speak(t('soundWrong', { a: animalWithArticle(entry.a) }));
+      const wrong = HELPS ? 'helpsWrong' : 'soundWrong';
+      banner(t(wrong, { a: animalWithArticle(entry.a) }), HELPS ? sq.target.a.helps[LANG] : t('listenAgain'), 'wrong');
+      speak(t(wrong, { a: animalWithArticle(entry.a) }));
       setTimeout(soundPlay, 1800);
     }
   }
 
-  $('quiz').addEventListener('click', () => { if (SOUND_QUIZ) soundPlay(); });
+  $('quiz').addEventListener('click', () => { if (SCAN_QUIZ) soundPlay(); });
 
   // ---- Feeding game ("What do I eat?") -----------------------------------------
   const feed = { on: false, animal: null, items: [], fed: new Set() };
@@ -807,8 +904,8 @@ async function main() {
   function openFeed() {
     if (!current) return;
     if (feed.animal !== current.a.id) {
-      const eats = current.a.eats || [];
-      const others = shuffled(Object.keys(FOODS).filter((f) => !eats.includes(f)));
+      const eats = wants(current.a);
+      const others = shuffled(Object.keys(catalog()).filter((f) => !eats.includes(f)));
       feed.animal = current.a.id;
       feed.items = shuffled([...eats, ...others.slice(0, Math.max(0, TRAY_SIZE - eats.length))]);
       feed.fed = new Set();
@@ -829,7 +926,7 @@ async function main() {
       const el = document.createElement('div');
       el.className = 'food' + (feed.fed.has(f) ? ' eaten' : '');
       el.dataset.food = f;
-      el.innerHTML = `<b>${FOODS[f].icon}</b><small>${FOODS[f][LANG]}</small>`;
+      el.innerHTML = `<b>${catalog()[f].icon}</b><small>${catalog()[f][LANG]}</small>`;
       el.addEventListener('pointerdown', (e) => startFoodDrag(e, f, el));
       tray.append(el);
     }
@@ -850,7 +947,7 @@ async function main() {
   }
 
   function mouthPoint() {
-    const head = current && current.parts.find((p) => p.def.id === 'head' || p.def.id === 'beak' || p.def.id === 'snout');
+    const head = current && current.parts.find((p) => ['head', 'beak', 'snout', 'door', 'cab', 'seat'].includes(p.def.id));
     if (head && head.visible) return { x: head.screen.x, y: head.screen.y };
     const b = animalScreenBox();
     return b ? { x: (b.x0 + b.x1) / 2, y: (b.y0 + b.y1) / 2 } : { x: innerWidth / 2, y: innerHeight * 0.4 };
@@ -862,7 +959,7 @@ async function main() {
     const start = { x: e.clientX, y: e.clientY, t: performance.now() };
     const ghost = document.createElement('div');
     ghost.className = 'food-ghost';
-    ghost.textContent = FOODS[food].icon;
+    ghost.textContent = catalog()[food].icon;
     ghost.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
     document.body.append(ghost);
     el.classList.add('dragging');
@@ -891,8 +988,8 @@ async function main() {
 
   function giveFood(food, ghost) {
     if (!current) { ghost.remove(); return; }
-    const right = (current.a.eats || []).includes(food);
-    const name = FOODS[food][LANG];
+    const right = wants(current.a).includes(food);
+    const name = catalog()[food][LANG];
     const entry = current;
     if (right) {
       const m = mouthPoint();
@@ -907,7 +1004,7 @@ async function main() {
       feed.fed.add(food);
       renderTray();
       ask('food', { animal: entry.a.id, food, right: true }).then((r) => { if (r && r.new) setTimeout(() => toast(t('newPart')), 900); reward({ ...r, new: false }, null); });
-      if (firstTime && (entry.a.eats || []).every((f) => feed.fed.has(f))) {
+      if (firstTime && wants(entry.a).every((f) => feed.fed.has(f))) {
         setTimeout(() => { toast(t('full')); confetti(120); }, 1000);
       }
     } else {
@@ -1098,6 +1195,7 @@ async function main() {
       const shown = e.anchor.group.visible || (state.held && e === current);
       if (!shown) continue;
       if (e.mixer) e.mixer.update(dt);
+      else if (VEH) updateDrive(e, dt);
       else if (e.model && e.baseScale) {
         // No built-in animation (the static models): breathe and sway a little.
         const t = now / 1000 + e.i;
@@ -1146,7 +1244,7 @@ async function main() {
     renderer.setAnimationLoop(frame);
     setPhase(state.held ? 'held' : 'scanning');
     notifyApp('ready');
-    if (SOUND_QUIZ && !sq.target) soundNext();
+    if (SCAN_QUIZ && !sq.target) soundNext();
   }
 
   // Called by the Flutter app when it goes to the background / comes back.

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'animals.dart';
+import 'books.dart';
 import 'l10n.dart';
 
 /// The three levels: 1 meet every animal, 2 find every body part,
@@ -103,14 +104,33 @@ class ChildData {
 /// sync (lib/cloud.dart) keeps it in step with other devices. The getters
 /// below read the active child.
 class Progress extends ChangeNotifier {
-  Progress(this._prefs, this.animals) : lang = Lang.parse(_prefs.getString('lang')) {
+  Progress(SharedPreferences prefs, List<Animal> animals) : this.library(prefs, [Book.animalsOnly(animals)]);
+
+  Progress.library(this._prefs, this.books) : lang = Lang.parse(_prefs.getString('lang')) {
+    _bookId = _prefs.getString('book');
     _load();
   }
 
   static Future<Progress> load(List<Animal> animals) async => Progress(await SharedPreferences.getInstance(), animals);
+  static Future<Progress> loadLibrary(List<Book> books) async =>
+      Progress.library(await SharedPreferences.getInstance(), books);
 
   final SharedPreferences _prefs;
-  final List<Animal> animals;
+
+  /// The library and the open book: levels, missions and the map follow it.
+  final List<Book> books;
+  String? _bookId;
+  Book get book => books.firstWhere((b) => b.id == _bookId, orElse: () => books.first);
+  List<Animal> get animals => book.items;
+
+  void openBook(String id) {
+    _bookId = id;
+    _prefs.setString('book', id);
+    notifyListeners();
+  }
+
+  /// Items met in a book, for the bookshelf.
+  int metIn(Book b) => b.items.where((a) => met(a.id)).length;
   Lang lang;
   final List<ChildData> children = [];
   String? _activeId;

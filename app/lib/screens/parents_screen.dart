@@ -317,7 +317,11 @@ class _StatsCard extends StatelessWidget {
     final s = p.s;
     final c = p.child;
     final tiles = [
-      (Icons.pets_rounded, s.statAnimals, '${p.metCount} / ${p.animals.length}'),
+      (
+        p.book.vehicles ? Icons.directions_car_rounded : Icons.pets_rounded,
+        p.book.vehicles ? s.statVehicles : s.statAnimals,
+        '${p.metCount} / ${p.animals.length}'
+      ),
       (Icons.touch_app_rounded, s.statParts, '${p.partsTotalFound} / ${p.totalParts}'),
       (Icons.quiz_rounded, s.statQuiz, '${p.quizTotal} / ${p.animals.length * quizGoal}'),
       (Icons.translate_rounded, s.statWords, '${p.wordsLearned}'),
@@ -347,10 +351,11 @@ class _StatsCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: AlignmentDirectional.centerStart,
-                    child: Text(value, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17, color: ink)),
-                  ),
+                        fit: BoxFit.scaleDown,
+                        alignment: AlignmentDirectional.centerStart,
+                        child:
+                            Text(value, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17, color: ink)),
+                      ),
                       Text(label,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,

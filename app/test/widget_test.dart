@@ -1,7 +1,8 @@
-import 'package:animal_book_ar/animals.dart';
+import 'package:animal_book_ar/books.dart';
 import 'package:animal_book_ar/main.dart';
 import 'package:animal_book_ar/progress.dart';
 import 'package:animal_book_ar/screens/animal_sheet.dart';
+import 'package:animal_book_ar/screens/bookshelf_screen.dart';
 import 'package:animal_book_ar/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<Progress> _progress(WidgetTester tester, Map<String, Object> saved) async {
   SharedPreferences.setMockInitialValues(saved);
-  return (await tester.runAsync(() async => Progress.load(await Animal.load())))!;
+  return (await tester.runAsync(() async => Progress.loadLibrary(await Book.loadAll())))!;
 }
 
 Future<void> _settle(WidgetTester tester) async {
@@ -17,8 +18,14 @@ Future<void> _settle(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 500));
 }
 
+Future<void> _openBook(WidgetTester tester, String id) async {
+  await tester.tap(find.byKey(Key('book-$id')));
+  await _settle(tester);
+  await tester.pump(const Duration(milliseconds: 400)); // the page transition
+}
+
 void main() {
-  testWidgets('first launch asks for a name, then shows the zoo', (tester) async {
+  testWidgets('first launch asks for a name, then the bookshelf, then the zoo', (tester) async {
     await tester.binding.setSurfaceSize(const Size(400, 900));
     addTearDown(() => tester.binding.setSurfaceSize(null));
     final p = await _progress(tester, {});
@@ -31,8 +38,10 @@ void main() {
     await tester.tap(find.byKey(const Key('start')));
     await _settle(tester);
 
-    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(BookshelfScreen), findsOneWidget);
     expect(find.text('Hello, Yahia'), findsOneWidget);
+    await _openBook(tester, 'animals');
+    expect(find.byType(HomeScreen), findsOneWidget);
     expect(find.text('Meet the horse'), findsOneWidget); // the first mission
     expect(find.text('Open your book at page 1'), findsOneWidget);
   });
@@ -42,15 +51,47 @@ void main() {
     addTearDown(() => tester.binding.setSurfaceSize(null));
     final p = await _progress(tester, {
       'name': 'Yahia',
-      'met': ['horse', 'fox', 'flamingo', 'parrot', 'stork', 'cow', 'sheep', 'zebra', 'llama', 'dog', 'lion', 'elephant', 'giraffe', 'camel'],
+      'met': [
+        'horse',
+        'fox',
+        'flamingo',
+        'parrot',
+        'stork',
+        'cow',
+        'sheep',
+        'zebra',
+        'llama',
+        'dog',
+        'lion',
+        'elephant',
+        'giraffe',
+        'camel'
+      ],
       'parts': ['fox:head', 'fox:ear'],
     });
     await tester.pumpWidget(AnimalBookApp(progress: p));
     await _settle(tester);
+    expect(find.text('14 of 14 animals'), findsOneWidget); // the book cover's progress
+    await _openBook(tester, 'animals');
 
     expect(find.text("Find the horse's head"), findsOneWidget); // level 2 mission
     expect(find.text('2 of 122 parts'), findsOneWidget);
-    for (final name in ['Horse', 'Fox', 'Flamingo', 'Parrot', 'Stork', 'Cow', 'Sheep', 'Zebra', 'Llama', 'Dog', 'Lion', 'Elephant', 'Giraffe', 'Camel']) {
+    for (final name in [
+      'Horse',
+      'Fox',
+      'Flamingo',
+      'Parrot',
+      'Stork',
+      'Cow',
+      'Sheep',
+      'Zebra',
+      'Llama',
+      'Dog',
+      'Lion',
+      'Elephant',
+      'Giraffe',
+      'Camel'
+    ]) {
       expect(find.text(name), findsOneWidget); // the zoo signs
     }
     expect(find.text('2/9'), findsOneWidget); // fox sign: 2 of 9 parts
@@ -71,7 +112,10 @@ void main() {
   testWidgets('parents page opens after the grown-up check; memory game deals 12 cards', (tester) async {
     await tester.binding.setSurfaceSize(const Size(400, 1000));
     addTearDown(() => tester.binding.setSurfaceSize(null));
-    final p = await _progress(tester, {'name': 'Yahia', 'met': ['fox']});
+    final p = await _progress(tester, {
+      'name': 'Yahia',
+      'met': ['fox']
+    });
     await tester.pumpWidget(AnimalBookApp(progress: p));
     await _settle(tester);
 
@@ -93,6 +137,7 @@ void main() {
     for (var i = 0; i < 4; i++) {
       await tester.pump(const Duration(milliseconds: 300));
     }
+    await _openBook(tester, 'animals');
     await tester.tap(find.byKey(const Key('game-memory')));
     for (var i = 0; i < 4; i++) {
       await tester.pump(const Duration(milliseconds: 300));
@@ -109,8 +154,45 @@ void main() {
     final p = await _progress(tester, {'name': 'Yahia', 'lang': 'ar'});
     await tester.pumpWidget(AnimalBookApp(progress: p));
     await _settle(tester);
+    await _openBook(tester, 'animals');
 
     expect(find.text('تعرّف على الحصان'), findsOneWidget);
     expect(Directionality.of(tester.element(find.byKey(const Key('mission')))), TextDirection.rtl);
+  });
+
+  testWidgets('the Cars book: town map, its own games, back to the books', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 2200));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final p = await _progress(tester, {
+      'name': 'Yahia',
+      'met': ['horse']
+    });
+    await tester.pumpWidget(AnimalBookApp(progress: p));
+    await _settle(tester);
+
+    expect(find.text('Cars and trucks'), findsOneWidget);
+    expect(find.text('0 of 9 vehicles'), findsOneWidget);
+    await _openBook(tester, 'cars');
+    expect(p.book.id, 'cars');
+    expect(find.text('Meet the car'), findsOneWidget); // the first mission
+    for (final name in [
+      'Car',
+      'Taxi',
+      'Police car',
+      'Ambulance',
+      'Fire truck',
+      'School bus',
+      'Tractor',
+      'Truck',
+      'Motorcycle'
+    ]) {
+      expect(find.text(name), findsOneWidget); // the town signs
+    }
+    expect(find.byKey(const Key('game-helps')), findsOneWidget); // "Who helps?"
+
+    await tester.tap(find.byKey(const Key('back-to-books')));
+    await _settle(tester);
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.byType(BookshelfScreen), findsOneWidget);
   });
 }

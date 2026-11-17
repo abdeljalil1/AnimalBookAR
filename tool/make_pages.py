@@ -7,7 +7,7 @@ Reads app/assets/ar/animals.json and tool/photos/<id>.jpg, then writes:
   app/assets/ar/pages/<id>.jpg  smaller copies the app shows ("Show page")
   app/assets/thumbs/<id>.jpg    round-photo thumbnails for the zoo path (square crops)
 
-Usage: python3 tool/make_pages.py
+Usage: python3 tool/make_pages.py [--book=cars]   (paths for other books: see tool/bookcfg.py)
 Needs Google Chrome in /Applications.
 """
 import html
@@ -18,16 +18,18 @@ from pathlib import Path
 
 from PIL import Image
 
+from bookcfg import BOOK
+
 ROOT = Path(__file__).resolve().parent.parent
 APP_AR = ROOT / "app" / "assets" / "ar"
-BOOK = ROOT / "book"
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 # Where each animal is in its photo (x, y as fractions), for the square thumbnails.
 THUMB_FOCUS = {"horse": (0.38, 0.5), "fox": (0.62, 0.45), "flamingo": (0.5, 0.5),
                "parrot": (0.42, 0.45), "stork": (0.5, 0.45), "cow": (0.5, 0.5), "sheep": (0.5, 0.55),
                "zebra": (0.5, 0.5), "llama": (0.45, 0.5), "dog": (0.5, 0.45), "lion": (0.5, 0.45),
-               "elephant": (0.5, 0.5), "giraffe": (0.5, 0.35), "camel": (0.5, 0.45)}
+               "elephant": (0.5, 0.5), "giraffe": (0.5, 0.35), "camel": (0.5, 0.45),
+               "bus": (0.45, 0.5), "firetruck": (0.45, 0.5), "truck": (0.5, 0.55)}
 
 # A4 at 96 CSS px per inch is 794 x 1123. Screenshots use a 1.5625 scale
 # factor, giving 1240 x 1754 PNGs (150 dpi).
@@ -67,22 +69,25 @@ html, body { background: #fff; }
 """
 
 
+ICON = "🚗" if BOOK.vehicles else "🐾"
+
+
 def page_html(a, num, credit):
     e = html.escape
     return f"""
 <section class="page" style="--c:{a['color']}">
   <div class="badge">{num}</div>
-  <div class="photo"><img src="{(ROOT / 'tool' / 'photos' / (a['id'] + '.jpg')).as_uri()}"></div>
+  <div class="photo"><img src="{(BOOK.photos / (a['id'] + '.jpg')).as_uri()}"></div>
   <div class="names">
     <div class="en">{e(a['en'])}</div>
     <div class="row"><span class="fr">{e(a['fr'])}</span><span class="ar" dir="rtl">{e(a['ar'])}</span></div>
   </div>
   <div class="facts">
-    <p>🐾 {e(a['fact_en'])}</p>
-    <p>🐾 {e(a['fact_fr'])}</p>
-    <p class="far">{e(a['fact_ar'])} 🐾</p>
+    <p>{ICON} {e(a['fact_en'])}</p>
+    <p>{ICON} {e(a['fact_fr'])}</p>
+    <p class="far">{e(a['fact_ar'])} {ICON}</p>
   </div>
-  <div class="foot"><span>Point the Animal Book AR app at this page</span><span>Photo: {e(credit)}</span></div>
+  <div class="foot"><span>Point the Animal Book AR app at this page ({e(BOOK.cfg["en"])})</span><span>Photo: {e(credit)}</span></div>
 </section>"""
 
 
@@ -97,10 +102,10 @@ def chrome(*args):
 
 
 def make_thumb(animal_id):
-    out = ROOT / "app" / "assets" / "thumbs" / f"{animal_id}.jpg"
+    out = BOOK.thumbs / f"{animal_id}.jpg"
     out.parent.mkdir(parents=True, exist_ok=True)
     fx, fy = THUMB_FOCUS.get(animal_id, (0.5, 0.5))
-    with Image.open(ROOT / "tool" / "photos" / f"{animal_id}.jpg") as im:
+    with Image.open(BOOK.photos / f"{animal_id}.jpg") as im:
         im = im.convert("RGB")
         w, h = im.size
         s = min(w, h)
@@ -110,10 +115,10 @@ def make_thumb(animal_id):
 
 
 def main():
-    animals = json.loads((APP_AR / "animals.json").read_text())
+    animals = BOOK.items
     credits = json.loads((ROOT / "tool" / "credits.json").read_text())
-    (BOOK / "pages").mkdir(parents=True, exist_ok=True)
-    (APP_AR / "pages").mkdir(parents=True, exist_ok=True)
+    BOOK.pages.mkdir(parents=True, exist_ok=True)
+    BOOK.app_pages.mkdir(parents=True, exist_ok=True)
     tmp = Path(tempfile.mkdtemp())
     sections = []
     for i, a in enumerate(animals, 1):
@@ -123,18 +128,18 @@ def main():
         sections.append(sec)
         f = tmp / f"{a['id']}.html"
         f.write_text(doc(sec))
-        out = BOOK / "pages" / f"{a['id']}.png"
+        out = BOOK.pages / f"{a['id']}.png"
         chrome(f"--window-size={PAGE_W},{PAGE_H}", f"--force-device-scale-factor={SCALE}",
                f"--screenshot={out}", f.as_uri())
         with Image.open(out) as im:
             im = im.convert("RGB")
             im.thumbnail((900, 900 * PAGE_H // PAGE_W + 1))
-            im.save(APP_AR / "pages" / f"{a['id']}.jpg", quality=85, optimize=True)
+            im.save(BOOK.app_pages / f"{a['id']}.jpg", quality=85, optimize=True)
         make_thumb(a["id"])
         print("page", out.relative_to(ROOT))
     book = tmp / "book.html"
     book.write_text(doc("".join(sections)))
-    pdf = BOOK / "animal-book.pdf"
+    pdf = BOOK.pdf
     chrome(f"--print-to-pdf={pdf}", "--no-pdf-header-footer", book.as_uri())
     print("book", pdf.relative_to(ROOT))
 
