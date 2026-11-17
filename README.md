@@ -10,7 +10,7 @@ beak. Aim the circle in the middle of the screen at one (or tap it) to see its
 name in the three languages. **Hold** keeps the animal on screen when the page
 leaves the camera, so the child can turn the phone and look around it.
 
-Five animals: horse, fox, flamingo, parrot, stork. The app speaks English,
+Ten animals: horse, fox, flamingo, parrot, stork, cow, sheep, zebra, llama, dog. The app speaks English,
 French or Arabic (right to left), chosen on first launch or from the home screen.
 
 ## Home and levels
@@ -81,7 +81,7 @@ the right behaviour.
 | `book/animal-book.pdf` | Printable book, A4, one animal per page |
 | `book/pages/*.png` | The same pages as images (also what the tracker learns) |
 | `tool/` | Page generator, target compiler, model inspector (for placing body parts), end-to-end AR test, source photos |
-| `CREDITS.md` | Authors and licences of the photos, sounds and models |
+| `CREDITS.md` | Authors and licences of the photos, sounds and models (made by `tool/make_credits.py`) |
 
 ## Try it
 
@@ -113,9 +113,14 @@ the phone then looks around it (gyroscope). The phone can't track you walking
 
 ## Add or change an animal
 
-1. Add a `.glb` model to `app/assets/ar/models/`, a short `.m4a` sound to
-   `app/assets/ar/sounds/`, and a photo to `tool/photos/<id>.jpg`.
-2. Add an entry to `app/assets/ar/animals.json` (and photo credit to `tool/credits.json`).
+1. Add a `.glb` model to `app/assets/ar/models/` (FBX models, e.g. Quaternius's
+   CC0 packs, convert with `python3 tool/convert_models.py app/assets/ar/models "path/Cow.fbx=Cow"`),
+   a short `.m4a` sound to `app/assets/ar/sounds/` (or `"sound": null`: the app
+   then says the name), and a photo to `tool/photos/<id>.jpg`.
+2. Add an entry to `app/assets/ar/animals.json` (names and facts in the three
+   languages, `eats`, `parts`), the photo and sound credits to `tool/credits.json`,
+   and the photo's focus point to `THUMB_FOCUS` in `tool/make_pages.py`, then run
+   `python3 tool/make_credits.py`. The zoo path grows by itself.
 3. Rebuild the pages and the tracking file:
 
 ```bash

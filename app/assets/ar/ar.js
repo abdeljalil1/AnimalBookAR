@@ -91,6 +91,8 @@ const FOODS = {
   nuts: { icon: '🥜', en: 'Nuts', fr: 'Noix', ar: 'مكسرات' },
   fish: { icon: '🐟', en: 'Fish', fr: 'Poisson', ar: 'سمك' },
   frog: { icon: '🐸', en: 'Frog', fr: 'Grenouille', ar: 'ضفدع' },
+  hay: { icon: '🌾', en: 'Hay', fr: 'Foin', ar: 'تبن' },
+  meat: { icon: '🍖', en: 'Meat', fr: 'Viande', ar: 'لحم' },
 };
 const TRAY_SIZE = 6;
 
@@ -372,8 +374,8 @@ async function main() {
     shadow.position.z = 0.002;
     scaler.add(shadow);
 
-    const audio = new Audio(a.sound);
-    audio.preload = 'auto';
+    const audio = a.sound ? new Audio(a.sound) : null; // no recording (llama): it says its name
+    if (audio) audio.preload = 'auto';
 
     const entry = {
       a, i, anchor, root, tilt, spin, scaler, pop, turn, audio,
@@ -425,6 +427,7 @@ async function main() {
     entry.lastSoundAt = performance.now();
     entry.popT = 0.45;
     const au = entry.audio;
+    if (!au) { speak(nameIn(entry.a)); state.soundsPlayed++; return; }
     au.currentTime = 0;
     au.play().then(() => { state.soundsPlayed++; }).catch(() => {
       // Autoplay blocked (only in a normal browser): the Sound button still works.

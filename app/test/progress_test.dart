@@ -26,7 +26,7 @@ void main() {
 
   test('meeting all animals unlocks level 2 and reports it once', () async {
     final p = await Progress.load(animals);
-    for (final a in animals.take(4)) {
+    for (final a in animals.take(animals.length - 1)) {
       expect(p.markMet(a.id)['levelUp'], isNull);
     }
     final last = p.markMet(animals.last.id);
@@ -34,7 +34,7 @@ void main() {
     expect(last['levelUp'], 2);
     expect(p.markMet(animals.last.id)['new'], isFalse); // again: nothing new
     expect(p.unlocked(2), isTrue);
-    expect(p.stars, 5);
+    expect(p.stars, animals.length);
     final m = p.mission;
     expect(m.level, 2);
     expect(const S(Lang.en).findPart(m.animal!, m.part!), "Find the horse's head");

@@ -38,19 +38,19 @@ void main() {
   });
 
   testWidgets('home shows the levels, the path and an animal sheet', (tester) async {
-    await tester.binding.setSurfaceSize(const Size(400, 1800));
+    await tester.binding.setSurfaceSize(const Size(400, 2600));
     addTearDown(() => tester.binding.setSurfaceSize(null));
     final p = await _progress(tester, {
       'name': 'Yahia',
-      'met': ['horse', 'fox', 'flamingo', 'parrot', 'stork'],
+      'met': ['horse', 'fox', 'flamingo', 'parrot', 'stork', 'cow', 'sheep', 'zebra', 'llama', 'dog'],
       'parts': ['fox:head', 'fox:ear'],
     });
     await tester.pumpWidget(AnimalBookApp(progress: p));
     await _settle(tester);
 
     expect(find.text("Find the horse's head"), findsOneWidget); // level 2 mission
-    expect(find.text('2 of 27 parts'), findsOneWidget);
-    for (final name in ['Horse', 'Fox', 'Flamingo', 'Parrot', 'Stork']) {
+    expect(find.text('2 of 55 parts'), findsOneWidget);
+    for (final name in ['Horse', 'Fox', 'Flamingo', 'Parrot', 'Stork', 'Cow', 'Sheep', 'Zebra', 'Llama', 'Dog']) {
       expect(find.text(name), findsOneWidget); // the zoo signs
     }
     expect(find.text('2/6'), findsOneWidget); // fox sign: 2 of 6 parts

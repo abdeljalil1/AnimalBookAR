@@ -43,8 +43,11 @@ def main():
     threading.Thread(target=server.serve_forever, daemon=True).start()
     parts = "--parts" in sys.argv
     only = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--only=")), "")
-    query = "?" + "&".join(x for x in ["parts" if parts else "", f"only={only}" if only else ""] if x)
-    out = OUT / f"models{'-parts' if parts else ''}{'-' + only.replace(',', '-') if only else ''}.png"
+    files = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--files=")), "")
+    query = "?" + "&".join(x for x in ["parts" if parts else "", f"only={only}" if only else "",
+                                       f"files={files}" if files else ""] if x)
+    tag = only or "-".join(Path(f).stem for f in files.split(",")) if (only or files) else ""
+    out = OUT / f"models{'-parts' if parts else ''}{'-' + tag.replace(',', '-') if tag else ''}.png"
     subprocess.run([CHROME, "--headless=new", "--use-angle=swiftshader", "--enable-unsafe-swiftshader",
                     "--hide-scrollbars", "--window-size=750,1260", "--virtual-time-budget=20000",
                     f"--screenshot={out}", f"http://127.0.0.1:{server.server_address[1]}/__inspect.html{query}"],

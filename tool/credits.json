@@ -68,5 +68,47 @@
   "page": "https://commons.wikimedia.org/wiki/File:White_stork_(Ciconia_ciconia)_Bia%C5%82owieza.jpg",
   "license": "CC BY-SA 4.0",
   "artist": "Charles J. Sharp"
+ },
+ "cow_photo": {
+  "title": "File:Cow (Fleckvieh breed) Oeschinensee Slaunger 2009-07-07.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8c/Cow_%28Fleckvieh_breed%29_Oeschinensee_Slaunger_2009-07-07.jpg/1280px-Cow_%28Fleckvieh_breed%29_Oeschinensee_Slaunger_2009-07-07.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Cow_(Fleckvieh_breed)_Oeschinensee_Slaunger_2009-07-07.jpg",
+  "license": "CC BY-SA 3.0",
+  "artist": "Kim Hansen"
+ },
+ "sheep_photo": {
+  "title": "File:Flock of sheep.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2c/Flock_of_sheep.jpg/1280px-Flock_of_sheep.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Flock_of_sheep.jpg",
+  "license": "Public domain",
+  "artist": "Keith Weller"
+ },
+ "zebra_photo": {
+  "title": "File:Equus quagga burchellii - Etosha, 2014.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Equus_quagga_burchellii_-_Etosha%2C_2014.jpg/1280px-Equus_quagga_burchellii_-_Etosha%2C_2014.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Equus_quagga_burchellii_-_Etosha,_2014.jpg",
+  "license": "CC BY-SA 3.0",
+  "artist": "Yathin S Krishnappa"
+ },
+ "llama_photo": {
+  "title": "File:Llamas, Vernagt-Stausee, Italy.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/Llamas%2C_Vernagt-Stausee%2C_Italy.jpg/1280px-Llamas%2C_Vernagt-Stausee%2C_Italy.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Llamas,_Vernagt-Stausee,_Italy.jpg",
+  "license": "CC BY-SA 4.0",
+  "artist": "Andrija12345678"
+ },
+ "dog_photo": {
+  "title": "File:Mops oct09 cropped2.jpg",
+  "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/Mops_oct09_cropped2.jpg/960px-Mops_oct09_cropped2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+  "page": "https://commons.wikimedia.org/wiki/File:Mops_oct09_cropped2.jpg",
+  "license": "CC BY-SA 2.0",
+  "artist": "Mops_oct09.jpg :  Dagur Brynjólfsson  from Hafnarfjordur, Iceland;   derivative work:  Anka Friedrich"
+ },
+ "sheep_sound": {
+  "title": "File:Sheep bleating.ogg",
+  "url": "https://upload.wikimedia.org/wikipedia/commons/1/13/Sheep_bleating.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+  "page": "https://commons.wikimedia.org/wiki/File:Sheep_bleating.ogg",
+  "license": "Public domain",
+  "artist": "earthcalling"
  }
 }

@@ -473,5 +473,488 @@
         ]
       }
     ]
+  },
+  {
+    "id": "cow",
+    "page": 6,
+    "en": "Cow",
+    "fr": "Vache",
+    "ar": "بقرة",
+    "fr_of": "de la vache",
+    "ar_def": "البقرة",
+    "fact_en": "A cow has a stomach with four parts to digest grass.",
+    "fact_fr": "La vache a un estomac en quatre parties pour digérer l'herbe.",
+    "fact_ar": "للبقرة معدة من أربعة أجزاء لهضم العشب.",
+    "model": "models/Cow.glb",
+    "sound": null,
+    "color": "#3f7d3a",
+    "size": 0.62,
+    "lift": 0,
+    "turn": 60,
+    "eats": [
+      "grass",
+      "hay"
+    ],
+    "parts": [
+      {
+        "id": "head",
+        "en": "Head",
+        "fr": "Tête",
+        "ar": "رأس",
+        "fr_def": "la tête",
+        "ar_def": "الرأس",
+        "at": [
+          0.5,
+          0.8,
+          0.97
+        ]
+      },
+      {
+        "id": "ear",
+        "en": "Ear",
+        "fr": "Oreille",
+        "ar": "أذن",
+        "fr_def": "l'oreille",
+        "ar_def": "الأذن",
+        "at": [
+          0.5,
+          0.95,
+          0.88
+        ]
+      },
+      {
+        "id": "udder",
+        "en": "Udder",
+        "fr": "Mamelle",
+        "ar": "ضرع",
+        "fr_def": "la mamelle",
+        "ar_def": "الضرع",
+        "at": [
+          0.5,
+          0.38,
+          0.38
+        ]
+      },
+      {
+        "id": "leg",
+        "en": "Leg",
+        "fr": "Patte",
+        "ar": "ساق",
+        "fr_def": "la patte",
+        "ar_def": "الساق",
+        "at": [
+          0.5,
+          0.3,
+          0.82
+        ]
+      },
+      {
+        "id": "hoof",
+        "en": "Hoof",
+        "fr": "Sabot",
+        "ar": "حافر",
+        "fr_def": "le sabot",
+        "ar_def": "الحافر",
+        "at": [
+          0.5,
+          0.02,
+          0.82
+        ]
+      },
+      {
+        "id": "tail",
+        "en": "Tail",
+        "fr": "Queue",
+        "ar": "ذيل",
+        "fr_def": "la queue",
+        "ar_def": "الذيل",
+        "at": [
+          0.5,
+          0.6,
+          0.03
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sheep",
+    "page": 8,
+    "en": "Sheep",
+    "fr": "Mouton",
+    "ar": "خروف",
+    "fr_of": "du mouton",
+    "ar_def": "الخروف",
+    "fact_en": "A sheep's wool keeps growing all its life.",
+    "fact_fr": "La laine du mouton pousse toute sa vie.",
+    "fact_ar": "صوف الخروف ينمو طوال حياته.",
+    "model": "models/Sheep.glb",
+    "sound": "sounds/sheep.m4a",
+    "color": "#7a6bb5",
+    "size": 0.5,
+    "lift": 0,
+    "turn": 60,
+    "eats": [
+      "grass",
+      "hay"
+    ],
+    "parts": [
+      {
+        "id": "head",
+        "en": "Head",
+        "fr": "Tête",
+        "ar": "رأس",
+        "fr_def": "la tête",
+        "ar_def": "الرأس",
+        "at": [
+          0.5,
+          0.85,
+          0.97
+        ]
+      },
+      {
+        "id": "ear",
+        "en": "Ear",
+        "fr": "Oreille",
+        "ar": "أذن",
+        "fr_def": "l'oreille",
+        "ar_def": "الأذن",
+        "at": [
+          0.5,
+          0.9,
+          0.88
+        ]
+      },
+      {
+        "id": "wool",
+        "en": "Wool",
+        "fr": "Laine",
+        "ar": "صوف",
+        "fr_def": "la laine",
+        "ar_def": "الصوف",
+        "at": [
+          0.5,
+          0.97,
+          0.5
+        ]
+      },
+      {
+        "id": "leg",
+        "en": "Leg",
+        "fr": "Patte",
+        "ar": "ساق",
+        "fr_def": "la patte",
+        "ar_def": "الساق",
+        "at": [
+          0.5,
+          0.25,
+          0.78
+        ]
+      },
+      {
+        "id": "hoof",
+        "en": "Hoof",
+        "fr": "Sabot",
+        "ar": "حافر",
+        "fr_def": "le sabot",
+        "ar_def": "الحافر",
+        "at": [
+          0.5,
+          0.02,
+          0.8
+        ]
+      }
+    ]
+  },
+  {
+    "id": "zebra",
+    "page": 10,
+    "en": "Zebra",
+    "fr": "Zèbre",
+    "ar": "حمار وحشي",
+    "fr_of": "du zèbre",
+    "ar_def": "الحمار الوحشي",
+    "fact_en": "No two zebras have the same stripes.",
+    "fact_fr": "Il n'y a pas deux zèbres avec les mêmes rayures.",
+    "fact_ar": "لا يوجد حماران وحشيان لهما الخطوط نفسها.",
+    "model": "models/Zebra.glb",
+    "sound": null,
+    "color": "#3d3d3d",
+    "size": 0.6,
+    "lift": 0,
+    "turn": 60,
+    "eats": [
+      "grass"
+    ],
+    "parts": [
+      {
+        "id": "head",
+        "en": "Head",
+        "fr": "Tête",
+        "ar": "رأس",
+        "fr_def": "la tête",
+        "ar_def": "الرأس",
+        "at": [
+          0.5,
+          0.78,
+          0.97
+        ]
+      },
+      {
+        "id": "ear",
+        "en": "Ear",
+        "fr": "Oreille",
+        "ar": "أذن",
+        "fr_def": "l'oreille",
+        "ar_def": "الأذن",
+        "at": [
+          0.5,
+          1.0,
+          0.9
+        ]
+      },
+      {
+        "id": "mane",
+        "en": "Mane",
+        "fr": "Crinière",
+        "ar": "عُرف",
+        "fr_def": "la crinière",
+        "ar_def": "العُرف",
+        "at": [
+          0.5,
+          0.85,
+          0.8
+        ]
+      },
+      {
+        "id": "stripes",
+        "en": "Stripes",
+        "fr": "Rayures",
+        "ar": "خطوط",
+        "fr_def": "les rayures",
+        "ar_def": "الخطوط",
+        "at": [
+          0.5,
+          0.55,
+          0.45
+        ]
+      },
+      {
+        "id": "hoof",
+        "en": "Hoof",
+        "fr": "Sabot",
+        "ar": "حافر",
+        "fr_def": "le sabot",
+        "ar_def": "الحافر",
+        "at": [
+          0.5,
+          0.02,
+          0.75
+        ]
+      },
+      {
+        "id": "tail",
+        "en": "Tail",
+        "fr": "Queue",
+        "ar": "ذيل",
+        "fr_def": "la queue",
+        "ar_def": "الذيل",
+        "at": [
+          0.5,
+          0.6,
+          0.02
+        ]
+      }
+    ]
+  },
+  {
+    "id": "llama",
+    "page": 12,
+    "en": "Llama",
+    "fr": "Lama",
+    "ar": "لاما",
+    "fr_of": "du lama",
+    "ar_def": "اللاما",
+    "fact_en": "Llamas hum to talk to each other.",
+    "fact_fr": "Les lamas fredonnent pour se parler.",
+    "fact_ar": "يتواصل اللاما مع بعضه بالهمهمة.",
+    "model": "models/Llama.glb",
+    "sound": null,
+    "color": "#1f8a8a",
+    "size": 0.5,
+    "lift": 0,
+    "turn": 60,
+    "eats": [
+      "grass",
+      "hay"
+    ],
+    "parts": [
+      {
+        "id": "head",
+        "en": "Head",
+        "fr": "Tête",
+        "ar": "رأس",
+        "fr_def": "la tête",
+        "ar_def": "الرأس",
+        "at": [
+          0.5,
+          0.95,
+          0.9
+        ]
+      },
+      {
+        "id": "ear",
+        "en": "Ear",
+        "fr": "Oreille",
+        "ar": "أذن",
+        "fr_def": "l'oreille",
+        "ar_def": "الأذن",
+        "at": [
+          0.5,
+          1.0,
+          0.8
+        ]
+      },
+      {
+        "id": "neck",
+        "en": "Neck",
+        "fr": "Cou",
+        "ar": "رقبة",
+        "fr_def": "le cou",
+        "ar_def": "الرقبة",
+        "at": [
+          0.5,
+          0.72,
+          0.8
+        ]
+      },
+      {
+        "id": "leg",
+        "en": "Leg",
+        "fr": "Patte",
+        "ar": "ساق",
+        "fr_def": "la patte",
+        "ar_def": "الساق",
+        "at": [
+          0.5,
+          0.25,
+          0.72
+        ]
+      },
+      {
+        "id": "tail",
+        "en": "Tail",
+        "fr": "Queue",
+        "ar": "ذيل",
+        "fr_def": "la queue",
+        "ar_def": "الذيل",
+        "at": [
+          0.5,
+          0.55,
+          0.02
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dog",
+    "page": 14,
+    "en": "Dog",
+    "fr": "Chien",
+    "ar": "كلب",
+    "fr_of": "du chien",
+    "ar_def": "الكلب",
+    "fact_en": "A dog's nose is thousands of times better than ours.",
+    "fact_fr": "Le flair du chien est des milliers de fois meilleur que le nôtre.",
+    "fact_ar": "حاسة الشم عند الكلب أقوى من حاستنا آلاف المرات.",
+    "model": "models/Dog.glb",
+    "sound": null,
+    "color": "#c98a12",
+    "size": 0.42,
+    "lift": 0,
+    "turn": 60,
+    "eats": [
+      "meat",
+      "fish"
+    ],
+    "parts": [
+      {
+        "id": "head",
+        "en": "Head",
+        "fr": "Tête",
+        "ar": "رأس",
+        "fr_def": "la tête",
+        "ar_def": "الرأس",
+        "at": [
+          0.5,
+          0.8,
+          0.95
+        ]
+      },
+      {
+        "id": "ear",
+        "en": "Ear",
+        "fr": "Oreille",
+        "ar": "أذن",
+        "fr_def": "l'oreille",
+        "ar_def": "الأذن",
+        "at": [
+          0.5,
+          0.95,
+          0.92
+        ]
+      },
+      {
+        "id": "snout",
+        "en": "Snout",
+        "fr": "Museau",
+        "ar": "خَطم",
+        "fr_def": "le museau",
+        "ar_def": "الخطم",
+        "at": [
+          0.5,
+          0.72,
+          1.0
+        ]
+      },
+      {
+        "id": "leg",
+        "en": "Leg",
+        "fr": "Patte",
+        "ar": "ساق",
+        "fr_def": "la patte",
+        "ar_def": "الساق",
+        "at": [
+          0.5,
+          0.25,
+          0.8
+        ]
+      },
+      {
+        "id": "paw",
+        "en": "Paw",
+        "fr": "Patte",
+        "ar": "قدم",
+        "fr_def": "la patte",
+        "ar_def": "القدم",
+        "at": [
+          0.5,
+          0.02,
+          0.82
+        ]
+      },
+      {
+        "id": "tail",
+        "en": "Tail",
+        "fr": "Queue",
+        "ar": "ذيل",
+        "fr_def": "la queue",
+        "ar_def": "الذيل",
+        "at": [
+          0.5,
+          0.85,
+          0.05
+        ]
+      }
+    ]
   }
 ]

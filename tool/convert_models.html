@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>FBX to GLB</title>
+<script type="importmap">
+  { "imports": { "three": "/__three/build/three.module.js", "three/addons/": "/__three/examples/jsm/" } }
+</script>
+</head>
+<body>
+<pre id="log"></pre>
+<script type="module">
+  // Served by tool/convert_models.py. Converts each FBX in the job list to a
+  // binary glTF (GLB) with its animations, minus the ones not meant for
+  // children ("Death"), with a walk/idle clip first (the app plays clip 0).
+  import * as THREE from 'three';
+  import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+  import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+
+  const log = (m) => { document.getElementById('log').textContent += m + '\n'; };
+  const jobs = await (await fetch('/__jobs')).json();
+  const order = ['walk', 'idle', 'eat', 'gallop', 'run', 'jump'];
+  const rank = (name) => { const n = name.toLowerCase(); const i = order.findIndex((o) => n.includes(o)); return i < 0 ? 99 : i; };
+
+  for (const job of jobs) {
+    try {
+      const obj = await new FBXLoader().loadAsync('/__fbx/' + encodeURIComponent(job.src));
+      const clips = obj.animations
+        .filter((c) => !/death|die|dead/i.test(c.name))
+        .map((c) => { c.name = c.name.replace(/^.*\|/, ''); return c; })
+        .sort((a, b) => rank(a.name) - rank(b.name));
+      const glb = await new GLTFExporter().parseAsync(obj, { binary: true, animations: clips, onlyVisible: true });
+      await fetch('/__out/' + encodeURIComponent(job.out), { method: 'POST', body: glb });
+      log(`${job.out}: ${clips.map((c) => c.name).join(', ')}`);
+    } catch (e) {
+      await fetch('/__err', { method: 'POST', body: job.src + ': ' + (e && e.stack || e) });
+    }
+  }
+  await fetch('/__done', { method: 'POST', body: document.getElementById('log').textContent });
+</script>
+</body>
+</html>

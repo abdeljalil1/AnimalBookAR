@@ -25,10 +25,13 @@ class ZooPath extends StatelessWidget {
   final void Function(Animal) onTap;
 
   static const designWidth = 360.0;
-  static const designHeight = 960.0;
+  static const _step = 152.0; // between enclosures
+
+  /// Enclosure centres for [n] animals, zig-zagging down, in design units.
+  static List<Offset> spotsFor(int n) => [for (var i = 0; i < n; i++) Offset(i.isEven ? 108 : 252, 220 + i * _step)];
+  static double heightFor(int n) => 220 + (n - 1) * _step + 140;
 
   /// Enclosure centres, in design units, in book order.
-  static const spots = [Offset(108, 220), Offset(252, 372), Offset(108, 524), Offset(252, 676), Offset(112, 828)];
 
   @override
   Widget build(BuildContext context) {
@@ -37,15 +40,15 @@ class ZooPath extends StatelessWidget {
       final k = c.maxWidth / designWidth;
       return SizedBox(
         width: c.maxWidth,
-        height: designHeight * k,
+        height: heightFor(animals.length) * k,
         child: Stack(clipBehavior: Clip.none, children: [
           Positioned.fill(
-            child: CustomPaint(painter: _ZooPainter(gateText: progress.s.zoo, count: animals.length)),
+            child: CustomPaint(painter: _ZooPainter(gateText: progress.s.zoo, ids: [for (final a in animals) a.id])),
           ),
-          for (var i = 0; i < animals.length && i < spots.length; i++)
+          for (var i = 0; i < animals.length; i++)
             Positioned(
-              left: spots[i].dx * k - 60,
-              top: spots[i].dy * k - 52,
+              left: spotsFor(animals.length)[i].dx * k - 60,
+              top: spotsFor(animals.length)[i].dy * k - 52,
               width: 120,
               child: _AnimalStop(
                 animal: animals[i],
@@ -218,10 +221,10 @@ const _greyscale = <double>[
 // ---------------------------------------------------------------------------
 
 class _ZooPainter extends CustomPainter {
-  _ZooPainter({required this.gateText, required this.count});
+  _ZooPainter({required this.gateText, required this.ids});
 
   final String gateText;
-  final int count;
+  final List<String> ids; // animal ids in path order, for their scenes
 
   static const _grass = Color(0xFFCDE8B0);
   static const _grassLight = Color(0xFFDDF1C6);
@@ -235,30 +238,26 @@ class _ZooPainter extends CustomPainter {
     final k = size.width / ZooPath.designWidth;
     canvas.save();
     canvas.scale(k);
-    const w = ZooPath.designWidth, h = ZooPath.designHeight;
-    final spots = ZooPath.spots.take(count).toList();
+    const w = ZooPath.designWidth;
+    final h = ZooPath.heightFor(ids.length);
+    final spots = ZooPath.spotsFor(ids.length);
+    // each animal's scene sits in the other column, level with its enclosure
+    final scenePos = [for (final s in spots) Offset(s.dx < w / 2 ? s.dx + 150 : s.dx - 150, s.dy - 8)];
 
     // grass with lighter patches
-    final bg = RRect.fromRectAndRadius(const Rect.fromLTWH(0, 0, w, h), const Radius.circular(28));
+    final bg = RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, w, h), const Radius.circular(28));
     canvas.drawRRect(bg, Paint()..color = _grass);
     canvas.save();
     canvas.clipRRect(bg);
     final patch = Paint()..color = _grassLight;
-    for (final o in const [
-      Offset(60, 120),
-      Offset(300, 260),
-      Offset(40, 420),
-      Offset(320, 560),
-      Offset(70, 700),
-      Offset(300, 900),
-    ]) {
-      canvas.drawOval(Rect.fromCenter(center: o, width: 150, height: 70), patch);
+    for (var y = 120.0, left = true; y < h; y += 140, left = !left) {
+      canvas.drawOval(Rect.fromCenter(center: Offset(left ? 60 : 300, y), width: 150, height: 70), patch);
     }
 
     // the sandy path: gate -> each enclosure -> exit
     final path = Path()..moveTo(w / 2, 96);
     var prev = const Offset(w / 2, 96);
-    for (final p in [...spots, const Offset(w / 2, h + 10)]) {
+    for (final p in [...spots, Offset(w / 2, h + 10)]) {
       final dy = (p.dy - prev.dy) / 2;
       path.cubicTo(prev.dx, prev.dy + dy, p.dx, p.dy - dy, p.dx, p.dy);
       prev = p;
@@ -302,16 +301,29 @@ class _ZooPainter extends CustomPainter {
       return o.dy > 120 || (o.dx < 90 || o.dx > 270);
     }
 
-    // scenes beside each enclosure
-    final scenes = <void Function()>[
-      () => _hay(canvas, spots[0] + const Offset(-70, 40)),
-      () => _rocks(canvas, spots[1] + const Offset(72, -28)),
-      () => _pond(canvas, spots[2] + const Offset(150, -12)),
-      () => _roundTree(canvas, spots[3] + const Offset(76, -40), 34),
-      () => _nest(canvas, spots[4] + const Offset(-76, -10)),
-    ];
-    for (var i = 0; i < spots.length && i < scenes.length; i++) {
-      scenes[i]();
+    // a little scene for each animal
+    for (var i = 0; i < ids.length; i++) {
+      final o = scenePos[i];
+      switch (ids[i]) {
+        case 'horse' || 'sheep' || 'llama':
+          _hay(canvas, o);
+        case 'fox':
+          _rocks(canvas, o);
+        case 'flamingo':
+          _pond(canvas, o);
+        case 'parrot':
+          _roundTree(canvas, o + const Offset(0, -20), 34);
+        case 'stork':
+          _nest(canvas, o);
+        case 'cow':
+          _trough(canvas, o);
+        case 'zebra':
+          _acacia(canvas, o + const Offset(0, -10));
+        case 'dog':
+          _kennel(canvas, o);
+        default:
+          _roundTree(canvas, o, 24);
+      }
     }
 
     // fences around the enclosures (the lower arc)
@@ -322,10 +334,11 @@ class _ZooPainter extends CustomPainter {
     // trees and flowers wherever there is room (fixed seed: same zoo every time)
     final rnd = math.Random(7);
     final trees = <Offset>[];
-    for (var i = 0; i < 160 && trees.length < 22; i++) {
+    final treeCount = (h / 44).round();
+    for (var i = 0; i < 400 && trees.length < treeCount; i++) {
       final o = Offset(14 + rnd.nextDouble() * (w - 28), 110 + rnd.nextDouble() * (h - 130));
       if (!free(o, 22) || trees.any((t) => (t - o).distance < 46)) continue;
-      if ((spots.length > 2) && (o - (spots[2] + const Offset(150, -12))).distance < 70) continue; // pond
+      if (scenePos.any((p) => (p - o).distance < 70)) continue; // keep scenes clear
       trees.add(o);
     }
     trees.sort((a, b) => a.dy.compareTo(b.dy)); // back to front
@@ -337,7 +350,7 @@ class _ZooPainter extends CustomPainter {
       }
     }
     final flowerColors = [const Color(0xFFF7A1C4), const Color(0xFFFFD166), const Color(0xFFFFFFFF)];
-    for (var i = 0; i < 70; i++) {
+    for (var i = 0; i < (h / 13).round(); i++) {
       final o = Offset(rnd.nextDouble() * w, 110 + rnd.nextDouble() * (h - 110));
       if (!free(o, 4)) continue;
       canvas.drawCircle(o, 2.6, Paint()..color = flowerColors[i % 3]);
@@ -452,6 +465,50 @@ class _ZooPainter extends CustomPainter {
     c.drawOval(Rect.fromCenter(center: o + const Offset(5, -18), width: 8, height: 6), Paint()..color = Colors.white);
   }
 
+  void _trough(Canvas c, Offset o) {
+    _shadow(c, o + const Offset(0, 14), 30, 6);
+    final wood = RRect.fromRectAndRadius(Rect.fromCenter(center: o, width: 58, height: 24), const Radius.circular(5));
+    c.drawRRect(wood, Paint()..color = const Color(0xFF8A5A2E));
+    c.drawRRect(
+        RRect.fromRectAndRadius(
+            Rect.fromCenter(center: o + const Offset(0, -3), width: 50, height: 12), const Radius.circular(4)),
+        Paint()..color = const Color(0xFF7CC4E4));
+    c.drawOval(Rect.fromCenter(center: o + const Offset(-10, -5), width: 16, height: 4),
+        Paint()..color = const Color(0x66FFFFFF));
+  }
+
+  void _acacia(Canvas c, Offset o) {
+    _shadow(c, o + const Offset(0, 34), 30, 7);
+    final trunk = Paint()
+      ..color = const Color(0xFF7A4E27)
+      ..strokeWidth = 6
+      ..strokeCap = StrokeCap.round;
+    c.drawLine(o + const Offset(0, 34), o + const Offset(0, 0), trunk);
+    c.drawLine(o, o + const Offset(-14, -10), trunk..strokeWidth = 4);
+    c.drawLine(o, o + const Offset(14, -10), trunk);
+    c.drawOval(Rect.fromCenter(center: o + const Offset(0, -16), width: 78, height: 20),
+        Paint()..color = const Color(0xFF6F9E3E));
+    c.drawOval(Rect.fromCenter(center: o + const Offset(-6, -20), width: 46, height: 10),
+        Paint()..color = const Color(0xFF8DBA55));
+  }
+
+  void _kennel(Canvas c, Offset o) {
+    _shadow(c, o + const Offset(0, 18), 28, 6);
+    c.drawRect(Rect.fromCenter(center: o + const Offset(0, 4), width: 46, height: 28),
+        Paint()..color = const Color(0xFFC98A12));
+    final roof = Path()
+      ..moveTo(o.dx - 30, o.dy - 8)
+      ..lineTo(o.dx, o.dy - 30)
+      ..lineTo(o.dx + 30, o.dy - 8)
+      ..close();
+    c.drawPath(roof, Paint()..color = const Color(0xFFB5452F));
+    c.drawRRect(
+        RRect.fromRectAndCorners(Rect.fromCenter(center: o + const Offset(0, 10), width: 18, height: 18),
+            topLeft: const Radius.circular(9), topRight: const Radius.circular(9)),
+        Paint()..color = const Color(0xFF4A3420));
+    c.drawCircle(o + const Offset(20, 16), 4, Paint()..color = const Color(0xFFF2F2F2)); // bowl
+  }
+
   void _gate(Canvas c, Offset o) {
     final post = Paint()..color = _wood;
     final cap = Paint()..color = _woodDark;
@@ -505,5 +562,5 @@ class _ZooPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _ZooPainter old) => old.gateText != gateText || old.count != count;
+  bool shouldRepaint(covariant _ZooPainter old) => old.gateText != gateText || old.ids.join() != ids.join();
 }

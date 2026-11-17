@@ -27,7 +27,10 @@ import { GLTFLoader } from './vendor/three/addons/loaders/GLTFLoader.js';
 const q = new URLSearchParams(location.search);
 const SHOW_PARTS = q.has('parts');
 const only = q.get('only');
-const animals = (await (await fetch('animals.json')).json()).filter((a) => !only || only.split(',').includes(a.id));
+const files = q.get('files'); // preview models not in animals.json yet: ?files=models/x.glb,...
+const animals = files
+  ? files.split(',').map((m) => ({ id: m.split('/').pop(), model: m, parts: [] }))
+  : (await (await fetch('animals.json')).json()).filter((a) => !only || only.split(',').includes(a.id));
 const loader = new GLTFLoader();
 const W = 360, H = 240;
 

@@ -29,7 +29,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const AR = join(ROOT, 'app', 'assets', 'ar');
 const OUT = join(ROOT, 'tool', 'test-output');
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const PAGES = ['horse', 'fox', 'flamingo', 'parrot', 'stork'];
+const PAGES = ['horse', 'fox', 'flamingo', 'parrot', 'stork', 'cow'];
+const ANIMALS = JSON.parse(readFileSync(new URL('../app/assets/ar/animals.json', import.meta.url))).length;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const failures = [];
 const check = (ok, what) => { console.log(`${ok ? 'PASS' : 'FAIL'}  ${what}`); if (!ok) failures.push(what); };
@@ -209,7 +210,7 @@ async function main() {
       await feedBtn && tap(feedBtn.x, feedBtn.y); // close the tray
     }
 
-    if (st.found === 'stork' && !holdDone) {
+    if (st.found === PAGES.at(-1) && !holdDone) {
       holdDone = true;
       await sleep(700);
       const btn = await centerOf('#btn-hold');
@@ -219,8 +220,8 @@ async function main() {
       check(h1.phase === 'held' && h1.held, `Hold turns on (${h1.phase})`);
       await sleep(5500); // the stork page leaves the camera meanwhile
       const h2 = await evalJs('JSON.stringify(window.__arState)').then(JSON.parse);
-      check(h2.phase === 'held' && h2.found === 'stork' && h2.parts.visible.length > 0,
-        `the stork stays on screen after its page leaves (${h2.phase}, ${h2.parts.visible.length} parts in view)`);
+      check(h2.phase === 'held' && h2.found === PAGES.at(-1) && h2.parts.visible.length > 0,
+        `the ${PAGES.at(-1)} stays on screen after its page leaves (${h2.phase}, ${h2.parts.visible.length} parts in view)`);
       await shot('stork-held.png');
       const under = await evalJs(`(() => { const e = document.elementFromPoint(${btn.x}, ${btn.y}); return e ? (e.id || e.className || e.tagName) + ' / ' + (e.closest('button') ? e.closest('button').id : '') : 'none'; })()`);
       console.log('      under the Hold button:', under);
@@ -286,7 +287,7 @@ async function main() {
   }
 
   console.log('      final state', JSON.stringify(st));
-  check(st && st.modelsLoaded === 5, `all 5 models loaded (${st?.modelsLoaded})`);
+  check(st && st.modelsLoaded === ANIMALS, `all ${ANIMALS} models loaded (${st?.modelsLoaded})`);
   const expected = PAGES.flatMap((p) => [p, 'lost']).join(' > ');
   check(seen.join(' > ') === expected, `pages found and lost in order (${seen.join(' > ')})`);
   check(st && st.soundsPlayed >= PAGES.length, `a sound played for each page found (${st?.soundsPlayed})`);
