@@ -27,7 +27,7 @@ class Book {
   final String fr;
   final String ar;
   final String kind; // animals | vehicles | letters | colors | heritage
-  final String map; // zoo | town | park
+  final String map; // zoo | town | school | studio | desert
   final Color color;
   final List<Animal> items;
 

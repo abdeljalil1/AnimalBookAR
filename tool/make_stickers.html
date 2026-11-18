@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><title>Make stickers</title>
+<script type="importmap">{ "imports": { "three": "/vendor/three/three.module.js" } }</script>
+</head>
+<body style="margin:0">
+<pre id="log">starting…</pre>
+<script type="module">
+// Served by tool/make_stickers.py. Renders every book item's 3D model, seen
+// as in the AR view (its "turn", a little from above), on a transparent
+// background: the stickers that stand at the map stops.
+import * as THREE from 'three';
+import { GLTFLoader } from '/vendor/three/addons/loaders/GLTFLoader.js';
+
+const log = (m) => { document.getElementById('log').textContent += '\n' + m; };
+const save = (path, body) => fetch('/__save?path=' + encodeURIComponent(path), { method: 'POST', body });
+const SIZE = 320;
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.setSize(SIZE, SIZE);
+renderer.setClearColor(0x000000, 0);
+const loader = new GLTFLoader();
+
+const books = await (await fetch('/books.json')).json();
+const only = new URLSearchParams(location.search).get('only');
+for (const book of books) {
+  if (only && only !== book.id) continue;
+  const items = await (await fetch('/' + book.data)).json();
+  for (const it of items) {
+    const gltf = await loader.loadAsync('/' + it.model);
+    const model = gltf.scene;
+    if (gltf.animations.length) { // a lively pose, a moment into the first animation
+      const mixer = new THREE.AnimationMixer(model);
+      mixer.clipAction(gltf.animations[0]).play();
+      mixer.update(0.35);
+    }
+    const holder = new THREE.Group();
+    holder.add(model);
+    // as in the AR view: the model's "turn", then a quarter turn more toward
+    // the viewer's right so it shows its side and face
+    holder.rotation.y = THREE.MathUtils.degToRad((it.turn || 0) + (book.kind === 'letters' ? 0 : -20));
+    holder.updateMatrixWorld(true);
+    model.traverse((o) => { if (o.isSkinnedMesh) o.skeleton.update(); });
+    const box = new THREE.Box3().setFromObject(holder, true);
+    const c = box.getCenter(new THREE.Vector3()), s = box.getSize(new THREE.Vector3());
+    const scene = new THREE.Scene();
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x8d7b68, 2.4));
+    const sun = new THREE.DirectionalLight(0xffffff, 2.0);
+    sun.position.set(2, 4, 4);
+    scene.add(sun, holder);
+    const cam = new THREE.PerspectiveCamera(28, 1, 0.001, 1000);
+    const r = Math.max(s.x, s.y, s.z) * 0.62;
+    const dist = r / Math.tan(THREE.MathUtils.degToRad(14));
+    const elev = book.kind === 'letters' ? 0.75 : 0.32; // a little from above
+    cam.position.set(c.x, c.y + dist * Math.sin(elev), c.z + dist * Math.cos(elev));
+    cam.near = dist / 100;
+    cam.far = dist * 10;
+    cam.updateProjectionMatrix();
+    cam.lookAt(c);
+    renderer.render(scene, cam);
+    const blob = await new Promise((ok) => renderer.domElement.toBlob(ok, 'image/png'));
+    await save(`app/${book.thumbsDir}/${it.id}_sticker.png`, blob);
+  }
+  log(book.id + ' done');
+}
+await fetch('/__done', { method: 'POST' });
+</script>
+</body>
+</html>
