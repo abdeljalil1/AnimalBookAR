@@ -3,7 +3,7 @@
 
     python3 tool/make_shapes.py
 
-Run after tool/make_learning_books.py. It opens tool/make_shapes.html in
+Run after tool/make_learning_books.py (--only=letters|colors|algeria builds one book). It opens tool/make_shapes.html in
 headless Chrome (three.js builds the shapes there) and writes:
   app/assets/ar/books/letters_ar/models/*.glb  one extruded letter per page
   app/assets/ar/books/colors/models/*.glb      four objects in each colour
@@ -53,6 +53,7 @@ LAYOUTS = [
     [[-0.8, -0.3, 1.1], [0.6, -0.35, 1.0], [-0.2, 0.5, 0.9], [0.9, 0.45, 0.85]],
     [[-0.9, 0.4, 0.9], [-0.25, -0.4, 1.05], [0.55, 0.15, 1.1], [1.05, -0.45, 0.85]],
 ]
+ONLY = next((a.split("=", 1)[1] for a in sys.argv if a.startswith("--only=")), "")  # letters | colors | algeria
 done = threading.Event()
 result = {}
 
@@ -63,7 +64,9 @@ def config():
     for i, it in enumerate(books["colors"]):
         colors.append({"id": it["id"], "cid": it["id"].removeprefix("color_"), "model": it["model"],
                        "color": it["color"], "objects": SETS[i % len(SETS)]})
-    return {"letters_ar": books["letters_ar"], "colors": colors, "layouts": LAYOUTS}
+    dz = json.loads((BOOKS / "algeria" / "items.json").read_text())
+    algeria = [{"id": it["id"], "key": it["id"].removeprefix("dz_"), "model": it["model"]} for it in dz]
+    return {"only": ONLY, "algeria": algeria, "letters_ar": books["letters_ar"], "colors": colors, "layouts": LAYOUTS}
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -82,6 +85,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return self.send_bytes((ROOT / "tool" / "make_shapes.html").read_bytes(), "text/html; charset=utf-8")
         if p == "/__config":
             return self.send_bytes(json.dumps(config(), ensure_ascii=False).encode(), "application/json")
+        if p == "/__algeria.js":
+            return self.send_bytes((ROOT / "tool" / "make_shapes_algeria.js").read_bytes(), "text/javascript")
         if p.startswith("/__three/"):
             return self.send_bytes((CACHE / "examples" / "jsm" / p[len("/__three/"):]).read_bytes(), "text/javascript")
         if p.startswith("/__fonts/"):
@@ -124,6 +129,17 @@ def finish():
         with Image.open(png) as im:
             im.convert("RGB").save(png.with_suffix(".jpg"), quality=88)
         png.unlink()
+    # the measured parts of the Algeria models
+    f = BOOKS / "algeria" / "items.json"
+    items = json.loads(f.read_text())
+    spots = {m["id"]: m["at"] for m in result["done"].get("algeria", [])}
+    for it in items:
+        for p in it["parts"]:
+            if p["id"] in spots.get(it["id"], {}):
+                p["at"] = spots[it["id"]][p["id"]]
+    f.write_text(json.dumps(items, ensure_ascii=False, indent=1))
+    if not result["done"]["colors"]:
+        return
     # the measured parts of each colour scene
     f = BOOKS / "colors" / "items.json"
     items = json.loads(f.read_text())

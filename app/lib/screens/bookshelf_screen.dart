@@ -89,7 +89,6 @@ class BookshelfScreen extends StatelessWidget {
                 children: [
                   for (final b in progress.books)
                     _BookCover(book: b, progress: progress, onTap: () => _open(context, b)),
-                  _SoonCover(title: s.heritageBook, soon: s.comingSoon),
                 ],
               ),
             ]),
@@ -251,40 +250,6 @@ class _BookCover extends StatelessWidget {
             const SizedBox(height: 5),
             Text(s.metOf(book.kind, met, total), style: const TextStyle(color: AppColors.muted, fontSize: 11.5)),
           ]),
-        ),
-      ]),
-    );
-  }
-}
-
-class _SoonCover extends StatelessWidget {
-  const _SoonCover({required this.title, required this.soon});
-  final String title;
-  final String soon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.sand,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.line),
-      ),
-      padding: const EdgeInsets.all(14),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Container(
-          padding: const EdgeInsets.all(14),
-          decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-          child: const Icon(Icons.mosque_rounded, size: 34, color: AppColors.faint),
-        ),
-        const SizedBox(height: 12),
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w800, color: AppColors.muted, fontSize: 15)),
-        const SizedBox(height: 6),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-          child:
-              Text(soon, style: const TextStyle(fontSize: 11.5, color: AppColors.faint, fontWeight: FontWeight.w700)),
         ),
       ]),
     );

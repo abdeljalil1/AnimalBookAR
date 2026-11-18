@@ -60,11 +60,17 @@ def main():
 
     def table(kind, title):
         out.extend([f"## {title}", "", "| Item | Author | Licence | Source |", "|---|---|---|---|"])
+        seen = set()
         for a in animals:
-            c = credits.get(f"{a['id']}_{kind}")
+            # pages may share a photo (the Arabic letters reuse the animal photos): list each file once
+            key = (a.get("photo") or a["id"]) if kind == "photo" else (Path(a["sound"]).stem if a.get("sound") else a["id"])
+            c = credits.get(f"{key}_{kind}") or credits.get(f"{a['id']}_{kind}")
+            if c and c["page"] in seen:
+                continue
             if c:
+                seen.add(c["page"])
                 out.append(f"| {a['en']} | {c['artist']} | {c['license']} | [Wikimedia Commons]({c['page']}) |")
-            elif kind == "sound":
+            elif kind == "sound" and not a.get("say") and a.get("sound") is None and "/" not in a["model"].removeprefix("models/"):
                 out.append(f"| {a['en']} | (no recording yet: the app says the name) | | |")
         out.append("")
 
@@ -72,6 +78,9 @@ def main():
     table("sound", "Sounds (trimmed to a few seconds, volume levelled, AAC)")
     out.extend(["## 3D models", "", "| Item | Author | Licence | Source |", "|---|---|---|---|"])
     for a in animals:
+        if any(a["model"].startswith(f"books/{b}/") for b in ("letters_ar", "colors", "algeria")):
+            out.append(f"| {a['en']} | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |")
+            continue
         model = Path(a["model"]).name
         who, lic, src = MODELS.get(model, QUATERNIUS)
         out.append(f"| {a['en']} | {who} | {lic} | {src} |")

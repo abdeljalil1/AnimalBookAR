@@ -31,6 +31,34 @@ publishing.
 | Tractor | Mulad | CC BY 2.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Ford_8N.jpg) |
 | Truck | Ralf Roletschek | CC BY 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:13-08-09-hongkong-by-RalfR-091.jpg) |
 | Motorcycle | Lothar Spurzem | CC BY-SA 2.0 de | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:2007-06-15_34_Moto_Guzzi_PE,_Fg.-Nr._SP7032.jpg) |
+| Taa · Apple | George Chernilevsky | Public domain | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Apples_in_basket_2018_G1.jpg) |
+| Daal · Bear | Malene Thyssen | CC BY 2.5 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Brown_bear_(Ursus_arctos_arctos)_running.jpg) |
+| Thaal · Corn | Dietmar Rabich | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Hausd%C3%BClmen,_Maisfeld_am_Sythener_Hellweg_--_2021_--_0616.jpg) |
+| Raa · Pomegranate | Kritzolina | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Granat%C3%A4pfel_am_Baum.jpg) |
+| Saad · Falcon | Isiwal | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Adlerwarte_Obernberg_am_Inn_Falkner_Wanderfalke-9506.jpg) |
+| Daad · Frog | LiquidGhoul | Public domain | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Australia_green_tree_frog_(Litoria_caerulea)_crop.jpg) |
+| Taa · Airplane | NASA | Public domain | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Convair_990_in_flight_EC89-0042-11.jpg) |
+| Thaa · Gazelle | מינוזיג - MinoZig | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Gazella_dorcas,_Israel.jpg) |
+| Ayn · Sparrow | Diliff | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:House_Sparrow,_England_-_May_09.jpg) |
+| Ghayn · Cloud | W.carter | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Altocumulus_and_cumulus_over_G%C3%A5seberg.jpg) |
+| Qaaf · Cat | Terragio67 | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Calico_cat,_-_Assisi,_Italy.jpg) |
+| Miim · Banana | Wilfredor | CC0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Ancient_banana_vendor.jpg) |
+| Nuun · Bee | Bernard Ladenthin | CC BY 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:20200601_135745_Flowers_and_Bees.jpg) |
+| Haa · Hoopoe | Giles Laurent | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:008_Eurasian_hoopoe_eating_in_Keoladeo_National_Park_Photo_by_Giles_Laurent.jpg) |
+| Waaw · Rose | Acabashi | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:A_red_rose_in_Great_Waltham,_Essex,_England_01.JPG) |
+| Yaa · Dove | Giles Laurent | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:140_Laughing_dove_in_Twyfelfontein_Photo_by_Giles_Laurent.jpg) |
+| Flag of Algeria | LBM1948 | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Banderas_de_Argelia.jpg) |
+| Maqam Echahid | Poudou99 | CC BY 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Alger_Memorial-du-Martyr_IMG_1160.JPG) |
+| Djamaa El Djazair | Abdellah zou | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Djamaa_El_Djaza%C3%AFr_2.jpg) |
+| Casbah of Algiers | Paebi | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Alger_Kasbah01.jpg) |
+| Timgad | Bernard Gagnon | CC BY 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Arch_of_Trajan_(Timgad).jpg) |
+| Ghardaïa | Joachim Himmeröder | CC BY-SA 2.0 de | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Ghardaia_1984.jpg) |
+| Tassili n'Ajjer | Fayeqalnatour | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:20180411_160529_HDR.jpg) |
+| Date palm | Michou06 | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Biskra_palms.jpg) |
+| Fennec | Khaled Mokhtar | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Fennec_FOX_-_Valley_of_the_Whales_-_Wadi_al_Hitan_2.jpg) |
+| Couscous | Laurhim | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Couscous_(74111).jpg) |
+| Mint tea | Muhammad Reyhand | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:ES_TEH_MANIS.jpg) |
+| Darbuka | Siffert80 | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Darbuka_do_Cairo.jpg) |
 
 ## Sounds (trimmed to a few seconds, volume levelled, AAC)
 
@@ -59,44 +87,7 @@ publishing.
 | Tractor | Work With Sounds  / Museum of Municipal Engineering | CC BY 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:WWS_TractorUrsusC328driving.ogg) |
 | Truck | Edvvc | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Trophy_Truck_and_American_V8s.ogg) |
 | Motorcycle | Huhu Uet | CC BY-SA 3.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Garelli_Bonanza_starten_01.ogg) |
-| Alif · Lion | (no recording yet: the app says the name) | | |
-| Baa · Cow | (no recording yet: the app says the name) | | |
-| Taa · Apple | (no recording yet: the app says the name) | | |
-| Thaa · Fox | (no recording yet: the app says the name) | | |
-| Jiim · Camel | (no recording yet: the app says the name) | | |
-| Haa · Horse | (no recording yet: the app says the name) | | |
-| Khaa · Sheep | (no recording yet: the app says the name) | | |
-| Daal · Bear | (no recording yet: the app says the name) | | |
-| Thaal · Corn | (no recording yet: the app says the name) | | |
-| Raa · Pomegranate | (no recording yet: the app says the name) | | |
-| Zaay · Giraffe | (no recording yet: the app says the name) | | |
-| Siin · Car | (no recording yet: the app says the name) | | |
-| Shiin · Truck | (no recording yet: the app says the name) | | |
-| Saad · Falcon | (no recording yet: the app says the name) | | |
-| Daad · Frog | (no recording yet: the app says the name) | | |
-| Taa · Airplane | (no recording yet: the app says the name) | | |
-| Thaa · Gazelle | (no recording yet: the app says the name) | | |
-| Ayn · Sparrow | (no recording yet: the app says the name) | | |
-| Ghayn · Cloud | (no recording yet: the app says the name) | | |
-| Faa · Elephant | (no recording yet: the app says the name) | | |
-| Qaaf · Cat | (no recording yet: the app says the name) | | |
-| Kaaf · Dog | (no recording yet: the app says the name) | | |
-| Laam · Stork | (no recording yet: the app says the name) | | |
-| Miim · Banana | (no recording yet: the app says the name) | | |
-| Nuun · Bee | (no recording yet: the app says the name) | | |
-| Haa · Hoopoe | (no recording yet: the app says the name) | | |
-| Waaw · Rose | (no recording yet: the app says the name) | | |
-| Yaa · Dove | (no recording yet: the app says the name) | | |
-| Red | (no recording yet: the app says the name) | | |
-| Orange | (no recording yet: the app says the name) | | |
-| Yellow | (no recording yet: the app says the name) | | |
-| Green | (no recording yet: the app says the name) | | |
-| Blue | (no recording yet: the app says the name) | | |
-| Purple | (no recording yet: the app says the name) | | |
-| Pink | (no recording yet: the app says the name) | | |
-| Brown | (no recording yet: the app says the name) | | |
-| Black | (no recording yet: the app says the name) | | |
-| White | (no recording yet: the app says the name) | | |
+| Darbuka | Cassa342 | CC BY-SA 4.0 | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Darbuka.ogg) |
 
 ## 3D models
 
@@ -125,44 +116,56 @@ publishing.
 | Tractor | Poly by Google | CC BY 3.0 | [Poly Pizza](https://poly.pizza/m/5TGoA5N14c5) |
 | Truck | Quaternius | CC0 1.0 | [Poly Pizza](https://poly.pizza/m/cXw6oiFtZ8) |
 | Motorcycle | AliceCassie | CC0 1.0 | [Poly Pizza](https://poly.pizza/m/j20srJUjpB) |
-| Alif · Lion | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Baa · Cow | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Taa · Apple | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Thaa · Fox | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Jiim · Camel | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Haa · Horse | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Khaa · Sheep | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Daal · Bear | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Thaal · Corn | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Raa · Pomegranate | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Zaay · Giraffe | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Siin · Car | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Shiin · Truck | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Saad · Falcon | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Daad · Frog | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Taa · Airplane | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Thaa · Gazelle | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Ayn · Sparrow | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Ghayn · Cloud | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Faa · Elephant | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Qaaf · Cat | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Kaaf · Dog | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Laam · Stork | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Miim · Banana | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Nuun · Bee | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Haa · Hoopoe | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Waaw · Rose | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Yaa · Dove | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Red | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Orange | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Yellow | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Green | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Blue | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Purple | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Pink | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Brown | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| Black | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
-| White | Quaternius (Farm Animals pack), converted to GLB with tool/convert_models.py | CC0 1.0 | [OpenGameArt](https://opengameart.org/node/85047) |
+| Alif · Lion | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Baa · Cow | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Taa · Apple | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Thaa · Fox | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Jiim · Camel | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Haa · Horse | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Khaa · Sheep | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Daal · Bear | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Thaal · Corn | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Raa · Pomegranate | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Zaay · Giraffe | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Siin · Car | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Shiin · Truck | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Saad · Falcon | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Daad · Frog | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Taa · Airplane | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Thaa · Gazelle | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Ayn · Sparrow | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Ghayn · Cloud | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Faa · Elephant | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Qaaf · Cat | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Kaaf · Dog | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Laam · Stork | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Miim · Banana | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Nuun · Bee | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Haa · Hoopoe | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Waaw · Rose | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Yaa · Dove | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Red | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Orange | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Yellow | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Green | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Blue | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Purple | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Pink | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Brown | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Black | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| White | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Flag of Algeria | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Maqam Echahid | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Djamaa El Djazair | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Casbah of Algiers | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Timgad | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Ghardaïa | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Tassili n'Ajjer | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Date palm | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Fennec | Model by PixelMannen (CC0); rigging and animation by tomkranis; glTF conversion by @AsoboStudio and @scurest | CC BY 4.0 | [Khronos glTF Sample Assets](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/Fox) |
+| Couscous | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Mint tea | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
+| Darbuka | Animal Book AR, built in code by `tool/make_shapes.py` | same as the app | |
 
 The horse, flamingo, parrot and stork from the three.js examples have no licence of their own. Fine for a
 prototype, but **replace them before publishing** (Quaternius has CC0 horses and birds).

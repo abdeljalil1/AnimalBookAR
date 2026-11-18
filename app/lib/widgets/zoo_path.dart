@@ -55,6 +55,7 @@ class ZooPath extends StatelessWidget {
               park: progress.book.map == 'park',
               colors: [for (final a in animals) a.color],
               labels: [for (final a in animals) a.letter ?? ''],
+              palms: progress.book.kind == 'heritage',
             )),
           ),
           for (var i = 0; i < animals.length; i++)
@@ -240,6 +241,7 @@ class _ZooPainter extends CustomPainter {
     this.park = false,
     this.colors = const [],
     this.labels = const [],
+    this.palms = false,
   });
 
   final String gateText;
@@ -247,6 +249,7 @@ class _ZooPainter extends CustomPainter {
   final bool park; // letters and colours: a garden path, a toy block or paint pot by each stop
   final List<Color> colors; // each item's colour (paint pots)
   final List<String> labels; // each item's letter (toy blocks)
+  final bool palms; // the Algeria book: a date palm by each stop
   final List<String> ids; // animal ids in path order, for their scenes
 
   static const _grass = Color(0xFFCDE8B0);
@@ -343,7 +346,9 @@ class _ZooPainter extends CustomPainter {
         continue;
       }
       if (park) {
-        if (labels.length > i && labels[i].isNotEmpty) {
+        if (palms) {
+          _palm(canvas, o + const Offset(0, -16));
+        } else if (labels.length > i && labels[i].isNotEmpty) {
           _block(canvas, o, labels[i], colors[i]);
         } else if (colors.length > i) {
           _paintPot(canvas, o, colors[i]);
@@ -854,5 +859,9 @@ class _ZooPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _ZooPainter old) =>
-      old.gateText != gateText || old.town != town || old.park != park || old.ids.join() != ids.join();
+      old.gateText != gateText ||
+      old.town != town ||
+      old.park != park ||
+      old.palms != palms ||
+      old.ids.join() != ids.join();
 }

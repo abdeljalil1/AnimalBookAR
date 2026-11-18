@@ -72,5 +72,23 @@
    "mix"
   ],
   "levels": 3
+ },
+ {
+  "id": "algeria",
+  "en": "Algeria",
+  "fr": "L'Algérie",
+  "ar": "الجزائر",
+  "kind": "heritage",
+  "map": "park",
+  "color": "#006233",
+  "data": "books/algeria/items.json",
+  "targets": "books/algeria/targets.mind",
+  "pagesDir": "assets/ar/books/algeria/pages",
+  "thumbsDir": "assets/ar/books/algeria/thumbs",
+  "games": [
+   "memory",
+   "find"
+  ],
+  "levels": 3
  }
 ]

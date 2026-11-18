@@ -69,7 +69,7 @@ html, body { background: #fff; }
 """
 
 
-ICON = {"vehicles": "🚗", "letters": "✏️", "colors": "🎨"}.get(BOOK.kind, "🐾")
+ICON = {"vehicles": "🚗", "letters": "✏️", "colors": "🎨", "heritage": "🌴"}.get(BOOK.kind, "🐾")
 
 
 def page_html(a, num, credit):
@@ -77,12 +77,12 @@ def page_html(a, num, credit):
     return f"""
 <section class="page" style="--c:{a['color']}">
   <div class="badge">{num}</div>
-  <div class="photo"><img src="{(BOOK.photos / (a['id'] + '.jpg')).as_uri()}"></div>
+  <div class="photo"><img src="{(BOOK.photos / (a.get('photo', a['id']) + '.jpg')).as_uri()}"></div>
   <div class="names">
-    <div class="en">{e(a['en'])}</div>
+    <div class="en" style="font-size:{76 if len(a['en']) <= 15 else int(76 * 15 / len(a['en']))}px">{e(a['en'])}</div>
     <div class="row"><span class="fr">{e(a['fr'])}</span><span class="ar" dir="rtl">{e(a['ar'])}</span></div>
   </div>
-  <div class="facts">
+  <div class="facts" style="{'font-size:18.5px' if len(a['fact_en']) + len(a['fact_fr']) > 125 else ''}">
     <p>{ICON} {e(a['fact_en'])}</p>
     <p>{ICON} {e(a['fact_fr'])}</p>
     <p class="far">{e(a['fact_ar'])} {ICON}</p>
@@ -189,7 +189,8 @@ def make_thumb(animal_id):
     out = BOOK.thumbs / f"{animal_id}.jpg"
     out.parent.mkdir(parents=True, exist_ok=True)
     fx, fy = THUMB_FOCUS.get(animal_id, (0.5, 0.5))
-    with Image.open(BOOK.photos / f"{animal_id}.jpg") as im:
+    photo = next((a.get("photo", a["id"]) for a in BOOK.items if a["id"] == animal_id), animal_id)
+    with Image.open(BOOK.photos / f"{photo}.jpg") as im:
         im = im.convert("RGB")
         w, h = im.size
         s = min(w, h)
