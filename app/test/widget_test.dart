@@ -232,4 +232,20 @@ void main() {
     await tester.pump(const Duration(milliseconds: 600));
     expect(find.text('Red and yellow make orange!'), findsOneWidget);
   });
+
+  testWidgets('the Algeria book: treasures, details and a Find game', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 2400));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final p = await _progress(tester, {'name': 'Yahia', 'met': ['dz_flag']});
+    await tester.pumpWidget(AnimalBookApp(progress: p));
+    await _settle(tester);
+
+    await tester.scrollUntilVisible(find.byKey(const Key('book-algeria')), 300, scrollable: find.byType(Scrollable).first);
+    expect(find.text('1 of 12 treasures'), findsWidgets);
+    await _openBook(tester, 'algeria');
+    expect(find.text('Discover Maqam Echahid'), findsOneWidget); // the flag is met: next is the memorial
+    expect(find.text('Details'), findsOneWidget); // level 2
+    expect(find.byKey(const Key('game-find')), findsOneWidget);
+    expect(find.text('Find the treasure'), findsOneWidget);
+  });
 }

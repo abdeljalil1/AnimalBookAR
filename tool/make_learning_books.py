@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Writes the items files of the Arabic letters and Colors books.
+"""Writes the items files of the Arabic letters, Colors and Algeria books.
 
     python3 tool/make_learning_books.py
 
 The words, letter names and colours live here; the 3D models come from
 tool/make_shapes.py (run it next: it also fills in each colour scene's parts).
-Then run make_pages.py and compile_targets.py with --book=letters_ar and
---book=colors.
+Then run make_pages.py and compile_targets.py with --book=letters_ar,
+--book=colors and --book=algeria.
 """
 import json
 from pathlib import Path
@@ -125,16 +125,126 @@ def colors():
     return items
 
 
+
+# Algeria: id, colour, size, names (en, fr, ar), fr_of, ar_def, fact (en, fr, ar),
+# parts (id, en, fr, ar, fr_def, ar_def). Models come from make_shapes.py, except
+# the fennec, which reuses the animated fox.
+P = {
+    "crescent": ("Crescent", "Croissant", "هلال", "le croissant", "الهلال"),
+    "star": ("Star", "Étoile", "نجمة", "l'étoile", "النجمة"),
+    "pole": ("Pole", "Mât", "سارية", "le mât", "السارية"),
+    "leaf": ("Palm leaf", "Palme", "سعفة", "la palme", "السعفة"),
+    "flame": ("Eternal flame", "Flamme éternelle", "الشعلة", "la flamme", "الشعلة"),
+    "base": ("Base", "Socle", "قاعدة", "le socle", "القاعدة"),
+    "minaret": ("Minaret", "Minaret", "مئذنة", "le minaret", "المئذنة"),
+    "dome": ("Dome", "Coupole", "قبة", "la coupole", "القبة"),
+    "arches": ("Arches", "Arcades", "أقواس", "les arcades", "الأقواس"),
+    "house": ("House", "Maison", "بيت", "la maison", "البيت"),
+    "stairs": ("Stairs", "Escalier", "درج", "l'escalier", "الدرج"),
+    "sea": ("Sea", "Mer", "بحر", "la mer", "البحر"),
+    "arch": ("Arch", "Arc", "قوس", "l'arc", "القوس"),
+    "column": ("Column", "Colonne", "عمود", "la colonne", "العمود"),
+    "hill": ("Hill", "Colline", "تل", "la colline", "التل"),
+    "rock": ("Rock", "Rocher", "صخرة", "le rocher", "الصخرة"),
+    "sand": ("Sand", "Sable", "رمل", "le sable", "الرمل"),
+    "painting": ("Rock painting", "Peinture", "رسم", "la peinture", "الرسم"),
+    "trunk": ("Trunk", "Tronc", "جذع", "le tronc", "الجذع"),
+    "fronds": ("Fronds", "Palmes", "سعف", "les palmes", "السعف"),
+    "dates": ("Dates", "Dattes", "تمر", "les dattes", "التمر"),
+    "plate": ("Dish", "Plat", "طبق", "le plat", "الطبق"),
+    "grains": ("Semolina", "Semoule", "سميد", "la semoule", "السميد"),
+    "carrot": ("Carrot", "Carotte", "جزرة", "la carotte", "الجزرة"),
+    "chickpeas": ("Chickpeas", "Pois chiches", "حمص", "les pois chiches", "الحمص"),
+    "teapot": ("Teapot", "Théière", "إبريق", "la théière", "الإبريق"),
+    "glass": ("Glass", "Verre", "كأس", "le verre", "الكأس"),
+    "mint": ("Mint", "Menthe", "نعناع", "la menthe", "النعناع"),
+    "tray": ("Tray", "Plateau", "صينية", "le plateau", "الصينية"),
+    "skin": ("Drum skin", "Peau", "جلد", "la peau", "الجلد"),
+    "body": ("Body", "Corps", "جسم", "le corps", "الجسم"),
+}
+ALGERIA = [
+    ("flag", "#006233", 0.38, ("Flag of Algeria", "Drapeau algérien", "العلم الجزائري"), "du drapeau", "العلم الجزائري",
+     ("The green and white flag has a red crescent and star.", "Le drapeau vert et blanc porte un croissant et une étoile rouges.",
+      "العلم الأخضر والأبيض يحمل هلالًا ونجمة باللون الأحمر."), ["crescent", "star", "pole"]),
+    ("memorial", "#8D6E63", 0.42, ("Maqam Echahid", "Maqam Echahid", "مقام الشهيد"), "du Maqam Echahid", "مقام الشهيد",
+     ("Maqam Echahid, 92 metres tall, honours the martyrs.", "Le Maqam Echahid, haut de 92 mètres, honore les martyrs.",
+      "مقام الشهيد بارتفاع 92 مترًا يخلّد ذكرى الشهداء."), ["leaf", "flame", "base"]),
+    ("mosque", "#00897B", 0.5, ("Djamaa El Djazair", "Djamaa El Djazaïr", "جامع الجزائر"), "de Djamaa El Djazaïr", "جامع الجزائر",
+     ("Djamaa El Djazair has the tallest minaret in the world: 265 metres.",
+      "Djamaa El Djazaïr a le plus haut minaret du monde : 265 mètres.", "لجامع الجزائر أطول مئذنة في العالم: 265 مترًا."),
+     ["minaret", "dome", "arches"]),
+    ("casbah", "#1E88E5", 0.62, ("Casbah of Algiers", "Casbah d'Alger", "القصبة"), "de la Casbah", "القصبة",
+     ("The Casbah of Algiers: old white houses and narrow streets.",
+      "La Casbah d'Alger : vieilles maisons blanches et ruelles étroites.",
+      "القصبة مدينة قديمة في الجزائر العاصمة بيوتها بيضاء وأزقتها ضيقة."), ["house", "stairs", "sea"]),
+    ("timgad", "#C2853D", 0.6, ("Timgad", "Timgad", "تيمقاد"), "de Timgad", "تيمقاد",
+     ("Timgad is a Roman town almost 2,000 years old.", "Timgad est une ville romaine vieille de près de 2 000 ans.",
+      "تيمقاد مدينة رومانية عمرها نحو ألفي سنة."), ["arch", "column"]),
+    ("ghardaia", "#D08C3A", 0.62, ("Ghardaïa", "Ghardaïa", "غرداية"), "de Ghardaïa", "غرداية",
+     ("In the M'zab valley, houses climb the hill around the mosque.",
+      "Dans la vallée du M'zab, les maisons montent la colline autour de la mosquée.",
+      "في وادي ميزاب تصعد البيوت التلّ حول المسجد."), ["minaret", "house", "hill"]),
+    ("tassili", "#B5452F", 0.62, ("Tassili n'Ajjer", "Tassili n'Ajjer", "طاسيلي ناجر"), "du Tassili", "طاسيلي ناجر",
+     ("Tassili n'Ajjer has very old paintings of animals on its rocks.",
+      "Le Tassili n'Ajjer a de très vieilles peintures d'animaux sur ses rochers.",
+      "في طاسيلي ناجر رسوم قديمة جدًا لحيوانات على الصخور."), ["rock", "sand", "painting"]),
+    ("palm", "#6B8E23", 0.4, ("Date palm", "Palmier dattier", "النخلة"), "du palmier", "النخلة",
+     ("Dates from Biskra, like Deglet Nour, are famous all over the world.",
+      "Les dattes de Biskra, comme la Deglet Nour, sont célèbres dans le monde.",
+      "تمور بسكرة مثل دقلة نور مشهورة في العالم كله."), ["trunk", "fronds", "dates"]),
+    ("fennec", "#E0A458", 0.55, ("Fennec", "Fennec", "الفنك"), "du fennec", "الفنك",
+     ("The fennec is Algeria's national animal. Its big ears keep it cool.",
+      "Le fennec est l'animal national de l'Algérie. Ses grandes oreilles le rafraîchissent.",
+      "الفنك هو الحيوان الوطني للجزائر، وأذناه الكبيرتان تبرّدان جسمه."), None),
+    ("couscous", "#E3B04B", 0.55, ("Couscous", "Couscous", "الكسكسي"), "du couscous", "الكسكسي",
+     ("Couscous is made of small grains of semolina, served with vegetables.",
+      "Le couscous est fait de petits grains de semoule, servis avec des légumes.",
+      "الكسكسي حبيبات صغيرة من السميد تقدَّم مع الخضر."), ["plate", "grains", "carrot", "chickpeas"]),
+    ("tea", "#2E7D32", 0.55, ("Mint tea", "Thé à la menthe", "الشاي بالنعناع"), "du thé à la menthe", "الشاي بالنعناع",
+     ("Mint tea is poured from high up to make foam.", "Le thé à la menthe est versé de haut pour faire de la mousse.",
+      "يُسكب الشاي بالنعناع من الأعلى لتكوين الرغوة."), ["teapot", "glass", "mint", "tray"]),
+    ("darbuka", "#D21034", 0.45, ("Darbuka", "Darbouka", "الدربوكة"), "de la darbouka", "الدربوكة",
+     ("The darbuka is a drum played with the hands at weddings and parties.",
+      "La darbouka est un tambour joué avec les mains aux mariages et aux fêtes.",
+      "الدربوكة طبل يُعزف باليدين في الأعراس والحفلات."), ["skin", "body"]),
+]
+
+
+def algeria():
+    fox = next(a for a in json.loads((ROOT / "app/assets/ar/animals.json").read_text()) if a["id"] == "fox")
+    items = []
+    for i, (iid, color, size, (en, fr, ar), fr_of, ar_def, (fen, ffr, far), parts) in enumerate(ALGERIA):
+        it = {
+            "id": f"dz_{iid}", "page": i + 1, "en": en, "fr": fr, "ar": ar, "fr_of": fr_of, "ar_def": ar_def,
+            "fact_en": fen, "fact_fr": ffr, "fact_ar": far,
+            "model": f"books/algeria/models/{iid}.glb", "sound": None, "photo": iid,
+            "color": color, "size": size, "lift": 0, "turn": 0,
+            "helps": {"en": f"Where is {en}?", "fr": f"Où est {fr} ?", "ar": f"أين {ar_def}؟"},
+            "parts": [{"id": p, "en": P[p][0], "fr": P[p][1], "ar": P[p][2], "fr_def": P[p][3], "ar_def": P[p][4],
+                       "at": [0.5, 0.5, 0.5]} for p in parts] if parts else [],
+        }
+        if iid == "fennec":  # the animated fox, with its sound and body parts
+            it.update(model=fox["model"], sound=fox["sound"], turn=fox["turn"], lift=fox["lift"], parts=fox["parts"])
+        if iid == "darbuka":
+            it["sound"] = "books/algeria/sounds/darbuka.m4a"
+        items.append(it)
+    return items
+
+
 def write(book, items):
     d = AR / book
-    for sub in ["models", "pages", "thumbs"]:
+    for sub in ["models", "pages", "thumbs", "sounds"] if book == "algeria" else ["models", "pages", "thumbs"]:
         (d / sub).mkdir(parents=True, exist_ok=True)
     f = d / "items.json"
-    if f.exists():  # keep the parts make_shapes.py measured
+    if f.exists():  # keep the spots make_shapes.py measured
         old = {x["id"]: x for x in json.loads(f.read_text())}
         for it in items:
-            if not it["parts"] and old.get(it["id"], {}).get("parts"):
-                it["parts"] = old[it["id"]]["parts"]
+            before = {p["id"]: p for p in old.get(it["id"], {}).get("parts", [])}
+            if not it["parts"]:
+                it["parts"] = list(before.values())
+            for p in it["parts"]:
+                if p["id"] in before and p.get("at") == [0.5, 0.5, 0.5]:
+                    p["at"] = before[p["id"]]["at"]
     f.write_text(json.dumps(items, ensure_ascii=False, indent=1))
     print("wrote", f.relative_to(ROOT), len(items))
 
@@ -142,3 +252,4 @@ def write(book, items):
 if __name__ == "__main__":
     write("letters_ar", letters_ar())
     write("colors", colors())
+    write("algeria", algeria())

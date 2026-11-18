@@ -6,6 +6,7 @@
 //     takes the right page,
 //   - colours: the scene's objects show as parts, Paint offers 6 paints, the
 //     right one keeps the scene's colour and a wrong one repaints it for a moment,
+//   - Algeria: the flag's details show as parts, and the pages are found,
 //   - there are no page errors.
 // Usage: node tool/test_learning_ar.mjs        (needs Chrome and ffmpeg)
 import { spawn } from 'node:child_process';
@@ -155,6 +156,25 @@ async function main() {
     });
     check(st && st.modelsLoaded === 10, `all 10 colour scenes loaded (${st?.modelsLoaded})`);
     check(seen.join(' > ') === 'color_red > lost > color_blue > lost', `colour pages found in order (${seen.join(' > ')})`);
+  });
+
+  // ---- Algeria ----
+  const DZ_PAGES = ['dz_flag', 'dz_fennec'];
+  await run('algeria', DZ_PAGES, async (h) => {
+    let flagDone = false;
+    const { seen, st } = await watch(h, DZ_PAGES, async (id) => {
+      await h.shot(`algeria-found-${id}.png`);
+      if (id === 'dz_flag' && !flagDone) {
+        flagDone = true;
+        await sleep(500);
+        const s = await h.state();
+        check(s.parts.visible.length >= 2, `the flag's details show as parts (${s.parts.visible.join(', ')})`);
+        const feed = await h.evalJs('document.getElementById("btn-feed").classList.contains("hidden")');
+        check(feed, 'Algeria: no Feed button');
+      }
+    });
+    check(st && st.modelsLoaded === 12, `all 12 Algeria models loaded (${st?.modelsLoaded})`);
+    check(seen.join(' > ') === 'dz_flag > lost > dz_fennec > lost', `Algeria pages found in order (${seen.join(' > ')})`);
   });
 
   console.log(failures.length ? `\n${failures.length} check(s) failed` : '\nall checks passed');

@@ -1,0 +1,860 @@
+[
+ {
+  "id": "dz_flag",
+  "page": 1,
+  "en": "Flag of Algeria",
+  "fr": "Drapeau algérien",
+  "ar": "العلم الجزائري",
+  "fr_of": "du drapeau",
+  "ar_def": "العلم الجزائري",
+  "fact_en": "The green and white flag has a red crescent and star.",
+  "fact_fr": "Le drapeau vert et blanc porte un croissant et une étoile rouges.",
+  "fact_ar": "العلم الأخضر والأبيض يحمل هلالًا ونجمة باللون الأحمر.",
+  "model": "books/algeria/models/flag.glb",
+  "sound": null,
+  "photo": "flag",
+  "color": "#006233",
+  "size": 0.38,
+  "lift": 0,
+  "turn": 0,
+  "helps": {
+   "en": "Where is Flag of Algeria?",
+   "fr": "Où est Drapeau algérien ?",
+   "ar": "أين العلم الجزائري؟"
+  },
+  "parts": [
+   {
+    "id": "crescent",
+    "en": "Crescent",
+    "fr": "Croissant",
+    "ar": "هلال",
+    "fr_def": "le croissant",
+    "ar_def": "الهلال",
+    "at": [
+     0.48,
+     0.78,
+     0.56
+    ]
+   },
+   {
+    "id": "star",
+    "en": "Star",
+    "fr": "Étoile",
+    "ar": "نجمة",
+    "fr_def": "l'étoile",
+    "ar_def": "النجمة",
+    "at": [
+     0.58,
+     0.77,
+     0.56
+    ]
+   },
+   {
+    "id": "pole",
+    "en": "Pole",
+    "fr": "Mât",
+    "ar": "سارية",
+    "fr_def": "le mât",
+    "ar_def": "السارية",
+    "at": [
+     0.04,
+     0.61,
+     0.54
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dz_memorial",
+  "page": 2,
+  "en": "Maqam Echahid",
+  "fr": "Maqam Echahid",
+  "ar": "مقام الشهيد",
+  "fr_of": "du Maqam Echahid",
+  "ar_def": "مقام الشهيد",
+  "fact_en": "Maqam Echahid, 92 metres tall, honours the martyrs.",
+  "fact_fr": "Le Maqam Echahid, haut de 92 mètres, honore les martyrs.",
+  "fact_ar": "مقام الشهيد بارتفاع 92 مترًا يخلّد ذكرى الشهداء.",
+  "model": "books/algeria/models/memorial.glb",
+  "sound": null,
+  "photo": "memorial",
+  "color": "#8D6E63",
+  "size": 0.42,
+  "lift": 0,
+  "turn": 0,
+  "helps": {
+   "en": "Where is Maqam Echahid?",
+   "fr": "Où est Maqam Echahid ?",
+   "ar": "أين مقام الشهيد؟"
+  },
+  "parts": [
+   {
+    "id": "leaf",
+    "en": "Palm leaf",
+    "fr": "Palme",
+    "ar": "سعفة",
+    "fr_def": "la palme",
+    "ar_def": "السعفة",
+    "at": [
+     0.47,
+     0.64,
+     0.78
+    ]
+   },
+   {
+    "id": "flame",
+    "en": "Eternal flame",
+    "fr": "Flamme éternelle",
+    "ar": "الشعلة",
+    "fr_def": "la flamme",
+    "ar_def": "الشعلة",
+    "at": [
+     0.5,
+     0.17,
+     0.57
+    ]
+   },
+   {
+    "id": "base",
+    "en": "Base",
+    "fr": "Socle",
+    "ar": "قاعدة",
+    "fr_def": "le socle",
+    "ar_def": "القاعدة",
+    "at": [
+     0.5,
+     0.08,
+     0.86
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dz_mosque",
+  "page": 3,
+  "en": "Djamaa El Djazair",
+  "fr": "Djamaa El Djazaïr",
+  "ar": "جامع الجزائر",
+  "fr_of": "de Djamaa El Djazaïr",
+  "ar_def": "جامع الجزائر",
+  "fact_en": "Djamaa El Djazair has the tallest minaret in the world: 265 metres.",
+  "fact_fr": "Djamaa El Djazaïr a le plus haut minaret du monde : 265 mètres.",
+  "fact_ar": "لجامع الجزائر أطول مئذنة في العالم: 265 مترًا.",
+  "model": "books/algeria/models/mosque.glb",
+  "sound": null,
+  "photo": "mosque",
+  "color": "#00897B",
+  "size": 0.5,
+  "lift": 0,
+  "turn": 0,
+  "helps": {
+   "en": "Where is Djamaa El Djazair?",
+   "fr": "Où est Djamaa El Djazaïr ?",
+   "ar": "أين جامع الجزائر؟"
+  },
+  "parts": [
+   {
+    "id": "minaret",
+    "en": "Minaret",
+    "fr": "Minaret",
+    "ar": "مئذنة",
+    "fr_def": "le minaret",
+    "ar_def": "المئذنة",
+    "at": [
+     0.21,
+     0.61,
+     0.5
+    ]
+   },
+   {
+    "id": "dome",
+    "en": "Dome",
+    "fr": "Coupole",
+    "ar": "قبة",
+    "fr_def": "la coupole",
+    "ar_def": "القبة",
+    "at": [
+     0.62,
+     0.29,
+     0.67
+    ]
+   },
+   {
+    "id": "arches",
+    "en": "Arches",
+    "fr": "Arcades",
+    "ar": "أقواس",
+    "fr_def": "les arcades",
+    "ar_def": "الأقواس",
+    "at": [
+     0.62,
+     0.1,
+     0.72
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dz_casbah",
+  "page": 4,
+  "en": "Casbah of Algiers",
+  "fr": "Casbah d'Alger",
+  "ar": "القصبة",
+  "fr_of": "de la Casbah",
+  "ar_def": "القصبة",
+  "fact_en": "The Casbah of Algiers: old white houses and narrow streets.",
+  "fact_fr": "La Casbah d'Alger : vieilles maisons blanches et ruelles étroites.",
+  "fact_ar": "القصبة مدينة قديمة في الجزائر العاصمة بيوتها بيضاء وأزقتها ضيقة.",
+  "model": "books/algeria/models/casbah.glb",
+  "sound": null,
+  "photo": "casbah",
+  "color": "#1E88E5",
+  "size": 0.62,
+  "lift": 0,
+  "turn": 0,
+  "helps": {
+   "en": "Where is Casbah of Algiers?",
+   "fr": "Où est Casbah d'Alger ?",
+   "ar": "أين القصبة؟"
+  },
+  "parts": [
+   {
+    "id": "house",
+    "en": "House",
+    "fr": "Maison",
+    "ar": "بيت",
+    "fr_def": "la maison",
+    "ar_def": "البيت",
+    "at": [
+     0.5,
+     0.63,
+     0.71
+    ]
+   },
+   {
+    "id": "stairs",
+    "en": "Stairs",
+    "fr": "Escalier",
+    "ar": "درج",
+    "fr_def": "l'escalier",
+    "ar_def": "الدرج",
+    "at": [
+     0.9,
+     0.29,
+     0.68
+    ]
+   },
+   {
+    "id": "sea",
+    "en": "Sea",
+    "fr": "Mer",
+    "ar": "بحر",
+    "fr_def": "la mer",
+    "ar_def": "البحر",
+    "at": [
+     0.5,
+     0.09,
+     0.93
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dz_timgad",
+  "page": 5,
+  "en": "Timgad",
+  "fr": "Timgad",
+  "ar": "تيمقاد",
+  "fr_of": "de Timgad",
+  "ar_def": "تيمقاد",
+  "fact_en": "Timgad is a Roman town almost 2,000 years old.",
+  "fact_fr": "Timgad est une ville romaine vieille de près de 2 000 ans.",
+  "fact_ar": "تيمقاد مدينة رومانية عمرها نحو ألفي سنة.",
+  "model": "books/algeria/models/timgad.glb",
+  "sound": null,
+  "photo": "timgad",
+  "color": "#C2853D",
+  "size": 0.6,
+  "lift": 0,
+  "turn": 0,
+  "helps": {
+   "en": "Where is Timgad?",
+   "fr": "Où est Timgad ?",
+   "ar": "أين تيمقاد؟"
+  },
+  "parts": [
+   {
+    "id": "arch",
+    "en": "Arch",
+    "fr": "Arc",
+    "ar": "قوس",
+    "fr_def": "l'arc",
+    "ar_def": "القوس",
+    "at": [
+     0.5,
+     0.62,
+     0.58
+    ]
+   },
+   {
+    "id": "column",
+    "en": "Column",
+    "fr": "Colonne",
+    "ar": "عمود",
+    "fr_def": "la colonne",
+    "ar_def": "العمود",
+    "at": [
+     0.5,
+     0.54,
+     0.65
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dz_ghardaia",
+  "page": 6,
+  "en": "Ghardaïa",
+  "fr": "Ghardaïa",
+  "ar": "غرداية",
+  "fr_of": "de Ghardaïa",
+  "ar_def": "غرداية",
+  "fact_en": "In the M'zab valley, houses climb the hill around the mosque.",
+  "fact_fr": "Dans la vallée du M'zab, les maisons montent la colline autour de la mosquée.",
+  "fact_ar": "في وادي ميزاب تصعد البيوت التلّ حول المسجد.",
+  "model": "books/algeria/models/ghardaia.glb",
+  "sound": null,
+  "photo": "ghardaia",
+  "color": "#D08C3A",
+  "size": 0.62,
+  "lift": 0,
+  "turn": 0,
+  "helps": {
+   "en": "Where is Ghardaïa?",
+   "fr": "Où est Ghardaïa ?",
+   "ar": "أين غرداية؟"
+  },
+  "parts": [
+   {
+    "id": "minaret",
+    "en": "Minaret",
+    "fr": "Minaret",
+    "ar": "مئذنة",
+    "fr_def": "le minaret",
+    "ar_def": "المئذنة",
+    "at": [
+     0.5,
+     0.78,
+     0.54
+    ]
+   },
+   {
+    "id": "house",
+    "en": "House",
+    "fr": "Maison",
+    "ar": "بيت",
+    "fr_def": "la maison",
+    "ar_def": "البيت",
+    "at": [
+     0.5,
+     0.31,
+     0.88
+    ]
+   },
+   {
+    "id": "hill",
+    "en": "Hill",
+    "fr": "Colline",
+    "ar": "تل",
+    "fr_def": "la colline",
+    "ar_def": "التل",
+    "at": [
+     0.5,
+     0.35,
+     0.92
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dz_tassili",
+  "page": 7,
+  "en": "Tassili n'Ajjer",
+  "fr": "Tassili n'Ajjer",
+  "ar": "طاسيلي ناجر",
+  "fr_of": "du Tassili",
+  "ar_def": "طاسيلي ناجر",
+  "fact_en": "Tassili n'Ajjer has very old paintings of animals on its rocks.",
+  "fact_fr": "Le Tassili n'Ajjer a de très vieilles peintures d'animaux sur ses rochers.",
+  "fact_ar": "في طاسيلي ناجر رسوم قديمة جدًا لحيوانات على الصخور.",
+  "model": "books/algeria/models/tassili.glb",
+  "sound": null,
+  "photo": "tassili",
+  "color": "#B5452F",
+  "size": 0.62,
+  "lift": 0,
+  "turn": 0,
+  "helps": {
+   "en": "Where is Tassili n'Ajjer?",
+   "fr": "Où est Tassili n'Ajjer ?",
+   "ar": "أين طاسيلي ناجر؟"
+  },
+  "parts": [
+   {
+    "id": "rock",
+    "en": "Rock",
+    "fr": "Rocher",
+    "ar": "صخرة",
+    "fr_def": "le rocher",
+    "ar_def": "الصخرة",
+    "at": [
+     0.42,
+     0.64,
+     0.69
+    ]
+   },
+   {
+    "id": "sand",
+    "en": "Sand",
+    "fr": "Sable",
+    "ar": "رمل",
+    "fr_def": "le sable",
+    "ar_def": "الرمل",
+    "at": [
+     0.5,
+     0.11,
+     1
+    ]
+   },
+   {
+    "id": "painting",
+    "en": "Rock painting",
+    "fr": "Peinture",
+    "ar": "رسم",
+    "fr_def": "la peinture",
+    "ar_def": "الرسم",
+    "at": [
+     0.49,
+     0.3,
+     0.72
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dz_palm",
+  "page": 8,
+  "en": "Date palm",
+  "fr": "Palmier dattier",
+  "ar": "النخلة",
+  "fr_of": "du palmier",
+  "ar_def": "النخلة",
+  "fact_en": "Dates from Biskra, like Deglet Nour, are famous all over the world.",
+  "fact_fr": "Les dattes de Biskra, comme la Deglet Nour, sont célèbres dans le monde.",
+  "fact_ar": "تمور بسكرة مثل دقلة نور مشهورة في العالم كله.",
+  "model": "books/algeria/models/palm.glb",
+  "sound": null,
+  "photo": "palm",
+  "color": "#6B8E23",
+  "size": 0.4,
+  "lift": 0,
+  "turn": 0,
+  "helps": {
+   "en": "Where is Date palm?",
+   "fr": "Où est Palmier dattier ?",
+   "ar": "أين النخلة؟"
+  },
+  "parts": [
+   {
+    "id": "trunk",
+    "en": "Trunk",
+    "fr": "Tronc",
+    "ar": "جذع",
+    "fr_def": "le tronc",
+    "ar_def": "الجذع",
+    "at": [
+     0.48,
+     0.47,
+     0.59
+    ]
+   },
+   {
+    "id": "fronds",
+    "en": "Fronds",
+    "fr": "Palmes",
+    "ar": "سعف",
+    "fr_def": "les palmes",
+    "ar_def": "السعف",
+    "at": [
+     0.52,
+     0.92,
+     1
+    ]
+   },
+   {
+    "id": "dates",
+    "en": "Dates",
+    "fr": "Dattes",
+    "ar": "تمر",
+    "fr_def": "les dattes",
+    "ar_def": "التمر",
+    "at": [
+     0.51,
+     0.71,
+     0.62
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dz_fennec",
+  "page": 9,
+  "en": "Fennec",
+  "fr": "Fennec",
+  "ar": "الفنك",
+  "fr_of": "du fennec",
+  "ar_def": "الفنك",
+  "fact_en": "The fennec is Algeria's national animal. Its big ears keep it cool.",
+  "fact_fr": "Le fennec est l'animal national de l'Algérie. Ses grandes oreilles le rafraîchissent.",
+  "fact_ar": "الفنك هو الحيوان الوطني للجزائر، وأذناه الكبيرتان تبرّدان جسمه.",
+  "model": "models/Fox.glb",
+  "sound": "sounds/fox.m4a",
+  "photo": "fennec",
+  "color": "#E0A458",
+  "size": 0.55,
+  "lift": 0,
+  "turn": 60,
+  "helps": {
+   "en": "Where is Fennec?",
+   "fr": "Où est Fennec ?",
+   "ar": "أين الفنك؟"
+  },
+  "parts": [
+   {
+    "id": "head",
+    "en": "Head",
+    "fr": "Tête",
+    "ar": "رأس",
+    "fr_def": "la tête",
+    "ar_def": "الرأس",
+    "at": [
+     0.5,
+     0.78,
+     0.92
+    ]
+   },
+   {
+    "id": "ear",
+    "en": "Ear",
+    "fr": "Oreille",
+    "ar": "أذن",
+    "fr_def": "l'oreille",
+    "ar_def": "الأذن",
+    "at": [
+     0.2,
+     0.97,
+     0.93
+    ]
+   },
+   {
+    "id": "snout",
+    "en": "Snout",
+    "fr": "Museau",
+    "ar": "خَطم",
+    "fr_def": "le museau",
+    "ar_def": "الخطم",
+    "at": [
+     0.5,
+     0.62,
+     0.99
+    ]
+   },
+   {
+    "id": "back",
+    "en": "Back",
+    "fr": "Dos",
+    "ar": "ظهر",
+    "fr_def": "le dos",
+    "ar_def": "الظهر",
+    "at": [
+     0.5,
+     0.9,
+     0.5
+    ]
+   },
+   {
+    "id": "paw",
+    "en": "Paw",
+    "fr": "Patte",
+    "ar": "قدم",
+    "fr_def": "la patte",
+    "ar_def": "القدم",
+    "at": [
+     0.5,
+     0.02,
+     0.77
+    ]
+   },
+   {
+    "id": "tail",
+    "en": "Tail",
+    "fr": "Queue",
+    "ar": "ذيل",
+    "fr_def": "la queue",
+    "ar_def": "الذيل",
+    "at": [
+     0.5,
+     0.3,
+     0.1
+    ]
+   },
+   {
+    "id": "eye",
+    "en": "Eye",
+    "fr": "Œil",
+    "ar": "عين",
+    "fr_def": "l'œil",
+    "ar_def": "العين",
+    "at": [
+     0.2,
+     0.85,
+     0.94
+    ]
+   },
+   {
+    "id": "chest",
+    "en": "Chest",
+    "fr": "Poitrine",
+    "ar": "صدر",
+    "fr_def": "la poitrine",
+    "ar_def": "الصدر",
+    "at": [
+     0.5,
+     0.55,
+     0.86
+    ]
+   },
+   {
+    "id": "belly",
+    "en": "Belly",
+    "fr": "Ventre",
+    "ar": "بطن",
+    "fr_def": "le ventre",
+    "ar_def": "البطن",
+    "at": [
+     0.5,
+     0.4,
+     0.6
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dz_couscous",
+  "page": 10,
+  "en": "Couscous",
+  "fr": "Couscous",
+  "ar": "الكسكسي",
+  "fr_of": "du couscous",
+  "ar_def": "الكسكسي",
+  "fact_en": "Couscous is made of small grains of semolina, served with vegetables.",
+  "fact_fr": "Le couscous est fait de petits grains de semoule, servis avec des légumes.",
+  "fact_ar": "الكسكسي حبيبات صغيرة من السميد تقدَّم مع الخضر.",
+  "model": "books/algeria/models/couscous.glb",
+  "sound": null,
+  "photo": "couscous",
+  "color": "#E3B04B",
+  "size": 0.55,
+  "lift": 0,
+  "turn": 0,
+  "helps": {
+   "en": "Where is Couscous?",
+   "fr": "Où est Couscous ?",
+   "ar": "أين الكسكسي؟"
+  },
+  "parts": [
+   {
+    "id": "plate",
+    "en": "Dish",
+    "fr": "Plat",
+    "ar": "طبق",
+    "fr_def": "le plat",
+    "ar_def": "الطبق",
+    "at": [
+     0.5,
+     0.17,
+     1
+    ]
+   },
+   {
+    "id": "grains",
+    "en": "Semolina",
+    "fr": "Semoule",
+    "ar": "سميد",
+    "fr_def": "la semoule",
+    "ar_def": "السميد",
+    "at": [
+     0.5,
+     0.41,
+     0.88
+    ]
+   },
+   {
+    "id": "carrot",
+    "en": "Carrot",
+    "fr": "Carotte",
+    "ar": "جزرة",
+    "fr_def": "la carotte",
+    "ar_def": "الجزرة",
+    "at": [
+     0.51,
+     0.73,
+     0.65
+    ]
+   },
+   {
+    "id": "chickpeas",
+    "en": "Chickpeas",
+    "fr": "Pois chiches",
+    "ar": "حمص",
+    "fr_def": "les pois chiches",
+    "ar_def": "الحمص",
+    "at": [
+     0.51,
+     0.54,
+     0.82
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dz_tea",
+  "page": 11,
+  "en": "Mint tea",
+  "fr": "Thé à la menthe",
+  "ar": "الشاي بالنعناع",
+  "fr_of": "du thé à la menthe",
+  "ar_def": "الشاي بالنعناع",
+  "fact_en": "Mint tea is poured from high up to make foam.",
+  "fact_fr": "Le thé à la menthe est versé de haut pour faire de la mousse.",
+  "fact_ar": "يُسكب الشاي بالنعناع من الأعلى لتكوين الرغوة.",
+  "model": "books/algeria/models/tea.glb",
+  "sound": null,
+  "photo": "tea",
+  "color": "#2E7D32",
+  "size": 0.55,
+  "lift": 0,
+  "turn": 0,
+  "helps": {
+   "en": "Where is Mint tea?",
+   "fr": "Où est Thé à la menthe ?",
+   "ar": "أين الشاي بالنعناع؟"
+  },
+  "parts": [
+   {
+    "id": "teapot",
+    "en": "Teapot",
+    "fr": "Théière",
+    "ar": "إبريق",
+    "fr_def": "la théière",
+    "ar_def": "الإبريق",
+    "at": [
+     0.37,
+     0.62,
+     0.58
+    ]
+   },
+   {
+    "id": "glass",
+    "en": "Glass",
+    "fr": "Verre",
+    "ar": "كأس",
+    "fr_def": "le verre",
+    "ar_def": "الكأس",
+    "at": [
+     0.69,
+     0.22,
+     0.83
+    ]
+   },
+   {
+    "id": "mint",
+    "en": "Mint",
+    "fr": "Menthe",
+    "ar": "نعناع",
+    "fr_def": "la menthe",
+    "ar_def": "النعناع",
+    "at": [
+     0.32,
+     0.1,
+     0.83
+    ]
+   },
+   {
+    "id": "tray",
+    "en": "Tray",
+    "fr": "Plateau",
+    "ar": "صينية",
+    "fr_def": "le plateau",
+    "ar_def": "الصينية",
+    "at": [
+     0.5,
+     0.06,
+     1
+    ]
+   }
+  ]
+ },
+ {
+  "id": "dz_darbuka",
+  "page": 12,
+  "en": "Darbuka",
+  "fr": "Darbouka",
+  "ar": "الدربوكة",
+  "fr_of": "de la darbouka",
+  "ar_def": "الدربوكة",
+  "fact_en": "The darbuka is a drum played with the hands at weddings and parties.",
+  "fact_fr": "La darbouka est un tambour joué avec les mains aux mariages et aux fêtes.",
+  "fact_ar": "الدربوكة طبل يُعزف باليدين في الأعراس والحفلات.",
+  "model": "books/algeria/models/darbuka.glb",
+  "sound": "books/algeria/sounds/darbuka.m4a",
+  "photo": "darbuka",
+  "color": "#D21034",
+  "size": 0.45,
+  "lift": 0,
+  "turn": 0,
+  "helps": {
+   "en": "Where is Darbuka?",
+   "fr": "Où est Darbouka ?",
+   "ar": "أين الدربوكة؟"
+  },
+  "parts": [
+   {
+    "id": "skin",
+    "en": "Drum skin",
+    "fr": "Peau",
+    "ar": "جلد",
+    "fr_def": "la peau",
+    "ar_def": "الجلد",
+    "at": [
+     0.5,
+     0.98,
+     0.87
+    ]
+   },
+   {
+    "id": "body",
+    "en": "Body",
+    "fr": "Corps",
+    "ar": "جسم",
+    "fr_def": "le corps",
+    "ar_def": "الجسم",
+    "at": [
+     0.5,
+     0.6,
+     0.85
+    ]
+   }
+  ]
+ }
+]

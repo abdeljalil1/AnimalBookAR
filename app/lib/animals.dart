@@ -84,6 +84,9 @@ class Animal {
   String get pageAsset => '$pagesDir/$id.jpg';
   String get thumbAsset => '$thumbsDir/$id.jpg';
 
+  /// The item's 3D model, rendered for the map (tool/make_stickers.py).
+  String get stickerAsset => '$thumbsDir/${id}_sticker.png';
+
   String name(Lang lang) => switch (lang) { Lang.en => en, Lang.fr => fr, Lang.ar => ar };
   String fact(Lang lang) => switch (lang) { Lang.en => factEn, Lang.fr => factFr, Lang.ar => factAr };
 

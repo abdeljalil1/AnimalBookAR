@@ -25,7 +25,7 @@ const SCAN_QUIZ = SOUND_QUIZ || HELPS; // both are answered by scanning a page
 const BOOK_ID = params.get('book') || 'animals';
 let VEH = false; // the open book is about vehicles (set once books.json is read)
 let KIND = 'animals'; // animals | vehicles | letters | colors
-const SUFFIX = { vehicles: 'V', letters: 'L', colors: 'C' };
+const SUFFIX = { vehicles: 'V', letters: 'L', colors: 'C', heritage: 'H' };
 const QUIZ_GOAL = 3; // right answers per animal
 const QUIZ_DWELL_MS = 400; // aim at the right part this long to answer
 const PAGE_HALF_W = 0.5;
@@ -67,6 +67,8 @@ const TEXT = {
     hintL: '1 finger: turn and tip · 2 fingers: zoom, move', helpsRightL: 'Yes! {a}!', helpsRightC: "Yes! It's {a}!",
     scanC: 'Point the camera at a colour page', newAnimalC: 'New colour! +1 ★', moveC: 'Spin',
     hintC: 'Aim the ◎ at a thing · 1 finger: turn and tip · 2 fingers: zoom, move',
+    scanH: 'Point the camera at an Algeria page', newAnimalH: 'New treasure! +1 ★', moveH: 'Spin', helpsRightH: "Yes! It's {a}!",
+    hintH: 'Aim the ◎ at a detail · 1 finger: turn and tip · 2 fingers: zoom, move',
     feedC: 'Paint', yumC: "Yes! It's {f}!", noThanksC: "That's {f}. Find the page's colour!", fullC: 'Well done! 🎉',
   },
   fr: {
@@ -92,6 +94,8 @@ const TEXT = {
     hintL: '1 doigt : tourner, pencher · 2 doigts : zoomer, déplacer', helpsRightL: 'Oui ! {a} !', helpsRightC: "Oui ! C'est {a} !",
     scanC: 'Vise une page de couleur avec la caméra', newAnimalC: 'Nouvelle couleur ! +1 ★', moveC: 'Tourner',
     hintC: 'Vise ◎ un objet · 1 doigt : tourner, pencher · 2 doigts : zoomer, déplacer',
+    scanH: "Vise une page de l'Algérie avec la caméra", newAnimalH: 'Nouveau trésor ! +1 ★', moveH: 'Tourner', helpsRightH: "Oui ! C'est {a} !",
+    hintH: 'Vise ◎ un détail · 1 doigt : tourner, pencher · 2 doigts : zoomer, déplacer',
     feedC: 'Peindre', yumC: "Oui ! C'est {f} !", noThanksC: "Ça, c'est {f}. Trouve la couleur de la page !", fullC: 'Bravo ! 🎉',
   },
   ar: {
@@ -117,6 +121,8 @@ const TEXT = {
     hintL: 'إصبع: تدوير وإمالة · إصبعان: تكبير وتحريك', helpsRightL: 'أحسنت! {a}!', helpsRightC: 'أحسنت! إنه {a}!',
     scanC: 'وجّه الكاميرا نحو صفحة لون', newAnimalC: 'لون جديد! +1 ★', moveC: 'دوران',
     hintC: 'صوّب ◎ نحو شيء · إصبع: تدوير وإمالة · إصبعان: تكبير وتحريك',
+    scanH: 'وجّه الكاميرا نحو صفحة من الجزائر', newAnimalH: 'كنز جديد! +1 ★', moveH: 'دوران', helpsRightH: 'أحسنت! إنه {a}!',
+    hintH: 'صوّب ◎ نحو تفصيل · إصبع: تدوير وإمالة · إصبعان: تكبير وتحريك',
     feedC: 'تلوين', yumC: 'نعم! إنه {f}!', noThanksC: 'هذا {f}. ابحث عن لون الصفحة!', fullC: 'أحسنت! 🎉',
   },
 };
@@ -198,7 +204,7 @@ function speak(text, lang = LANG) {
 }
 
 // "the fox" / "le renard" / "الثعلب"
-const animalWithArticle = (a) => (KIND === 'letters' || KIND === 'colors' ? a[LANG] : {
+const animalWithArticle = (a) => (KIND === 'letters' || KIND === 'colors' || KIND === 'heritage' ? a[LANG] : {
   en: 'the ' + a.en.toLowerCase(),
   fr: a.fr_of.startsWith('du ') ? 'le ' + a.fr_of.slice(3) : a.fr_of.replace(/^de /, ''),
   ar: a.ar_def,
@@ -333,11 +339,11 @@ function applyLanguage() {
   $('scan-hint').textContent = t('scan');
   $('held-badge').textContent = t('held');
   $('gesture-hint').textContent = t('hint');
-  const icons = { animals: ['🔊', '🐾', '🍽️'], vehicles: ['📢', '🚗', '🧰'], letters: ['🔊', '🔄', ''], colors: ['🔊', '🔄', '🎨'] }[KIND];
+  const icons = { animals: ['🔊', '🐾', '🍽️'], vehicles: ['📢', '🚗', '🧰'], letters: ['🔊', '🔄', ''], colors: ['🔊', '🔄', '🎨'], heritage: ['🔊', '🔄', ''] }[KIND];
   for (const [id, key, icon] of [['btn-sound', 'sound', icons[0]], ['btn-move', 'move', icons[1]], ['btn-feed', 'feed', icons[2]], ['btn-hold', 'hold', '✋'], ['btn-reset', 'reset', '↺']]) {
     $(id).innerHTML = `<span>${icon}</span>${t(key)}`;
   }
-  $('btn-feed').classList.toggle('hidden', KIND === 'letters'); // nothing to give a letter
+  $('btn-feed').classList.toggle('hidden', KIND === 'letters' || KIND === 'heritage'); // nothing to give
 }
 applyLanguage();
 

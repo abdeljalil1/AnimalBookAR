@@ -17,6 +17,7 @@ import { TTFLoader } from 'three/addons/loaders/TTFLoader.js';
 import { Font } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+import { ALGERIA } from '/__algeria.js';
 
 const log = (m) => { document.getElementById('log').textContent += '\n' + m; };
 const cfg = await (await fetch('/__config')).json();
@@ -81,7 +82,7 @@ function letterModel(text, font, color) {
   return g;
 }
 
-for (const book of ['letters_ar']) {
+for (const book of cfg.only && cfg.only !== 'letters' ? [] : ['letters_ar']) {
   for (const it of cfg[book]) {
     const text = book === 'letters_ar' ? it.letter : it.letter; // "Aa" for French, the isolated form for Arabic
     const model = letterModel(text, fonts[book === 'letters_ar' ? 'ar' : 'fr'], it.color);
@@ -207,7 +208,7 @@ const MAKERS = {
   },
 };
 
-for (const [i, it] of cfg.colors.entries()) {
+for (const [i, it] of (cfg.only && cfg.only !== 'colors' ? [] : cfg.colors).entries()) {
   const mat = new THREE.MeshStandardMaterial({ color: it.color, roughness: 0.4 });
   const scene = new THREE.Group();
   const spots = cfg.layouts[i % cfg.layouts.length];
@@ -237,7 +238,35 @@ for (const [i, it] of cfg.colors.entries()) {
   cfg.colors[i].parts = parts;
 }
 log('colors done');
-await fetch('/__done', { method: 'POST', body: JSON.stringify({ colors: cfg.colors.map((c) => ({ id: c.id, parts: c.parts })) }) });
+
+// ---- Algeria -------------------------------------------------------------------
+// Where each named part is, as fractions of the model's box (like the colour scenes).
+function measure(model) {
+  model.updateMatrixWorld(true);
+  const all = new THREE.Box3().setFromObject(model);
+  const size = all.getSize(new THREE.Vector3());
+  const out = {};
+  model.traverse((o) => {
+    if (!o.name || o.name === 'ground' || o.name === 'cloth' || out[o.name]) return;
+    const b = new THREE.Box3().setFromObject(o);
+    if (b.isEmpty()) return;
+    const c = b.getCenter(new THREE.Vector3());
+    out[o.name] = [(c.x - all.min.x) / size.x, (b.min.y + (b.max.y - b.min.y) * 0.6 - all.min.y) / size.y, (b.max.z - all.min.z) / size.z]
+      .map((v) => +Math.min(1, Math.max(0, v)).toFixed(2));
+  });
+  return out;
+}
+const algeria = [];
+for (const it of cfg.only && cfg.only !== 'algeria' ? [] : cfg.algeria) {
+  const make = ALGERIA[it.key];
+  if (!make) continue; // the fennec uses the fox
+  const model = make();
+  await save(`app/assets/ar/${it.model}`, await glb(model));
+  algeria.push({ id: it.id, at: measure(model) });
+}
+log('algeria done');
+await fetch('/__done', { method: 'POST', body: JSON.stringify({
+  colors: (cfg.only && cfg.only !== 'colors' ? [] : cfg.colors).map((c) => ({ id: c.id, parts: c.parts })), algeria }) });
 </script>
 </body>
 </html>
