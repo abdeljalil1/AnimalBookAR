@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
@@ -147,12 +148,31 @@ class _MemoryGameState extends State<MemoryGame> {
       key: Key('card-$i'),
       onTap: () => _tap(c),
       child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 250),
-        transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+        duration: const Duration(milliseconds: 420),
+        // a card flip: the old face turns away, the new one turns in
+        transitionBuilder: (child, anim) {
+          final rotate = Tween(begin: math.pi, end: 0.0).animate(anim);
+          return AnimatedBuilder(
+            animation: rotate,
+            child: child,
+            builder: (context, child) {
+              final isOut = child!.key != ValueKey(showing);
+              final angle = isOut ? math.min(rotate.value, math.pi / 2) : rotate.value;
+              return Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.0015)
+                  ..rotateY(angle),
+                child: angle > math.pi / 2 ? const SizedBox.shrink() : child,
+              );
+            },
+          );
+        },
+        layoutBuilder: (current, previous) => Stack(children: [...previous, if (current != null) current]),
         child: Container(
           key: ValueKey(showing),
           decoration: BoxDecoration(
-            color: showing ? Colors.white : brand,
+            color: showing ? Colors.white : widget.progress.book.color,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
                 color: c.matched ? const Color(0xFF2E9E6A) : (showing ? c.animal.color : Colors.white), width: 3),
@@ -160,7 +180,17 @@ class _MemoryGameState extends State<MemoryGame> {
           ),
           clipBehavior: Clip.antiAlias,
           child: !showing
-              ? const Center(child: Icon(Icons.pets_rounded, color: Colors.white, size: 40))
+              ? Center(
+                  child: Icon(
+                      switch (widget.progress.book.kind) {
+                        'vehicles' => Icons.directions_car_rounded,
+                        'letters' => Icons.abc_rounded,
+                        'colors' => Icons.palette_rounded,
+                        'heritage' => Icons.mosque_rounded,
+                        _ => Icons.pets_rounded,
+                      },
+                      color: Colors.white,
+                      size: 40))
               : c.isPhoto
                   ? Image.asset(c.animal.thumbAsset, fit: BoxFit.cover)
                   : Center(

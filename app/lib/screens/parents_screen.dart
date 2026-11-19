@@ -79,17 +79,20 @@ class ParentsScreen extends StatelessWidget {
             surfaceTintColor: Colors.transparent,
           ),
           body: ListView(padding: const EdgeInsets.fromLTRB(16, 0, 16, 32), children: [
-            _ChildHeader(progress: progress),
-            SectionLabel(s.overview),
-            _Overview(progress: progress),
-            SectionLabel(s.byBook),
-            _BookProgress(progress: progress),
-            SectionLabel(s.children),
-            AppCard(padding: const EdgeInsets.fromLTRB(14, 6, 6, 12), child: _ChildrenCard(progress: progress)),
-            SectionLabel(s.account),
-            AppCard(child: _AccountCard(progress: progress, cloud: cloud)),
-            SectionLabel(s.settings),
-            AppCard(child: _Settings(progress: progress)),
+            for (final (i, w) in <Widget>[
+              _ChildHeader(progress: progress),
+              SectionLabel(s.overview),
+              _Overview(progress: progress),
+              SectionLabel(s.byBook),
+              _BookProgress(progress: progress),
+              SectionLabel(s.children),
+              AppCard(padding: const EdgeInsets.fromLTRB(14, 6, 6, 12), child: _ChildrenCard(progress: progress)),
+              SectionLabel(s.account),
+              AppCard(child: _AccountCard(progress: progress, cloud: cloud)),
+              SectionLabel(s.settings),
+              AppCard(child: _Settings(progress: progress)),
+            ].indexed)
+              FadeSlideIn(delay: Duration(milliseconds: 40 * i), child: w),
           ]),
         );
       },
@@ -137,13 +140,9 @@ class _Overview extends StatelessWidget {
     final s = p.s;
     final c = p.child;
     final tiles = [
+      StatTile(icon: Icons.explore_rounded, count: p.metAll, label: s.statDiscovered, color: const Color(0xFF2F6FD0)),
       StatTile(
-          icon: Icons.explore_rounded, value: '${p.metAll}', label: s.statDiscovered, color: const Color(0xFF2F6FD0)),
-      StatTile(
-          icon: Icons.translate_rounded,
-          value: '${p.wordsLearned}',
-          label: s.statWords,
-          color: const Color(0xFF00897B)),
+          icon: Icons.translate_rounded, count: p.wordsLearned, label: s.statWords, color: const Color(0xFF00897B)),
       StatTile(
           icon: Icons.timer_rounded,
           value: s.minutes((c.playSeconds / 60).round()),
@@ -151,16 +150,15 @@ class _Overview extends StatelessWidget {
           color: AppColors.green),
       StatTile(
           icon: Icons.emoji_events_rounded,
-          value: '${c.memoryWins + c.soundCorrect}',
+          count: c.memoryWins + c.soundCorrect,
           label: s.statGames,
           color: const Color(0xFF7E57C2)),
       StatTile(
           icon: Icons.quiz_rounded,
-          value: '${c.quiz.values.fold<int>(0, (n, v) => n + v)}',
+          count: c.quiz.values.fold<int>(0, (n, v) => n + v),
           label: s.statQuiz,
           color: const Color(0xFFD81B60)),
-      StatTile(
-          icon: Icons.volunteer_activism_rounded, value: '${c.food.length}', label: s.statFood, color: AppColors.brand),
+      StatTile(icon: Icons.volunteer_activism_rounded, count: c.food.length, label: s.statFood, color: AppColors.brand),
     ];
     return GridView.count(
       crossAxisCount: 3,

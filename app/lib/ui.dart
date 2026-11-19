@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 /// The app's look in one place: colours, card style, section headers and
@@ -124,9 +126,10 @@ class StarsChip extends StatelessWidget {
 
 /// A big number with a label and an icon (dashboards).
 class StatTile extends StatelessWidget {
-  const StatTile({super.key, required this.icon, required this.value, required this.label, this.color});
+  const StatTile({super.key, required this.icon, this.value = '', this.count, required this.label, this.color});
   final IconData icon;
   final String value;
+  final int? count; // counts up when given (instead of [value])
   final String label;
   final Color? color;
 
@@ -150,7 +153,9 @@ class StatTile extends StatelessWidget {
         FittedBox(
           fit: BoxFit.scaleDown,
           alignment: AlignmentDirectional.centerStart,
-          child: Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.ink)),
+          child: count != null
+              ? CountUp(count!, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.ink))
+              : Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.ink)),
         ),
         Text(label,
             maxLines: 2,
@@ -178,6 +183,178 @@ class ProgressBar extends StatelessWidget {
         minHeight: height,
         backgroundColor: track ?? color.withOpacity(0.15),
         color: color,
+      ),
+    );
+  }
+}
+
+// ---- motion -----------------------------------------------------------------
+
+/// Fades and slides its child in once, after [delay] (for lists: 60 ms × index).
+class FadeSlideIn extends StatefulWidget {
+  const FadeSlideIn({super.key, required this.child, this.delay = Duration.zero, this.offset = 24});
+  final Widget child;
+  final Duration delay;
+  final double offset;
+
+  @override
+  State<FadeSlideIn> createState() => _FadeSlideInState();
+}
+
+class _FadeSlideInState extends State<FadeSlideIn> with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 520));
+  late final Animation<double> _t = CurvedAnimation(parent: _c, curve: Curves.easeOutCubic);
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.delay == Duration.zero) {
+      _c.forward();
+    } else {
+      Future.delayed(widget.delay, () {
+        if (mounted) _c.forward();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _t,
+      builder: (context, child) => Opacity(
+        opacity: _t.value,
+        child: Transform.translate(offset: Offset(0, widget.offset * (1 - _t.value)), child: child),
+      ),
+      child: widget.child,
+    );
+  }
+}
+
+/// Shrinks a little while pressed, then springs back: a tactile tap.
+class Pressable extends StatefulWidget {
+  const Pressable({super.key, required this.child, required this.onTap});
+  final Widget child;
+  final VoidCallback? onTap;
+
+  @override
+  State<Pressable> createState() => _PressableState();
+}
+
+class _PressableState extends State<Pressable> {
+  bool _down = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: (_) => setState(() => _down = true),
+      onTapCancel: () => setState(() => _down = false),
+      onTapUp: (_) => setState(() => _down = false),
+      onTap: widget.onTap,
+      child: AnimatedScale(
+        scale: _down ? 0.95 : 1,
+        duration: const Duration(milliseconds: 140),
+        curve: Curves.easeOutBack,
+        child: widget.child,
+      ),
+    );
+  }
+}
+
+/// Bobs gently up and down (and tilts a touch), for stickers and pictures.
+class Floating extends StatefulWidget {
+  const Floating({super.key, required this.child, this.amount = 6, this.phase = 0, this.period = 2600});
+  final Widget child;
+  final double amount;
+  final double phase; // 0..1, so neighbours don't move together
+  final int period; // ms
+
+  @override
+  State<Floating> createState() => _FloatingState();
+}
+
+class _FloatingState extends State<Floating> with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(vsync: this, duration: Duration(milliseconds: widget.period))
+    ..repeat();
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _c,
+      builder: (context, child) {
+        final a = (_c.value + widget.phase) * 2 * math.pi;
+        return Transform.translate(
+          offset: Offset(0, widget.amount * -0.5 * (1 - math.cos(a))),
+          child: Transform.rotate(angle: 0.025 * math.sin(a), child: child),
+        );
+      },
+      child: widget.child,
+    );
+  }
+}
+
+/// A number that counts up to its new value.
+class CountUp extends StatelessWidget {
+  const CountUp(this.value, {super.key, this.style, this.suffix = ''});
+  final int value;
+  final TextStyle? style;
+  final String suffix;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: value.toDouble()),
+      duration: const Duration(milliseconds: 900),
+      curve: Curves.easeOutCubic,
+      builder: (context, v, _) => Text('${v.round()}$suffix', style: style),
+    );
+  }
+}
+
+/// A ring that fills to [value] (0..1) with the percentage in the middle.
+class ProgressRing extends StatelessWidget {
+  const ProgressRing({super.key, required this.value, this.size = 54, this.color = Colors.white, this.track});
+  final double value;
+  final double size;
+  final Color color;
+  final Color? track;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: value.clamp(0, 1)),
+      duration: const Duration(milliseconds: 1100),
+      curve: Curves.easeOutCubic,
+      builder: (context, v, _) => SizedBox(
+        width: size,
+        height: size,
+        child: Stack(alignment: Alignment.center, children: [
+          SizedBox(
+            width: size,
+            height: size,
+            child: CircularProgressIndicator(
+              value: v,
+              strokeWidth: size * 0.11,
+              strokeCap: StrokeCap.round,
+              color: color,
+              backgroundColor: track ?? color.withOpacity(0.25),
+            ),
+          ),
+          Text('${(v * 100).round()}%',
+              style: TextStyle(color: color, fontWeight: FontWeight.w800, fontSize: size * 0.26)),
+        ]),
       ),
     );
   }

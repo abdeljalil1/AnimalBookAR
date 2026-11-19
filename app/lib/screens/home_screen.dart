@@ -4,6 +4,7 @@ import '../animals.dart';
 import '../cloud.dart';
 import '../l10n.dart';
 import '../progress.dart';
+import '../ui.dart';
 import '../widgets/zoo_path.dart';
 import 'animal_sheet.dart';
 import 'ar_screen.dart';
@@ -64,34 +65,47 @@ class _HomeScreenState extends State<HomeScreen> {
         return Scaffold(
           floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
           floatingActionButton: _ScanButton(label: s.scanBook, onTap: () => _openAr(quiz: level == 3)),
-          body: SafeArea(
-            bottom: false,
-            child: CustomScrollView(slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
-                sliver: SliverList.list(children: [
-                  _Header(progress: p, onParents: () => openParents(context, p, widget.cloud)),
-                  const SizedBox(height: 16),
-                  _MissionCard(mission: mission, progress: p, onGo: () => _openAr(quiz: mission.quiz)),
-                  const SizedBox(height: 18),
-                  if (p.book.levels > 1)
-                    _LevelSwitcher(
-                      progress: p,
-                      selected: level,
-                      onSelect: (l) {
-                        if (p.unlocked(l)) {
-                          setState(() => _shownLevel = l);
-                        } else {
-                          ScaffoldMessenger.of(context)
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(SnackBar(content: Text(s.finishFirst(l - 1))));
-                        }
-                      },
+          backgroundColor: AppColors.cream,
+          body: CustomScrollView(slivers: [
+            // the mission card overlaps the header: both in one Column, so its top edge stays tappable
+            SliverToBoxAdapter(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                _BookHeader(progress: p, onParents: () => openParents(context, p, widget.cloud)),
+                Transform.translate(
+                  offset: const Offset(0, -24),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18),
+                    child: FadeSlideIn(
+                      delay: const Duration(milliseconds: 100),
+                      child: _MissionCard(mission: mission, progress: p, onGo: () => _openAr(quiz: mission.quiz)),
                     ),
-                  if (p.book.levels > 1) const SizedBox(height: 10),
-                  _LevelBar(progress: p, level: level),
-                  const SizedBox(height: 14),
-                  _Games(
+                  ),
+                ),
+              ]),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
+              sliver: SliverList.list(children: [
+                if (p.book.levels > 1)
+                  _LevelSwitcher(
+                    progress: p,
+                    selected: level,
+                    onSelect: (l) {
+                      if (p.unlocked(l)) {
+                        setState(() => _shownLevel = l);
+                      } else {
+                        ScaffoldMessenger.of(context)
+                          ..hideCurrentSnackBar()
+                          ..showSnackBar(SnackBar(content: Text(s.finishFirst(l - 1))));
+                      }
+                    },
+                  ),
+                if (p.book.levels > 1) const SizedBox(height: 10),
+                _LevelBar(progress: p, level: level),
+                const SizedBox(height: 14),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 220),
+                  child: _Games(
                     progress: p,
                     onHelps: () => _openAr(helps: true),
                     onMemory: () =>
@@ -99,95 +113,134 @@ class _HomeScreenState extends State<HomeScreen> {
                     onSoundQuiz: () => _openAr(soundQuiz: true),
                     onMix: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => MixGame(progress: p))),
                   ),
-                  const SizedBox(height: 14),
-                ]),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 12, 110),
-                sliver: SliverToBoxAdapter(
-                  child: ZooPath(
-                    progress: p,
-                    level: level,
-                    highlight: mission.level == level ? mission.animal?.id : null,
-                    onTap: _openAnimal,
-                  ),
+                ),
+                const SizedBox(height: 14),
+              ]),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 110),
+              sliver: SliverToBoxAdapter(
+                child: ZooPath(
+                  progress: p,
+                  level: level,
+                  highlight: mission.level == level ? mission.animal?.id : null,
+                  onTap: _openAnimal,
                 ),
               ),
-            ]),
-          ),
+            ),
+          ]),
         );
       },
     );
   }
 }
 
-class _Header extends StatelessWidget {
-  const _Header({required this.progress, required this.onParents});
+/// The book's header: its colour as a gradient, back to the library, the
+/// title and progress ring, stars, language and the parents' door, with three
+/// of the book's stickers bobbing on the right.
+class _BookHeader extends StatelessWidget {
+  const _BookHeader({required this.progress, required this.onParents});
   final Progress progress;
   final VoidCallback onParents;
 
   @override
   Widget build(BuildContext context) {
     final s = progress.s;
-    final name = progress.name.isEmpty ? s.explorer : progress.name;
-    return Row(children: [
-      if (Navigator.of(context).canPop())
-        IconButton(
-          key: const Key('back-to-books'),
-          tooltip: s.booksTitle,
-          onPressed: () => Navigator.of(context).maybePop(),
-          icon: const Icon(Icons.arrow_back_rounded, color: ink),
+    final b = progress.book;
+    final met = progress.metIn(b);
+    final total = b.items.length;
+    final picks = b.items.take(3).toList();
+    final white = Colors.white.withOpacity(0.22);
+    return Container(
+      padding: EdgeInsets.fromLTRB(10, MediaQuery.of(context).padding.top + 6, 14, 42),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color.lerp(b.color, Colors.white, 0.18)!, b.color, Color.lerp(b.color, Colors.black, 0.25)!],
         ),
-      CircleAvatar(
-        radius: 22,
-        backgroundColor: const Color(0xFFFFE3CC),
-        child: Text(name.characters.first.toUpperCase(),
-            style: const TextStyle(color: Color(0xFF9A3F12), fontWeight: FontWeight.w800, fontSize: 18)),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
       ),
-      const SizedBox(width: 10),
-      Expanded(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(s.hello(name), style: const TextStyle(color: Color(0xFF7A6A5C), fontSize: 13)),
-          Text(progress.book.title(progress.lang),
-              style: const TextStyle(color: ink, fontSize: 19, fontWeight: FontWeight.w800, height: 1.15)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          if (Navigator.of(context).canPop())
+            IconButton(
+              key: const Key('back-to-books'),
+              tooltip: s.booksTitle,
+              onPressed: () => Navigator.of(context).maybePop(),
+              icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+            ),
+          Expanded(
+            child: Text(s.hello(progress.name.isEmpty ? s.explorer : progress.name),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 13.5)),
+          ),
+          StarsChip(progress.stars),
+          const SizedBox(width: 6),
+          PopupMenuButton<Lang>(
+            key: const Key('language'),
+            tooltip: s.language,
+            onSelected: progress.setLang,
+            itemBuilder: (_) => [
+              for (final l in Lang.values)
+                CheckedPopupMenuItem(value: l, checked: l == progress.lang, child: Text(l.label)),
+            ],
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              decoration: BoxDecoration(color: white, borderRadius: BorderRadius.circular(20)),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                const Icon(Icons.translate_rounded, size: 16, color: Colors.white),
+                const SizedBox(width: 4),
+                Text(progress.lang.short, style: const TextStyle(fontWeight: FontWeight.w800, color: Colors.white)),
+              ]),
+            ),
+          ),
+          IconButton(
+            key: const Key('parents'),
+            tooltip: s.parents,
+            onPressed: onParents,
+            icon: const Icon(Icons.family_restroom_rounded, color: Colors.white),
+          ),
         ]),
-      ),
-      Container(
-        key: const Key('stars'),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(color: const Color(0xFFFFF0C2), borderRadius: BorderRadius.circular(20)),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.star_rounded, color: Color(0xFFF2A60C), size: 20),
-          const SizedBox(width: 3),
-          Text('${progress.stars}', style: const TextStyle(color: Color(0xFF7A4A00), fontWeight: FontWeight.w800)),
-        ]),
-      ),
-      const SizedBox(width: 6),
-      PopupMenuButton<Lang>(
-        key: const Key('language'),
-        tooltip: s.language,
-        onSelected: progress.setLang,
-        itemBuilder: (_) => [
-          for (final l in Lang.values)
-            CheckedPopupMenuItem(value: l, checked: l == progress.lang, child: Text(l.label)),
-        ],
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-          decoration: BoxDecoration(color: const Color(0xFFF1E9DD), borderRadius: BorderRadius.circular(20)),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            const Icon(Icons.translate_rounded, size: 16, color: Color(0xFF5C4A3A)),
-            const SizedBox(width: 4),
-            Text(progress.lang.short, style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF5C4A3A))),
+        const SizedBox(height: 10),
+        Padding(
+          padding: const EdgeInsetsDirectional.only(start: 8),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            ProgressRing(value: total == 0 ? 0 : met / total, size: 58),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(b.title(progress.lang),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style:
+                        const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.w800, height: 1.1)),
+                const SizedBox(height: 3),
+                Text(s.metOf(b.kind, met, total), style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 13)),
+              ]),
+            ),
+            SizedBox(
+              width: 112,
+              height: 70,
+              child: Stack(clipBehavior: Clip.none, children: [
+                for (final (i, a) in picks.indexed)
+                  PositionedDirectional(
+                    end: i * 34.0,
+                    top: i.isOdd ? 0 : 8,
+                    child: Floating(
+                      phase: i / 3,
+                      amount: 7,
+                      child: Image.asset(a.stickerAsset,
+                          width: 56, height: 56, errorBuilder: (_, __, ___) => const SizedBox(width: 56, height: 56)),
+                    ),
+                  ),
+              ]),
+            ),
           ]),
         ),
-      ),
-      IconButton(
-        key: const Key('parents'),
-        tooltip: progress.s.parents,
-        onPressed: onParents,
-        icon: const Icon(Icons.family_restroom_rounded, color: Color(0xFF5C4A3A)),
-      ),
-    ]);
+      ]),
+    );
   }
 }
 
@@ -253,7 +306,20 @@ class _MissionCard extends StatelessWidget {
                       radius: 38,
                       backgroundColor: Color(0xFFFFF0C2),
                       child: Icon(Icons.emoji_events_rounded, size: 40, color: Color(0xFFF2A60C)))
-                  : ClipOval(child: Image.asset(a.thumbAsset, width: 76, height: 76, fit: BoxFit.cover)),
+                  : ClipOval(
+                      child: Container(
+                        width: 76,
+                        height: 76,
+                        color: Color.lerp(color, Colors.white, 0.85),
+                        padding: const EdgeInsets.all(6),
+                        child: Floating(
+                          amount: 4,
+                          child: Image.asset(a.stickerAsset,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => Image.asset(a.thumbAsset, fit: BoxFit.cover)),
+                        ),
+                      ),
+                    ),
             ),
           ]),
         ),
@@ -400,13 +466,19 @@ class _Games extends StatelessWidget {
     final s = progress.s;
     final kind = progress.book.kind;
     Widget tile(Key key, IconData icon, String title, String sub, Color color, VoidCallback onTap) => Expanded(
-          child: Material(
+          child: Pressable(
             key: key,
-            color: color,
-            borderRadius: BorderRadius.circular(18),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(18),
-              onTap: onTap,
+            onTap: onTap,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [color, Color.lerp(color, Colors.black, 0.18)!],
+                ),
+                boxShadow: [BoxShadow(color: color.withOpacity(0.35), blurRadius: 10, offset: const Offset(0, 4))],
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(children: [

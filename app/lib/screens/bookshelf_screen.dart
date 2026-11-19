@@ -29,70 +29,71 @@ class BookshelfScreen extends StatelessWidget {
         final c = progress.child;
         return Scaffold(
           backgroundColor: AppColors.cream,
-          body: SafeArea(
-            child: ListView(padding: const EdgeInsets.fromLTRB(18, 14, 18, 28), children: [
-              Row(children: [
-                Avatar(name: name, size: 46),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(s.hello(name), style: const TextStyle(color: AppColors.muted, fontSize: 13.5)),
-                    Text(s.booksTitle,
-                        style: const TextStyle(
-                            color: AppColors.ink, fontSize: 22, fontWeight: FontWeight.w800, height: 1.15)),
-                  ]),
+          body: ListView(padding: EdgeInsets.zero, children: [
+            // the Continue card overlaps the header: both in one Column, so its top edge stays tappable
+            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              _LibraryHeader(progress: progress, name: name, onParents: () => openParents(context, progress, cloud)),
+              Transform.translate(
+                offset: const Offset(0, -26),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18),
+                  child: FadeSlideIn(
+                    delay: const Duration(milliseconds: 120),
+                    child: _ContinueCard(progress: progress, onTap: () => _open(context, progress.book)),
+                  ),
                 ),
-                StarsChip(progress.stars),
-                const SizedBox(width: 4),
-                IconButton(
-                  key: const Key('parents'),
-                  tooltip: s.parents,
-                  onPressed: () => openParents(context, progress, cloud),
-                  style: IconButton.styleFrom(
-                      backgroundColor: Colors.white, side: const BorderSide(color: AppColors.line)),
-                  icon: const Icon(Icons.family_restroom_rounded, color: AppColors.muted),
-                ),
-              ]),
-              const SizedBox(height: 18),
-              _ContinueCard(progress: progress, onTap: () => _open(context, progress.book)),
-              const SizedBox(height: 14),
-              Row(children: [
-                Expanded(
-                    child: StatTile(
-                        icon: Icons.star_rounded,
-                        value: '${progress.stars}',
-                        label: s.statStars,
-                        color: AppColors.gold)),
-                const SizedBox(width: 10),
-                Expanded(
-                    child: StatTile(
-                        icon: Icons.explore_rounded,
-                        value: '${progress.metAll}',
-                        label: s.statDiscovered,
-                        color: const Color(0xFF2F6FD0))),
-                const SizedBox(width: 10),
-                Expanded(
-                    child: StatTile(
-                        icon: Icons.timer_rounded,
-                        value: '${(c.playSeconds / 60).round()}',
-                        label: s.statMinutes,
-                        color: AppColors.green)),
-              ]),
-              SectionLabel(s.yourBooks),
-              GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 0.74,
-                children: [
-                  for (final b in progress.books)
-                    _BookCover(book: b, progress: progress, onTap: () => _open(context, b)),
-                ],
               ),
             ]),
-          ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 0, 18, 28),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 220),
+                  child: Row(children: [
+                    Expanded(
+                        child: StatTile(
+                            icon: Icons.star_rounded,
+                            count: progress.stars,
+                            label: s.statStars,
+                            color: AppColors.gold)),
+                    const SizedBox(width: 10),
+                    Expanded(
+                        child: StatTile(
+                            icon: Icons.explore_rounded,
+                            count: progress.metAll,
+                            label: s.statDiscovered,
+                            color: const Color(0xFF2F6FD0))),
+                    const SizedBox(width: 10),
+                    Expanded(
+                        child: StatTile(
+                            icon: Icons.timer_rounded,
+                            count: (c.playSeconds / 60).round(),
+                            label: s.statMinutes,
+                            color: AppColors.green)),
+                  ]),
+                ),
+                SectionLabel(s.yourBooks),
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 0.74,
+                  children: [
+                    for (final (i, b) in progress.books.indexed)
+                      FadeSlideIn(
+                        delay: Duration(milliseconds: 300 + 80 * i),
+                        child: Pressable(
+                          onTap: () => _open(context, b),
+                          child: _BookCover(book: b, progress: progress),
+                        ),
+                      ),
+                  ],
+                ),
+              ]),
+            ),
+          ]),
         );
       },
     );
@@ -172,7 +173,20 @@ class _ContinueCard extends StatelessWidget {
                         radius: 34,
                         backgroundColor: AppColors.goldBg,
                         child: Icon(Icons.emoji_events_rounded, size: 36, color: AppColors.gold))
-                    : ClipOval(child: Image.asset(a.thumbAsset, width: 68, height: 68, fit: BoxFit.cover)),
+                    : ClipOval(
+                        child: Container(
+                          width: 68,
+                          height: 68,
+                          color: Color.lerp(b.color, Colors.white, 0.85),
+                          padding: const EdgeInsets.all(5),
+                          child: Floating(
+                            amount: 4,
+                            child: Image.asset(a.stickerAsset,
+                                fit: BoxFit.contain,
+                                errorBuilder: (_, __, ___) => Image.asset(a.thumbAsset, fit: BoxFit.cover)),
+                          ),
+                        ),
+                      ),
               ),
               PositionedDirectional(
                 end: -4,
@@ -196,10 +210,9 @@ class _ContinueCard extends StatelessWidget {
 }
 
 class _BookCover extends StatelessWidget {
-  const _BookCover({required this.book, required this.progress, required this.onTap});
+  const _BookCover({required this.book, required this.progress});
   final Book book;
   final Progress progress;
-  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +223,6 @@ class _BookCover extends StatelessWidget {
     return AppCard(
       key: Key('book-${book.id}'),
       padding: EdgeInsets.zero,
-      onTap: onTap,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         // four pictures from the book, on its colour
         Expanded(
@@ -251,6 +263,85 @@ class _BookCover extends StatelessWidget {
             Text(s.metOf(book.kind, met, total), style: const TextStyle(color: AppColors.muted, fontSize: 11.5)),
           ]),
         ),
+      ]),
+    );
+  }
+}
+
+/// The library's header: the child, their stars and the parents' door on a
+/// warm gradient, the title, and three stickers from the books bobbing about.
+class _LibraryHeader extends StatelessWidget {
+  const _LibraryHeader({required this.progress, required this.name, required this.onParents});
+  final Progress progress;
+  final String name;
+  final VoidCallback onParents;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = progress.s;
+    final picks = [for (final b in progress.books.take(3)) b.items.first];
+    final total = progress.books.fold(0, (n, b) => n + b.items.length);
+    return Container(
+      padding: EdgeInsets.fromLTRB(18, MediaQuery.of(context).padding.top + 12, 18, 44),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFF39A4C), AppColors.brand, AppColors.brandDark],
+        ),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Avatar(name: name, size: 44),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(s.hello(name),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800)),
+            ]),
+          ),
+          StarsChip(progress.stars),
+          const SizedBox(width: 6),
+          IconButton(
+            key: const Key('parents'),
+            tooltip: s.parents,
+            onPressed: onParents,
+            style: IconButton.styleFrom(backgroundColor: Colors.white.withOpacity(0.22)),
+            icon: const Icon(Icons.family_restroom_rounded, color: Colors.white),
+          ),
+        ]),
+        const SizedBox(height: 18),
+        Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(s.booksTitle,
+                  style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w800, height: 1.1)),
+              const SizedBox(height: 4),
+              Text('${progress.metAll} / $total · ${s.statDiscovered}',
+                  style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 13)),
+            ]),
+          ),
+          SizedBox(
+            width: 150,
+            height: 76,
+            child: Stack(clipBehavior: Clip.none, children: [
+              for (final (i, a) in picks.indexed)
+                Positioned(
+                  left: i * 46.0,
+                  top: i.isOdd ? 0 : 10,
+                  child: Floating(
+                    phase: i / 3,
+                    amount: 8,
+                    child: Image.asset(a.stickerAsset,
+                        width: 64, height: 64, errorBuilder: (_, __, ___) => const SizedBox(width: 64, height: 64)),
+                  ),
+                ),
+            ]),
+          ),
+        ]),
       ]),
     );
   }
