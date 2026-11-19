@@ -5,3 +5,4 @@ __pycache__/
 tool/.chrome-profile-shapes/
 tool/.chrome-profile-stickers/
 book/print/
+app/ios/build/
