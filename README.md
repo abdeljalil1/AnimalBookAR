@@ -222,6 +222,24 @@ pages, put photos of its pages in `book/pages/<id>.png` and run only
 `compile_targets.py`. Pages with lots of detail track best; plain or repetitive
 pages track badly.
 
+## Map stickers, app icon and printable books
+
+```bash
+python3 tool/make_stickers.py
+```
+
+renders each item's 3D model (as in the AR view) for its map stop
+(`<thumbsDir>/<id>_sticker.png`). `tool/make_icon.py` draws the launcher icon,
+the adaptive icon layers and the splash art from the horse sticker.
+
+```bash
+python3 tool/make_print.py
+```
+
+writes a ready-to-print A4 PDF per book to `book/print/` (not in git: large):
+a cover in the book's colours with its stickers, a "how to use" page in three
+languages, every AR page, and a back cover listing what is inside.
+
 ## Tests
 
 ```bash
