@@ -16,6 +16,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+from PIL import Image
+
 ROOT = Path(__file__).resolve().parent.parent
 AR = ROOT / "app" / "assets" / "ar"
 OUT = ROOT / "book" / "print"
@@ -171,8 +173,14 @@ def main():
         pages_dir = PAGES.get(book["id"], ROOT / "book" / book["id"] / "pages")
         c = book["color"]
         style = f"--c:{c};--light:{shade(c, 0.25)};--dark:{shade(c, -0.3)};--soft:{shade(c, 0.75)}"
-        pages = "".join(f'<section class="sheet page"><img src="{(pages_dir / (it["id"] + ".png")).as_uri()}"></section>'
-                        for it in items)
+        # the pages as high-quality JPEGs: the PDFs stay small enough to send (PNG pages make ~30 MB books)
+        jpgs = []
+        for it in items:
+            j = tmp / f"{book['id']}-{it['id']}.jpg"
+            with Image.open(pages_dir / f"{it['id']}.png") as im:
+                im.convert("RGB").save(j, quality=88, optimize=True)
+            jpgs.append(j)
+        pages = "".join(f'<section class="sheet page"><img src="{j.as_uri()}"></section>' for j in jpgs)
         doc = (f'<!doctype html><html><head><meta charset="utf-8"><style>{CSS}</style></head>'
                f'<body style="{style}">{cover(book, items)}{howto(book, items)}{pages}{back(book, items)}</body></html>')
         f = tmp / f"{book['id']}.html"
