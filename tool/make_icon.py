@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Draws the app icon (an open book with the horse standing on it, on the
-brand orange) and writes the Android launcher icons, the adaptive icon layers
-and the splash picture.
+brand orange) and writes the Android launcher icons, the adaptive icon layers,
+the splash picture and the iOS app icons.
 
     python3 tool/make_icon.py      (after tool/make_stickers.py)
 """
@@ -86,6 +86,14 @@ def main():
     # splash: the art in the middle of the brand colour
     for dens, px in sizes.items():
         fg.resize((px * 4, px * 4), Image.LANCZOS).save(RES / f"mipmap-{dens}" / "launch_image.png")
+    # iOS: every icon in the asset catalogue, square and opaque (iOS rounds the corners itself)
+    ios = ROOT / "app" / "ios" / "Runner" / "Assets.xcassets" / "AppIcon.appiconset"
+    opaque = full.convert("RGB")
+    for f in ios.glob("*.png"):
+        with Image.open(f) as old:
+            size = old.size
+        opaque.resize(size, Image.LANCZOS).save(f)
+    (ROOT / "tool" / "test-output").mkdir(exist_ok=True)
     full.resize((512, 512), Image.LANCZOS).save(ROOT / "tool" / "test-output" / "icon.png")
     print("wrote launcher icons, adaptive layers and splash image")
 
